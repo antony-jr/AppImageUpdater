@@ -54,7 +54,8 @@ public:
     QGridLayout *gridLayout_5;
     QLabel *AppImagePath;
     QProgressBar *progress;
-    QSpacerItem *verticalSpacer;
+    QLabel *progressText;
+    QLabel *banner;
     QLabel *AppImageLogo;
     QWidget *InstallSuccess;
     QGridLayout *gridLayout_8;
@@ -228,13 +229,8 @@ public:
         progress->setObjectName(QStringLiteral("progress"));
         progress->setValue(0);
 
-        gridLayout_5->addWidget(progress, 1, 1, 1, 5);
+        gridLayout_5->addWidget(progress, 1, 1, 1, 4);
 
-       
-
-        verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
-
-        gridLayout_5->addItem(verticalSpacer, 3, 3, 1, 1);
 
         AppImageLogo = new QLabel(Updating);
         AppImageLogo->setObjectName(QStringLiteral("AppImageLogo"));
@@ -243,8 +239,24 @@ public:
         AppImageLogo->setPixmap(QPixmap(QString::fromUtf8(":/resources/enlarged_logo.png")));
         AppImageLogo->setScaledContents(true);
 
-        gridLayout_5->addWidget(AppImageLogo, 0, 5, 1, 1);
+        gridLayout_5->addWidget(AppImageLogo, 0, 4, 1, 1);
 
+        progressText = new QLabel(Updating);
+        progressText->setObjectName(QStringLiteral("progressText"));
+        progressText->setAlignment(Qt::AlignCenter);
+
+        gridLayout_5->addWidget(progressText, 2, 1, 1, 4, Qt::AlignHCenter);
+
+        banner = new QLabel(Updating);
+        banner->setObjectName(QStringLiteral("banner"));
+        banner->setMinimumSize(QSize(0, 0));
+        banner->setMaximumSize(QSize(779, 168));
+        banner->setPixmap(QPixmap(QString::fromUtf8(":/resources/thankyou.png")));
+        banner->setScaledContents(false);
+        banner->setAlignment(Qt::AlignCenter);
+
+        gridLayout_5->addWidget(banner, 3, 1, 1, 4, Qt::AlignHCenter);
+        
         gridLayout_6->addLayout(gridLayout_5, 0, 0, 1, 1);
 
         MainStack->addWidget(Updating);

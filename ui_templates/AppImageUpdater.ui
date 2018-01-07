@@ -93,7 +93,7 @@ color: white;</string>
       <item row="0" column="0">
        <widget class="QStackedWidget" name="MainStack">
         <property name="currentIndex">
-         <number>0</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="Home">
          <layout class="QGridLayout" name="gridLayout_3">
@@ -249,7 +249,7 @@ color: white;</string>
          <layout class="QGridLayout" name="gridLayout_6">
           <item row="0" column="0">
            <layout class="QGridLayout" name="gridLayout_5">
-            <item row="0" column="1" colspan="4">
+            <item row="0" column="1" colspan="3">
              <widget class="QLabel" name="AppImagePath">
               <property name="text">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Updating AppImage...&lt;span style=&quot; font-weight:600;&quot;&gt; AppImageUpdater.AppImage&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Local SHA1 : &lt;/span&gt;1f04789c4f6550ad896bf428a139ca66df79314&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Upstream SHA1: &lt;/span&gt;1f04789c4f6550ad896bf428a139ca66df793141&lt;/p&gt;&lt;p&gt;&lt;br/&gt;Please wait as we are porting your &lt;span style=&quot; font-weight:600;&quot;&gt;AppImage &lt;/span&gt;to the&lt;span style=&quot; font-weight:600;&quot;&gt; future&lt;/span&gt;. This might take some time so &lt;span style=&quot; font-weight:600;&quot;&gt;have a Tea!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -262,47 +262,17 @@ color: white;</string>
               </property>
              </widget>
             </item>
-            <item row="1" column="1" colspan="5">
+            <item row="1" column="1" colspan="4">
              <widget class="QProgressBar" name="progress">
               <property name="value">
                <number>0</number>
               </property>
               <property name="format">
-               <string>Downloading %p% of 33333 bytes at 255 KiBs</string>
+               <string>%p%</string>
               </property>
              </widget>
             </item>
-            <item row="4" column="1" colspan="5">
-             <widget class="QTextEdit" name="debugTextBox">
-              <property name="autoFillBackground">
-               <bool>false</bool>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: white;
-color: black;</string>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="3">
-             <spacer name="verticalSpacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="0" column="5">
+            <item row="0" column="4">
              <widget class="QLabel" name="AppImageLogo">
               <property name="minimumSize">
                <size>
@@ -327,18 +297,41 @@ color: black;</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="1" colspan="5">
-             <widget class="QPushButton" name="showMore">
-              <property name="styleSheet">
-               <string notr="true">background-color:  rgb(229, 54, 38);
-color:white;</string>
+            <item row="2" column="1" colspan="4" alignment="Qt::AlignHCenter">
+             <widget class="QLabel" name="progressText">
+              <property name="text">
+               <string>Retrived: 3333 of 33455 Bytes , Downloading at 225 Kbps</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1" colspan="4" alignment="Qt::AlignHCenter">
+             <widget class="QLabel" name="banner">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>779</width>
+                <height>168</height>
+               </size>
               </property>
               <property name="text">
-               <string>Show More Information</string>
+               <string/>
               </property>
-              <property name="icon">
-               <iconset resource="../AppImageUpdaterResources.qrc">
-                <normaloff>:/resources/info.png</normaloff>:/resources/info.png</iconset>
+              <property name="pixmap">
+               <pixmap resource="../AppImageUpdaterResources.qrc">:/resources/thankyou.png</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>false</bool>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
               </property>
              </widget>
             </item>

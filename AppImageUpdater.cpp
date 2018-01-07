@@ -35,6 +35,13 @@ AppImageUpdater::AppImageUpdater()
         return;
     });
     
+    connect(Bridge , &AIUpdaterBridge::updateFinished,
+    [&](QString AppImage , QString SHA1){
+        Ui->sckFoot->setText("<html><head/><body><p>Updated <span style=\" font-weight:600;\">"+ AppImage +"</span> ( SHA1: "+ SHA1 +")</p></body></html>");
+        Ui->MainStack->setCurrentIndex(SUCCESS);
+        return;
+    });
+    
     connect(Bridge , &AIUpdaterBridge::updatesAvailable ,
     [&](QString AppImage , QString newSHA1){
         QFile App(AppImage);
