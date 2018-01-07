@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AppImageUpdater</class>
+ <widget class="QMainWindow" name="AppImageUpdater">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>807</width>
+    <height>491</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>AppImage Updater</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../AppImageUpdaterResources.qrc">
+    <normaloff>:/resources/logo.svg</normaloff>:/resources/logo.svg</iconset>
+  </property>
+  <property name="toolTip">
+   <string/>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: #141318;
+color: white;</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QGridLayout" name="MainGrid">
+      <item row="1" column="0">
+       <layout class="QHBoxLayout" name="StaticControls">
+        <item>
+         <widget class="QPushButton" name="aboutBtn">
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: #709cb7;
+color: white;</string>
+          </property>
+          <property name="text">
+           <string>About</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../AppImageUpdaterResources.qrc">
+            <normaloff>:/resources/about.png</normaloff>:/resources/about.png</iconset>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="StatciControlsSpace">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="exitOrCancelBtn">
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: #709cb7;
+color: white;</string>
+          </property>
+          <property name="text">
+           <string>Exit</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../AppImageUpdaterResources.qrc">
+            <normaloff>:/resources/exit.png</normaloff>:/resources/exit.png</iconset>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="0">
+       <widget class="QStackedWidget" name="MainStack">
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <widget class="QWidget" name="Home">
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="1">
+           <layout class="QGridLayout" name="HomeGrid">
+            <item row="11" column="0" colspan="3">
+             <widget class="QLabel" name="AppCopyleft">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The &lt;span style=&quot; font-weight:600;&quot;&gt;BSD-3 Clause&lt;/span&gt; License. Copyright (C) 2017 &lt;span style=&quot; font-weight:600;&quot;&gt;Antony Jr&lt;/span&gt; , All Rights Reserved.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="9" column="0" colspan="3">
+             <widget class="QLabel" name="VersionInfo">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;AppImageUpdater&lt;span style=&quot; font-weight:600;&quot;&gt; v0.0.1-alpha&lt;/span&gt; , Built with &lt;span style=&quot; font-weight:600;&quot;&gt;Qt Version 5.10.0&lt;/span&gt; with &lt;span style=&quot; font-weight:600;&quot;&gt;OpenSSL v0.43.00-es&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QLabel" name="HomeLogo">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="minimumSize">
+               <size>
+                <width>200</width>
+                <height>200</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>200</width>
+                <height>200</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="../AppImageUpdaterResources.qrc">:/resources/enlarged_logo.png</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="0" colspan="3">
+             <widget class="QLabel" name="AppSha1">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;AppImage SHA1: &lt;/span&gt;&lt;span style=&quot; font-size:11pt;&quot;&gt;1f04789c4f6550ad896bf428a139ca66df793141&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0" colspan="3" alignment="Qt::AlignHCenter">
+             <widget class="QLabel" name="AppInfo">
+              <property name="maximumSize">
+               <size>
+                <width>600</width>
+                <height>80</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <pointsize>10</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>Welcome to AppImage Updater , Just select your AppImage and Update it now.</string>
+              </property>
+              <property name="scaledContents">
+               <bool>false</bool>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QPushButton" name="browseAppImage">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(255, 61, 55);
+color: white;</string>
+              </property>
+              <property name="text">
+               <string>Browse for AppImage</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../AppImageUpdaterResources.qrc">
+                <normaloff>:/resources/browse.png</normaloff>:/resources/browse.png</iconset>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="Loading">
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+             <widget class="QLabel" name="LoadingGif">
+              <property name="minimumSize">
+               <size>
+                <width>256</width>
+                <height>256</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>256</width>
+                <height>256</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>Loading</string>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="Updating">
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout_5">
+            <item row="0" column="1" colspan="4">
+             <widget class="QLabel" name="AppImagePath">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Updating AppImage...&lt;span style=&quot; font-weight:600;&quot;&gt; AppImageUpdater.AppImage&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Local SHA1 : &lt;/span&gt;1f04789c4f6550ad896bf428a139ca66df79314&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Upstream SHA1: &lt;/span&gt;1f04789c4f6550ad896bf428a139ca66df793141&lt;/p&gt;&lt;p&gt;&lt;br/&gt;Please wait as we are porting your &lt;span style=&quot; font-weight:600;&quot;&gt;AppImage &lt;/span&gt;to the&lt;span style=&quot; font-weight:600;&quot;&gt; future&lt;/span&gt;. This might take some time so &lt;span style=&quot; font-weight:600;&quot;&gt;have a Tea!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+              </property>
+              <property name="wordWrap">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" colspan="5">
+             <widget class="QProgressBar" name="progress">
+              <property name="value">
+               <number>0</number>
+              </property>
+              <property name="format">
+               <string>Downloading %p% of 33333 bytes at 255 KiBs</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1" colspan="5">
+             <widget class="QTextEdit" name="debugTextBox">
+              <property name="autoFillBackground">
+               <bool>false</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: white;
+color: black;</string>
+              </property>
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="3">
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="5">
+             <widget class="QLabel" name="AppImageLogo">
+              <property name="minimumSize">
+               <size>
+                <width>180</width>
+                <height>180</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>180</width>
+                <height>180</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="../AppImageUpdaterResources.qrc">:/resources/enlarged_logo.png</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1" colspan="5">
+             <widget class="QPushButton" name="showMore">
+              <property name="styleSheet">
+               <string notr="true">background-color:  rgb(229, 54, 38);
+color:white;</string>
+              </property>
+              <property name="text">
+               <string>Show More Information</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../AppImageUpdaterResources.qrc">
+                <normaloff>:/resources/info.png</normaloff>:/resources/info.png</iconset>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="InstallSuccess">
+         <layout class="QGridLayout" name="gridLayout_8">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout_7">
+            <item row="3" column="0">
+             <widget class="QLabel" name="sckFoot">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Updated &lt;span style=&quot; font-weight:600;&quot;&gt;appimaged.AppImage&lt;/span&gt; ( SHA1:f2afa5133a30d672ca03c111187625be333ea411)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" alignment="Qt::AlignHCenter">
+             <widget class="QLabel" name="sckImg">
+              <property name="minimumSize">
+               <size>
+                <width>312</width>
+                <height>312</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>312</width>
+                <height>312</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="../AppImageUpdaterResources.qrc">:/resources/success.png</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="sckHead">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;Successfully Updated your AppImage! See ya!&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="InstallFail">
+         <layout class="QGridLayout" name="gridLayout_10">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout_9">
+            <item row="3" column="0">
+             <widget class="QLabel" name="failFoot">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Because the update was cancelled by the user.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" alignment="Qt::AlignHCenter">
+             <widget class="QLabel" name="failImg">
+              <property name="minimumSize">
+               <size>
+                <width>312</width>
+                <height>312</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>312</width>
+                <height>312</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="pixmap">
+               <pixmap resource="../AppImageUpdaterResources.qrc">:/resources/exit.png</pixmap>
+              </property>
+              <property name="scaledContents">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="failHead">
+              <property name="text">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt;&quot;&gt;Failed to Update your AppImage, Sorry.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources>
+  <include location="../AppImageUpdaterResources.qrc"/>
+ </resources>
+ <connections/>
+</ui>
