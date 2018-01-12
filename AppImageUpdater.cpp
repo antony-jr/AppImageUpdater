@@ -8,7 +8,7 @@
 AppImageUpdater::AppImageUpdater()
 {
     Ui = new Ui::AppImageUpdater;
-    Bridge = new AIUpdaterBridge;
+    Bridge = new AIUpdaterBridge(this);
     Bridge->doDebug(true);
     
     Ui->setupUi(this); // Setup the main gui UI.
@@ -16,7 +16,7 @@ AppImageUpdater::AppImageUpdater()
     {
     QFile App(QFileInfo(QApplication::applicationFilePath()).fileName());
     App.open(QIODevice::ReadOnly); // assume its successfull because , user cannot open it without reading it.
-    Ui->VersionInfo->setText("<html><head/><body><p>AppImageUpdater<span style=\" font-weight:600;\"> "+APPIMAGEUPDATER_VERSION_STR+"</span> , Built with <span style=\" font-weight:600;\">"+QT_VERSION_STR+"</span> with <span style=\" font-weight:600;\">"+QSslSocket::sslLibraryBuildVersionString()+"</span>.</p></body></html>");
+    Ui->VersionInfo->setText("<html><head/><body><p>AppImageUpdater<span style=\" font-weight:600;\"> "+APPIMAGEUPDATER_VERSION_STR+"</span> , Built with <span style=\" font-weight:600;\"> Qt "+QT_VERSION_STR+"</span> with <span style=\" font-weight:600;\">"+QSslSocket::sslLibraryBuildVersionString()+"</span>.</p></body></html>");
     Ui->AppSha1->setText("<html><head/><body><p><span style=\" font-weight:600;\">AppImage SHA1: </span><span style=\" font-size:11pt;\">"+QString(QCryptographicHash::hash(App.readAll(), QCryptographicHash::Sha1).toHex())+"</span></p></body></html>");
     }
     Ui->MainStack->setCurrentIndex(HOME);
@@ -49,7 +49,7 @@ AppImageUpdater::AppImageUpdater()
         Ui->AppImagePath->setText("<html><head/><body><p>Updating AppImage...<span style=\" font-weight:600;\"> "+AppImage+"</span></p><p><span style=\" font-weight:600;\">Local SHA1 : </span>"+QString(QCryptographicHash::hash(App.readAll(), QCryptographicHash::Sha1).toHex())+"</p><p><span style=\" font-weight:600;\">Upstream SHA1: </span>"+ newSHA1 +"</p><p><br/>Please wait as we are porting your <span style=\" font-weight:600;\">AppImage </span>to the<span style=\" font-weight:600;\"> future</span>. This might take some time so <span style=\" font-weight:600;\">have a Tea!</span></p></body></html>");
         Ui->loader_movie->stop();
         Ui->MainStack->setCurrentIndex(UPDATING);
-        Bridge->start();
+        Bridge->startUpdating();
         return;
     });
     
