@@ -68,7 +68,6 @@ AppImageUpdater::AppImageUpdater()
 
 void AppImageUpdater::checkForUpdates(void)
 {
-    qDebug() << "Updating:: " << QApplication::applicationFilePath();
     checkForUpdates(QApplication::applicationFilePath());
     return;
 }

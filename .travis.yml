@@ -8,7 +8,7 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - sudo apt-get -y install qt59base zsync
+  - sudo apt-get -y install qt59base
   - source /opt/qt*/bin/qt*-env.sh
 
 script:
@@ -29,7 +29,6 @@ script:
 
 after_success:
   - find appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
-  - zsyncmake AppImageUpdater*.AppImage
   - wget "https://github.com/probonopd/uploadtool/raw/master/upload.sh"
   - bash upload.sh AppImageUpdater*.AppImage* *zsync
   
