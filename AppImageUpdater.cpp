@@ -155,7 +155,7 @@ void AppImageUpdater::handleError(QString AppImage, short errorCode)
         whatString += "No AppImage given to process.";
         break;
     case AIUpdaterBridge::NETWORK_ERROR:
-        whatString += "Unable to update <b>" + file + "</b> because of unknow network interruption.";
+        whatString += "Unable to update <b>" + file + "</b> because of unknown network interruption.";
         break;
     case AIUpdaterBridge::CANNOT_FIND_GITHUB_ASSET:
         whatString += "Cannot get the github asset for <b>" + file + "</b>!";
