@@ -68,7 +68,7 @@ AppImageUpdater::AppImageUpdater()
 
 void AppImageUpdater::checkForUpdates(void)
 {
-    checkForUpdates(QApplication::applicationFilePath());
+    selfUpdate = true;
     return;
 }
 
@@ -102,10 +102,11 @@ void AppImageUpdater::updateFinished(QString AppImage, QString SHA1)
 
 void AppImageUpdater::noUpdatesAvailable(QString AppImage, QString oldSHA1)
 {
-    if(AppImage == QApplication::applicationFilePath()) {
+    if(selfUpdate) {
         Ui->mainBtn->setEnabled(false);
         Ui->loader_movie->stop();
         Ui->MainStack->setCurrentIndex(HOME);
+	selfUpdate = false;
         return;
     }
     Ui->sckFoot->setText("<html><head/><body><p>Already Uptodate for <span style=\" font-weight:600;\">"+ QFileInfo(AppImage).fileName() +"</span> ( SHA1: "+ oldSHA1 +")</p></body></html>");

@@ -400,6 +400,7 @@ private:
         SUCCESS,
         FAILED
     };
+    bool selfUpdate = false;
     Ui::AppImageUpdater *Ui;
     AIUpdaterBridge *Bridge;
 };

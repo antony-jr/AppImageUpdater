@@ -4,7 +4,7 @@ sudo: require
 dist: trusty
 
 before_install:
-  - sudo add-apt-repository ppa:beineri/opt-qt593-trusty -y
+  - sudo add-apt-repository ppa:beineri/opt-qt593-trusty -y # Change Open ssl before changing this
   - sudo apt-get update -qq
 
 install:
@@ -19,6 +19,7 @@ script:
   - mkdir -p appdir/usr/bin ; strip AppImageUpdater ; cp AppImageUpdater ./appdir/usr/bin/
   - mkdir -p appdir/usr/share/applications ; cp ../*.desktop ./appdir/usr/share/applications/
   - mkdir -p appdir/usr/lib/ ; cp /usr/lib/x86_64-linux-gnu/libk5crypto.so.3 ./appdir/usr/lib/
+  - cp -r ../Pre-BuiltOpenSSL/etc appdir/ ; cp -r ../Pre-BuiltOpenSSL/lib/* appdir/lib/ # OpenSSL FIX
   - mkdir -p appdir/usr/share/icons/hicolor/256x256/apps/ ; cp ../*png appdir/usr/share/icons/hicolor/256x256/apps/AppImageUpdater.png
   - wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
   - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
