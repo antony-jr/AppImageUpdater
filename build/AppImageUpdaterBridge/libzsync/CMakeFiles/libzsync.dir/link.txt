@@ -1,2 +1,0 @@
-/usr/bin/ar qc libzsync.a  CMakeFiles/libzsync.dir/zsync.c.o CMakeFiles/libzsync.dir/zmap.c.o CMakeFiles/libzsync.dir/sha1.c.o CMakeFiles/libzsync.dir/libzsync_autogen/mocs_compilation.cpp.o
-/usr/bin/ranlib libzsync.a
