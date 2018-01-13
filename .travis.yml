@@ -29,7 +29,7 @@ script:
 
 after_success:
   - find appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
-  - curl --upload-file AppImageUpdater*.AppImage https://transfer.sh/Test-git.$(git rev-parse --short HEAD)-x86_64.AppImage
+  - curl --upload-file AppImageUpdater*.AppImage https://transfer.sh/AppImageUpdater.$(git rev-parse --short HEAD)-x86_64.AppImage
   - # wget -c "https://raw.githubusercontent.com/probonopd/uploadtool/88b3c752469ff384b3e275215b6d9a071bd2e9ff/upload.sh" # FIXME; https://github.com/probonopd/uploadtool/pull/29#issuecomment-355575435
   - # bash upload.sh AppImageUpdater*.AppImage*
   
