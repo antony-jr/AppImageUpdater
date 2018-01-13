@@ -2,8 +2,8 @@
   <img src=".img/preview.gif" height="500px" width=auto alt="AppImage Updater">  <br>
 </p>
 
-> :rocket: A Unofficial AppImage Updater written using AppImageUpdaterBridge , Written :black_nib: in C++ using Qt5. This is a very hot :heart_eyes: updater for   
-> Humans , Update your AppImages Like a Pro. :heart:   
+> :rocket: A Unofficial AppImage Updater written using AppImageUpdaterBridge , Written :black_nib: in C++ using Qt5. This is a very hot   
+> :heart_eyes: updater for Humans , Update your AppImages Like a Pro. :heart:   
 > -- Antony Jr.
 
 
@@ -23,7 +23,7 @@
   </tr>
   <tr>
     <td >
-    <a href="#">
+    <a href="https://github.com/antony-jr/AppImageUpdater/releases/download/continuous/AppImageUpdater-continuous-x86_64.AppImage">
     <img src="https://img.shields.io/badge/DOWNLOAD%20APPIMAGE_x86__64-v0.0.1--alpha-yellowgreen.svg?style=for-the-badge" alt="Download" / >
     </a>
     </td>
@@ -32,6 +32,12 @@
 </table>
 </p>
 
+This is built to **Test** AppImageUpdaterBridge and also for people who like to have a nice looking AppImage Updater.
+
+**Note** : This is not the official Update tool , this is just a example to help developers to understand **AppImageUpdaterBridge** better.
+and also for people who like Qt.
+
+Please see [AppImage Updater Bridge](https://github.com/antony-jr/AppImageUpdaterBridge) for more information.
 
 # Support [![Liberapay](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/antonyjr/donate) [![Twitter](https://img.shields.io/twitter/url/https/github.com/antony-jr/AIUpdateInformation.svg?style=social)](https://twitter.com/intent/tweet?text=Checkout%20the%20new%20AppImage%20Updater%20by%20%40antonyjr0%20%2C%20its%20really%20cool%20%2C%20Get%20it%20at%20https%3A%2F%2Fgithub.com%2Fantony-jr%2FAppImageUpdater)
 
