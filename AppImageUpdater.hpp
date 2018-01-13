@@ -5,6 +5,7 @@
 #include <QtCore>
 #include <QtGlobal>
 #include <QMovie>
+#include <QMessageBox>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
@@ -32,7 +33,7 @@ public:
     QGridLayout *gridLayout;
     QGridLayout *MainGrid;
     QHBoxLayout *StaticControls;
-    QPushButton *aboutBtn;
+    QPushButton *mainBtn;
     QSpacerItem *StatciControlsSpace;
     QPushButton *exitOrCancelBtn;
     QStackedWidget *MainStack;
@@ -42,7 +43,6 @@ public:
     QLabel *AppCopyleft;
     QLabel *VersionInfo;
     QLabel *HomeLogo;
-    QLabel *AppSha1;
     QLabel *AppInfo;
     QPushButton *browseAppImage;
     QWidget *Loading;
@@ -82,7 +82,7 @@ public:
         AppImageUpdater->setWindowIcon(icon);
         AppImageUpdater->setAutoFillBackground(false);
         AppImageUpdater->setStyleSheet(QLatin1String("background-color: #141318;\n"
-"color: white;"));
+                                       "color: white;"));
         loader_movie = new QMovie(":/resources/loader.gif");
         centralwidget = new QWidget(AppImageUpdater);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
@@ -92,17 +92,17 @@ public:
         MainGrid->setObjectName(QStringLiteral("MainGrid"));
         StaticControls = new QHBoxLayout();
         StaticControls->setObjectName(QStringLiteral("StaticControls"));
-        aboutBtn = new QPushButton(centralwidget);
-        aboutBtn->setObjectName(QStringLiteral("aboutBtn"));
-        aboutBtn->setAutoFillBackground(false);
-        aboutBtn->setStyleSheet(QLatin1String("background-color: #709cb7;\n"
-"color: white;"));
+        mainBtn = new QPushButton(centralwidget);
+        mainBtn->setObjectName(QStringLiteral("mainBtn"));
+        mainBtn->setAutoFillBackground(false);
+        mainBtn->setStyleSheet(QLatin1String("background-color: #709cb7;\n"
+                                             "color: white;"));
         QIcon icon1;
         icon1.addFile(QStringLiteral(":/resources/about.png"), QSize(), QIcon::Normal, QIcon::Off);
-        aboutBtn->setIcon(icon1);
-        aboutBtn->setFlat(false);
+        mainBtn->setIcon(icon1);
+        mainBtn->setFlat(false);
 
-        StaticControls->addWidget(aboutBtn);
+        StaticControls->addWidget(mainBtn);
 
         StatciControlsSpace = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
@@ -112,7 +112,7 @@ public:
         exitOrCancelBtn->setObjectName(QStringLiteral("exitOrCancelBtn"));
         exitOrCancelBtn->setAutoFillBackground(false);
         exitOrCancelBtn->setStyleSheet(QLatin1String("background-color: #709cb7;\n"
-"color: white;"));
+                                       "color: white;"));
         QIcon icon2;
         icon2.addFile(QStringLiteral(":/resources/exit.png"), QSize(), QIcon::Normal, QIcon::Off);
         exitOrCancelBtn->setIcon(icon2);
@@ -131,11 +131,6 @@ public:
         gridLayout_3->setObjectName(QStringLiteral("gridLayout_3"));
         HomeGrid = new QGridLayout();
         HomeGrid->setObjectName(QStringLiteral("HomeGrid"));
-        AppCopyleft = new QLabel(Home);
-        AppCopyleft->setObjectName(QStringLiteral("AppCopyleft"));
-        AppCopyleft->setAlignment(Qt::AlignCenter);
-
-        HomeGrid->addWidget(AppCopyleft, 11, 0, 1, 3);
 
         VersionInfo = new QLabel(Home);
         VersionInfo->setObjectName(QStringLiteral("VersionInfo"));
@@ -157,12 +152,6 @@ public:
 
         HomeGrid->addWidget(HomeLogo, 3, 1, 1, 1);
 
-        AppSha1 = new QLabel(Home);
-        AppSha1->setObjectName(QStringLiteral("AppSha1"));
-        AppSha1->setAlignment(Qt::AlignCenter);
-
-        HomeGrid->addWidget(AppSha1, 10, 0, 1, 3);
-
         AppInfo = new QLabel(Home);
         AppInfo->setObjectName(QStringLiteral("AppInfo"));
         AppInfo->setMaximumSize(QSize(600, 80));
@@ -182,7 +171,7 @@ public:
         browseAppImage->setFont(font1);
         browseAppImage->setAutoFillBackground(false);
         browseAppImage->setStyleSheet(QLatin1String("background-color: rgb(255, 61, 55);\n"
-"color: white;"));
+                                      "color: white;"));
         QIcon icon3;
         icon3.addFile(QStringLiteral(":/resources/browse.png"), QSize(), QIcon::Normal, QIcon::Off);
         browseAppImage->setIcon(icon3);
@@ -256,7 +245,7 @@ public:
         banner->setAlignment(Qt::AlignCenter);
 
         gridLayout_5->addWidget(banner, 3, 1, 1, 4, Qt::AlignHCenter);
-        
+
         gridLayout_6->addLayout(gridLayout_5, 0, 0, 1, 1);
 
         MainStack->addWidget(Updating);
@@ -347,22 +336,21 @@ public:
 #ifndef QT_NO_TOOLTIP
         AppImageUpdater->setToolTip(QString());
 #endif // QT_NO_TOOLTIP
-        aboutBtn->setText(QApplication::translate("AppImageUpdater", "About", nullptr));
+        mainBtn->setText(QApplication::translate("AppImageUpdater", "Updater", nullptr));
+        mainBtn->setEnabled(false);
         exitOrCancelBtn->setText(QApplication::translate("AppImageUpdater", "Exit", nullptr));
-        AppCopyleft->setText(QApplication::translate("AppImageUpdater", "<html><head/><body><p>The <span style=\" font-weight:600;\">BSD-3 Clause</span> License. Copyright (C) 2017 <span style=\" font-weight:600;\">Antony Jr</span> , All Rights Reserved.</p></body></html>", nullptr));
         LoadingGif->setText(QString());
         LoadingGif->setMovie(loader_movie);
         VersionInfo->setText(QString());
         HomeLogo->setText(QString());
-        AppSha1->setText(QString());
-        AppInfo->setText(QApplication::translate("AppImageUpdater", "Welcome to AppImage Updater , Just select your AppImage and Update it now.", nullptr));
+        AppInfo->setText(QString());
         browseAppImage->setText(QApplication::translate("AppImageUpdater", "Browse for AppImage", nullptr));
         AppImagePath->setText(QString());
         AppImageLogo->setText(QString());
         sckFoot->setText(QString());
         sckImg->setText(QString());
         sckHead->setText(QApplication::translate("AppImageUpdater", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">Successfully Updated your AppImage! See ya!</span></p></body></html>", nullptr));
-        failFoot->setText(QApplication::translate("AppImageUpdater", "<html><head/><body><p>Because the update was cancelled by the user.</p></body></html>", nullptr));
+        failFoot->setText(QString());
         failImg->setText(QString());
         failHead->setText(QApplication::translate("AppImageUpdater", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt;\">Failed to Update your AppImage, Sorry.</span></p></body></html>", nullptr));
     } // retranslateUi
@@ -372,17 +360,33 @@ public:
 // QSslSocket::sslLibraryBuildVersionString() -> to get Openssl build version.
 // QT_VERSION_STR -> to get qt version in string.
 
-namespace Ui {
-    class AppImageUpdater: public Ui_AppImageUpdater {};
+namespace Ui
+{
+class AppImageUpdater: public Ui_AppImageUpdater {};
 } // namespace Ui
 
 class AppImageUpdater : public QMainWindow
 {
     Q_OBJECT
-public: 
+public:
     explicit AppImageUpdater();
     // explicit AppImageUpdater(const QString& AppImage);
-    ~AppImageUpdater() { }
+    ~AppImageUpdater()
+    {
+        return;
+    }
+public slots:
+    void checkForUpdates(void);
+    void checkForUpdates(const QString&);
+private slots:
+    void progress(float, qint64, qint64, double, QString);
+    void updateFinished(QString, QString);
+    void noUpdatesAvailable(QString, QString);
+    void updatesAvailable(QString, QString);
+    void handleError(QString, short);
+    void cancel(void);
+    void exit(void);
+
 signals:
     void safeToCloseApplication();
 private:
