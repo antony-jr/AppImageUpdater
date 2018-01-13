@@ -1,0 +1,38 @@
+language: cpp
+compiler: gcc
+sudo: require
+dist: trusty
+
+before_install:
+  - sudo add-apt-repository ppa:beineri/opt-qt593-trusty -y
+  - sudo apt-get update -qq
+
+install:
+  - sudo apt-get -y install qt59base
+  - source /opt/qt*/bin/qt*-env.sh
+
+script:
+  - mkdir build
+  - cd build/
+  - cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+  - make -j$(nproc)
+  - mkdir -p appdir/usr/bin ; strip AppImageUpdater ; cp AppImageUpdater ./appdir/usr/bin/
+  - mkdir -p appdir/usr/share/applications ; cp ../*.desktop ./appdir/usr/share/applications/
+  - mkdir -p appdir/usr/share/icons/hicolor/256x256/apps/ ; wget "https://avatars2.githubusercontent.com/u/33930174?s=256" -O appdir/usr/share/icons/hicolor/256x256/apps/updater.png # FIXME
+  - wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
+  - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
+  - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
+  - export VERSION=$(git rev-parse --short HEAD) # linuxdeployqt uses this for naming the file
+  - ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -bundle-non-qt-libs
+  - ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage
+
+after_success:
+  - find appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
+  - curl --upload-file AppImageUpdater*.AppImage https://transfer.sh/Test-git.$(git rev-parse --short HEAD)-x86_64.AppImage
+  - # wget -c "https://raw.githubusercontent.com/probonopd/uploadtool/88b3c752469ff384b3e275215b6d9a071bd2e9ff/upload.sh" # FIXME; https://github.com/probonopd/uploadtool/pull/29#issuecomment-355575435
+  - # bash upload.sh AppImageUpdater*.AppImage*
+  
+branches:
+  except:
+    - # Do not build tags that we create when we upload to GitHub Releases
+    - /^(?i:continuous)/
