@@ -1,0 +1,10 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/antonyjr/Developer/AppImageUpdater/build/AppImageUpdaterBridge/librcksum/md4test_autogen/mocs_compilation.cpp
+

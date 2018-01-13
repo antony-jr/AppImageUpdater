@@ -1,0 +1,2 @@
+/usr/bin/ar qc librcksum.a  CMakeFiles/librcksum.dir/rsum.c.o CMakeFiles/librcksum.dir/hash.c.o CMakeFiles/librcksum.dir/state.c.o CMakeFiles/librcksum.dir/range.c.o CMakeFiles/librcksum.dir/md4.c.o CMakeFiles/librcksum.dir/librcksum_autogen/mocs_compilation.cpp.o
+/usr/bin/ranlib librcksum.a
