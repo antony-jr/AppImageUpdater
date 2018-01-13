@@ -18,7 +18,7 @@ script:
   - make -j$(nproc)
   - mkdir -p appdir/usr/bin ; strip AppImageUpdater ; cp AppImageUpdater ./appdir/usr/bin/
   - mkdir -p appdir/usr/share/applications ; cp ../*.desktop ./appdir/usr/share/applications/
-  - mkdir -p appdir/usr/share/icons/hicolor/256x256/apps/ ; wget "https://avatars2.githubusercontent.com/u/33930174?s=256" -O appdir/usr/share/icons/hicolor/256x256/apps/updater.png # FIXME
+  - mkdir -p appdir/usr/share/icons/hicolor/256x256/apps/ ; cp ../*png appdir/usr/share/icons/hicolor/256x256/apps/AppImageUpdater.png
   - wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
   - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
   - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH

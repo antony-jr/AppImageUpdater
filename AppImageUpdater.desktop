@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=AppImageUpdater
+Type=Application
+Exec=AppImageUpdater
+Icon=AppImageUpdater
+Terminal=false
+Categories=System;
+Comment=Update your AppImages Like a Pro.
