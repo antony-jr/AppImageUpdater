@@ -83,7 +83,7 @@ void AppImageUpdater::checkForUpdates(const QString &filename)
 // Private Slots
 void AppImageUpdater::progress(float percent, qint64 bytesRecived, qint64 bytesTotal, double speed,QString unit)
 {
-    Ui->progressText->setText("<html><body><h4>Downloading <b>" + QString::number((bytesRecived/1024.0)/1024.0) + "/" + QString::number((bytesTotal/1024.0)/1024.0) + "</b> MiB at <b>" + QString::number(speed) + " " + unit + "</b>.</h4></body></html>"); 
+    Ui->progressText->setText("<html><body><h4>Downloading delta of <b>" + QString::number((bytesRecived/1024.0)/1024.0) + " from total size of " + QString::number((bytesTotal/1024.0)/1024.0) + "</b> MiB at <b>" + QString::number(speed) + " " + unit + "</b>.</h4></body></html>");
     Ui->progress->setValue(percent);
     return;
 }
@@ -106,7 +106,7 @@ void AppImageUpdater::noUpdatesAvailable(QString AppImage, QString oldSHA1)
         Ui->mainBtn->setEnabled(false);
         Ui->loader_movie->stop();
         Ui->MainStack->setCurrentIndex(HOME);
-	selfUpdate = false;
+        selfUpdate = false;
         return;
     }
     Ui->sckFoot->setText("<html><head/><body><p>Already Uptodate for <span style=\" font-weight:600;\">"+ QFileInfo(AppImage).fileName() +"</span> ( SHA1: "+ oldSHA1 +")</p></body></html>");

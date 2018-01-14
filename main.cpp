@@ -34,7 +34,7 @@ int main(int argc, char **argv)
     MainApp.show();
     if(parser.positionalArguments().size() == 0) {
         MainApp.checkForUpdates(); // Flag this as self update! Has special cases.
-	MainApp.checkForUpdates(QString(argv[0]));
+        MainApp.checkForUpdates(QString(argv[0]));
     } else {
         MainApp.checkForUpdates(parser.positionalArguments().at(0));
     }
