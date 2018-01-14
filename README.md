@@ -25,8 +25,8 @@
   </tr>
   <tr>
     <td >
-    <a href="https://github.com/antony-jr/AppImageUpdater/releases/download/continuous/AppImageUpdater-continuous-x86_64.AppImage">
-    <img src="https://img.shields.io/badge/DOWNLOAD%20APPIMAGE_x86__64-v0.0.1--alpha-yellowgreen.svg?style=for-the-badge" alt="Download" / >
+    <a href="https://github.com/antony-jr/AppImageUpdater/releases/tag/continuous">
+    <img src="https://img.shields.io/badge/Get%20the%20Latest%20AppImage-x86__64-brightgreen.svg?style=for-the-badge" alt="Download" / >
     </a>
     </td>
     <td ><b>chmod</b> +x AppImageUpdater*-x86_64.AppImage &amp;&amp; ./AppImageUpdater*-x86_64.AppImage<br></td>
