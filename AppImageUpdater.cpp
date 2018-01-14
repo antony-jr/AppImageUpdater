@@ -83,7 +83,7 @@ void AppImageUpdater::checkForUpdates(const QString &filename)
 // Private Slots
 void AppImageUpdater::progress(float percent, qint64 bytesRecived, qint64 bytesTotal, double speed,QString unit)
 {
-    Ui->progressText->setText("<html><body><h4>Downloading <b>" + QString::number(bytesRecived) + "/" + QString::number(bytesTotal) + "</b> bytes at <b>" + QString::number(speed) + " " + unit + "</b>.</h4></body></html>"); 
+    Ui->progressText->setText("<html><body><h4>Downloading <b>" + QString::number(bytesRecived / 1024.0) + "/" + QString::number(bytesTotal / 1024) + "</b> MiB at <b>" + QString::number(speed) + " " + unit + "</b>.</h4></body></html>"); 
     Ui->progress->setValue(percent);
     return;
 }
