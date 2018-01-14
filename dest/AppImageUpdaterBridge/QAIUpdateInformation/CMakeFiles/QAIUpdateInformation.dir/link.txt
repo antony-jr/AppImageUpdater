@@ -1,0 +1,2 @@
+/usr/bin/ar qc libQAIUpdateInformation.a  CMakeFiles/QAIUpdateInformation.dir/QAIUpdateInformation.cpp.o CMakeFiles/QAIUpdateInformation.dir/QAIUpdateInformation_autogen/mocs_compilation.cpp.o
+/usr/bin/ranlib libQAIUpdateInformation.a

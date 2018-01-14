@@ -1,0 +1,2 @@
+/usr/bin/ar qc libAIUpdaterBridge.a  CMakeFiles/AIUpdaterBridge.dir/AIUpdaterBridge.cpp.o CMakeFiles/AIUpdaterBridge.dir/legacy_http.c.o CMakeFiles/AIUpdaterBridge.dir/AIUpdaterBridge_autogen/mocs_compilation.cpp.o
+/usr/bin/ranlib libAIUpdaterBridge.a
