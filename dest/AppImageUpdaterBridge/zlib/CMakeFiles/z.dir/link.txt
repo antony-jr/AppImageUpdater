@@ -1,2 +1,0 @@
-/usr/bin/ar qc libz.a  CMakeFiles/z.dir/inflate.c.o CMakeFiles/z.dir/adler32.c.o CMakeFiles/z.dir/inftrees.c.o CMakeFiles/z.dir/zutil.c.o CMakeFiles/z.dir/crc32.c.o CMakeFiles/z.dir/deflate.c.o CMakeFiles/z.dir/compress.c.o CMakeFiles/z.dir/trees.c.o CMakeFiles/z.dir/gzio.c.o CMakeFiles/z.dir/z_autogen/mocs_compilation.cpp.o
-/usr/bin/ranlib libz.a
