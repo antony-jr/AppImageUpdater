@@ -39,7 +39,7 @@ AppImageUpdater::AppImageUpdater()
     connect(Ui->browseAppImage, &QPushButton::pressed, this,
     [&]() {
         QString filename;
-        filename = QFileDialog::getOpenFileName(this, tr("Select AppImage"), QDir::homePath(), tr("AppImages (*.AppImage *.appimage)"));
+        filename = QFileDialog::getOpenFileName(this, tr("Select AppImage"), QDir::homePath(), tr("AppImages (*.AppImage *.appimage)") , 0,QFileDialog::DontUseNativeDialog );
 
         if(filename.isEmpty()) {
             return;
