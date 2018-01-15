@@ -1,12 +1,3 @@
-<p align="center">
-  <img src=".img/preview.gif" height="500px" width=auto alt="AppImage Updater">  <br>
-</p>
-
-> :rocket: A Unofficial AppImage Updater written using AppImageUpdaterBridge , Written :black_nib: in C++ using Qt5. This is a very hot   
-> :heart_eyes: updater for Humans , Update your AppImages Like a Pro. :heart:   
-> -- Antony Jr.
-
-
 <h1 align="center">AppImage Updater</h1>
 <p align="center">
     <img src="https://img.shields.io/github/issues/antony-jr/AppImageUpdater.svg?style=flat-square" alt="issues" / >
@@ -33,6 +24,16 @@
   </tr>
 </table>
 </p>
+
+
+<p align="center">
+  <img src=".img/poster.png" height="570px" width=auto alt="AppImage Updater">  <br>
+</p>
+
+> :rocket: A Unofficial AppImage Updater written using AppImageUpdaterBridge , Written :black_nib: in C++ using Qt5. This is a very hot
+> :heart_eyes: updater for Humans , Update your AppImages Like a Pro. :heart:
+> -- Antony Jr.
+
 
 This is built to **Test** AppImageUpdaterBridge and also for people who like to have a nice looking AppImage Updater.
 
