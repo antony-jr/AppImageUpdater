@@ -10,6 +10,7 @@ AppImageUpdater::AppImageUpdater()
     Ui = new Ui::AppImageUpdater;
     Bridge = new AIUpdaterBridge(this);
     Bridge->doDebug(true);
+    setAcceptDrops(true);
 
     Ui->setupUi(this); // Setup the main gui UI.
 
@@ -36,24 +37,9 @@ AppImageUpdater::AppImageUpdater()
     connect(Ui->exitOrCancelBtn, &QPushButton::pressed, this, &AppImageUpdater::exit);
 
     // Connect buttons
-    connect(Ui->browseAppImage, &QPushButton::pressed, this,
-    [&]() {
-        QString filename;
-        filename = QFileDialog::getOpenFileName(this, tr("Select AppImage"), QDir::homePath(), tr("AppImages (*.AppImage *.appimage)") , 0,QFileDialog::DontUseNativeDialog );
-
-        if(filename.isEmpty()) {
-            return;
-        }
-
-        Ui->loader_movie->start();
-        Bridge->setAppImageUpdateInformation(filename);
-
-        Ui->MainStack->setCurrentIndex(LOADING);
-        return;
-    });
-
     connect(Ui->mainBtn, &QPushButton::pressed, this,
     [&]() {
+        setAcceptDrops(true);
         Ui->MainStack->setCurrentIndex(HOME);
         Ui->mainBtn->setEnabled(false);
         return;
@@ -63,6 +49,32 @@ AppImageUpdater::AppImageUpdater()
 
 /* ---- */
 
+/*
+ * Drag 'n' Drop Functionality
+ * ----------------------------
+ *  This is achived by overloading QMainWindow Drag event!
+*/
+
+void AppImageUpdater::dragEnterEvent(QDragEnterEvent *e)
+{
+    if (e->mimeData()->hasUrls()) {
+        e->acceptProposedAction();
+    }
+    return;
+}
+
+void AppImageUpdater::dropEvent(QDropEvent *e)
+{
+    foreach (const QUrl &url, e->mimeData()->urls()) {
+        QString fileName = url.toLocalFile();
+        AppImages.enqueue(fileName);
+        qDebug() << "AppImageUpdater:: Dropped file :" << fileName;
+    }
+    checkForUpdates(AppImages.dequeue());
+    return;
+}
+
+/* ---- */
 
 // Public Slots
 
@@ -74,6 +86,7 @@ void AppImageUpdater::checkForUpdates(void)
 
 void AppImageUpdater::checkForUpdates(const QString &filename)
 {
+    setAcceptDrops(false);
     Ui->loader_movie->start();
     Bridge->setAppImageUpdateInformation(filename);
     Ui->MainStack->setCurrentIndex(LOADING);
@@ -103,6 +116,7 @@ void AppImageUpdater::updateFinished(QString AppImage, QString SHA1)
 void AppImageUpdater::noUpdatesAvailable(QString AppImage, QString oldSHA1)
 {
     if(selfUpdate) {
+        setAcceptDrops(true);
         Ui->mainBtn->setEnabled(false);
         Ui->loader_movie->stop();
         Ui->MainStack->setCurrentIndex(HOME);
@@ -118,12 +132,14 @@ void AppImageUpdater::noUpdatesAvailable(QString AppImage, QString oldSHA1)
 
 void AppImageUpdater::updatesAvailable(QString AppImage, QString newSHA1)
 {
+    selfUpdate = false; // just in case
     QMessageBox::StandardButton resBtn = QMessageBox::question( this, "AppImage Updater",
                                          "A New Version of "+QFileInfo(AppImage).fileName() +" is available , Do you want to Update ?\n",
                                          QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
                                          QMessageBox::Yes);
 
     if (resBtn != QMessageBox::Yes) {
+        setAcceptDrops(true);
         Ui->loader_movie->stop();
         Ui->MainStack->setCurrentIndex(HOME);
         return;
@@ -210,6 +226,7 @@ void AppImageUpdater::cancel(void)
         Ui->exitOrCancelBtn->setText("Exit");
         connect(Ui->exitOrCancelBtn, &QPushButton::pressed, this, &AppImageUpdater::exit);
         disconnect(Ui->exitOrCancelBtn, &QPushButton::pressed, this, &AppImageUpdater::cancel);
+        setAcceptDrops(true);
         Ui->loader_movie->stop();
         Ui->MainStack->setCurrentIndex(HOME);
         return;

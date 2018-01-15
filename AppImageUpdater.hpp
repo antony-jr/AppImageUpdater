@@ -5,6 +5,10 @@
 #include <QtCore>
 #include <QtGlobal>
 #include <QMovie>
+#include <QDrag>
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QQueue>
 #include <QMessageBox>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
@@ -22,7 +26,6 @@
 #include <QtWidgets/QTextEdit>
 #include <QtWidgets/QWidget>
 #include <AIUpdaterBridge.hpp>
-#include <QFileDialog>
 
 QT_BEGIN_NAMESPACE
 
@@ -44,7 +47,6 @@ public:
     QLabel *VersionInfo;
     QLabel *HomeLogo;
     QLabel *AppInfo;
-    QPushButton *browseAppImage;
     QWidget *Loading;
     QGridLayout *gridLayout_4;
     QGridLayout *gridLayout_2;
@@ -162,22 +164,6 @@ public:
         AppInfo->setAlignment(Qt::AlignCenter);
 
         HomeGrid->addWidget(AppInfo, 5, 0, 1, 3, Qt::AlignHCenter);
-
-        browseAppImage = new QPushButton(Home);
-        browseAppImage->setObjectName(QStringLiteral("browseAppImage"));
-        QFont font1;
-        font1.setBold(true);
-        font1.setWeight(75);
-        browseAppImage->setFont(font1);
-        browseAppImage->setAutoFillBackground(false);
-        browseAppImage->setStyleSheet(QLatin1String("background-color: rgb(255, 61, 55);\n"
-                                      "color: white;"));
-        QIcon icon3;
-        icon3.addFile(QStringLiteral(":/resources/browse.png"), QSize(), QIcon::Normal, QIcon::Off);
-        browseAppImage->setIcon(icon3);
-
-        HomeGrid->addWidget(browseAppImage, 4, 1, 1, 1);
-
 
         gridLayout_3->addLayout(HomeGrid, 0, 1, 1, 1);
 
@@ -344,7 +330,6 @@ public:
         VersionInfo->setText(QString());
         HomeLogo->setText(QString());
         AppInfo->setText(QString());
-        browseAppImage->setText(QApplication::translate("AppImageUpdater", "Browse for AppImage", nullptr));
         AppImagePath->setText(QString());
         AppImageLogo->setText(QString());
         sckFoot->setText(QString());
@@ -386,7 +371,6 @@ private slots:
     void handleError(QString, short);
     void cancel(void);
     void exit(void);
-
 signals:
     void safeToCloseApplication();
 private:
@@ -403,6 +387,10 @@ private:
     bool selfUpdate = false;
     Ui::AppImageUpdater *Ui;
     AIUpdaterBridge *Bridge;
+    QQueue<QString> AppImages;
+protected:
+    void dragEnterEvent(QDragEnterEvent *);
+    void dropEvent(QDropEvent *);
 };
 
 QT_END_NAMESPACE
