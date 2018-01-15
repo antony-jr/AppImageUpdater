@@ -110,6 +110,10 @@ void AppImageUpdater::updateFinished(QString AppImage, QString SHA1)
     Ui->mainBtn->setEnabled(true);
     Ui->loader_movie->stop();
     Ui->MainStack->setCurrentIndex(SUCCESS);
+    selfUpdate = false;
+    if(!AppImages.isEmpty()) {
+        checkForUpdates(AppImages.dequeue());
+    }
     return;
 }
 
@@ -121,12 +125,19 @@ void AppImageUpdater::noUpdatesAvailable(QString AppImage, QString oldSHA1)
         Ui->loader_movie->stop();
         Ui->MainStack->setCurrentIndex(HOME);
         selfUpdate = false;
+        if(!AppImages.isEmpty()) {
+            checkForUpdates(AppImages.dequeue());
+        }
         return;
     }
+    selfUpdate = false;
     Ui->sckFoot->setText("<html><head/><body><p>Already Uptodate for <span style=\" font-weight:600;\">"+ QFileInfo(AppImage).fileName() +"</span> ( SHA1: "+ oldSHA1 +")</p></body></html>");
     Ui->mainBtn->setEnabled(true);
     Ui->loader_movie->stop();
     Ui->MainStack->setCurrentIndex(SUCCESS);
+    if(!AppImages.isEmpty()) {
+        checkForUpdates(AppImages.dequeue());
+    }
     return;
 }
 
@@ -142,6 +153,9 @@ void AppImageUpdater::updatesAvailable(QString AppImage, QString newSHA1)
         setAcceptDrops(true);
         Ui->loader_movie->stop();
         Ui->MainStack->setCurrentIndex(HOME);
+        if(!AppImages.isEmpty()) {
+            checkForUpdates(AppImages.dequeue());
+        }
         return;
     }
 
