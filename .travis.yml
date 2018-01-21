@@ -7,6 +7,11 @@ before_install:
   - sudo apt-get update -qq
 
 install:
+  - sudo apt-get install upx-ucl
+  - git clone --recursive git+https://github.com/upx/upx.git#branch=devel
+  - cd upx
+  - make all -j$(nproc)
+  - sudo cp -pf src/upx.out /usr/bin/upx
   - bash build_qt_static.sh
 
 script:
@@ -14,11 +19,20 @@ script:
   - cd build/
   - /usr/local/Qt-5.10.0/bin/qmake .. 
   - make -j$(nproc)
+  - mkdir -p appdir/usr/bin ; strip AppImageUpdater ; cp AppImageUpdater ./appdir/usr/bin/
+  - mkdir -p appdir/usr/share/applications ; cp ../*.desktop ./appdir/usr/share/applications/
+  - mkdir -p appdir/usr/share/icons/hicolor/256x256/apps/ ; cp ../*png appdir/usr/share/icons/hicolor/256x256/apps/AppImageUpdater.png
+  - wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
+  - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
+  - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
+  - export VERSION=$(git rev-parse --short HEAD)
+  - ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -bundle-non-qt-libs
+  - upx --lzma -9 appdir/usr/bin/AppImageUpdater
+  - ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage
 
 after_success:
-  - curl --upload-file AppImageUpdater https://transfer.sh/AppImageUpdater
-  - # wget "https://github.com/probonopd/uploadtool/raw/master/upload.sh"
-  - # bash upload.sh AppImage*.AppImage *zsync
+  - wget "https://github.com/probonopd/uploadtool/raw/master/upload.sh"
+  - bash upload.sh AppImage*.AppImage *zsync
   
 branches:
   except:
