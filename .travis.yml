@@ -11,7 +11,6 @@ install:
 
 script:
   - bash configure.sh
-  - mkdir build
   - cd build/
   - /usr/local/Qt-5.10.0/bin/qmake .. 
   - make -j$(nproc)
