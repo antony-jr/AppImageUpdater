@@ -12,7 +12,7 @@ install:
 script:
   - bash configure.sh
   - cd build/
-  - qmake .. 
+  - /usr/local/Qt-5.10.0/bin/qmake .. 
   - make -j$(nproc)
 
 after_success:
