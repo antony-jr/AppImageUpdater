@@ -7,11 +7,6 @@ before_install:
   - sudo apt-get update -qq
 
 install:
-  - sudo apt-get install upx-ucl
-  - git clone --recursive -b "devel" "https://github.com/upx/upx"
-  - cd upx
-  - make all -j$(nproc)
-  - sudo cp -pf src/upx.out /usr/bin/upx
   - bash build_qt_static.sh
 
 script:
@@ -27,7 +22,6 @@ script:
   - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
   - export VERSION=$(git rev-parse --short HEAD)
   - ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -bundle-non-qt-libs
-  - upx --lzma -9 appdir/usr/bin/AppImageUpdater
   - ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage
 
 after_success:
