@@ -8,7 +8,7 @@ before_install:
 
 install:
   - sudo apt-get install upx-ucl
-  - git clone --recursive "git://github.com/upx/upx.git#branch=devel"
+  - git clone --recursive -b "devel" "https://github.com/upx/upx"
   - cd upx
   - make all -j$(nproc)
   - sudo cp -pf src/upx.out /usr/bin/upx
