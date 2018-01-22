@@ -26,7 +26,9 @@ script:
   - upx --lzma -9 appdir/usr/bin/AppImageUpdater
   - upx --lzma -9 appdir/usr/lib/*
   - upx --lzma -9 appdir/usr/lib/engines/*
-  - ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage
+  - wget -c -nv "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage"
+  - chmod a+x appimagetool-x86_64.AppImage
+  - ./appimagetool-x86_64.AppImage -g appdir
 
 after_success:
   - wget "https://github.com/probonopd/uploadtool/raw/master/upload.sh"
