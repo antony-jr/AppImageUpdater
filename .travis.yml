@@ -24,6 +24,8 @@ script:
   - export VERSION=$(git rev-parse --short HEAD)
   - ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -bundle-non-qt-libs
   - upx --lzma -9 appdir/usr/bin/AppImageUpdater
+  - upx --lzma -9 appdir/usr/lib/*
+  - upx --lzma -9 appdir/usr/lib/engines/*
   - ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -appimage
 
 after_success:
