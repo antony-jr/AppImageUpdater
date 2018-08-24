@@ -2,6 +2,7 @@
 <qresource>
     <file>logo.png</file>
     <file>dotted_square.png</file>
+    <file>dotted_square_drop.png</file>
     <file>success.png</file>
     <file>fail.png</file>
     <file>more_info_icon.png</file>

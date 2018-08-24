@@ -20,7 +20,7 @@
    <string>AppImage Updater</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../resources/resources.qrc">
+   <iconset resource="app_resources/resources.qrc">
     <normaloff>:/logo.png</normaloff>:/logo.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
@@ -48,7 +48,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="../resources/resources.qrc">:/dotted_square.png</pixmap>
+            <pixmap resource="app_resources/resources.qrc">:/dotted_square.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -89,7 +89,7 @@
             <string>Exit</string>
            </property>
            <property name="icon">
-            <iconset resource="../resources/resources.qrc">
+            <iconset resource="app_resources/resources.qrc">
              <normaloff>:/exit.png</normaloff>:/exit.png</iconset>
            </property>
           </widget>
@@ -100,7 +100,7 @@
             <string>About</string>
            </property>
            <property name="icon">
-            <iconset resource="../resources/resources.qrc">
+            <iconset resource="app_resources/resources.qrc">
              <normaloff>:/about.png</normaloff>:/about.png</iconset>
            </property>
           </widget>
@@ -127,7 +127,7 @@
             <string/>
            </property>
            <property name="pixmap">
-            <pixmap resource="../resources/resources.qrc">:/loader.gif</pixmap>
+            <pixmap resource="app_resources/resources.qrc">:/loader.gif</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -146,7 +146,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Fetching the Zsync Control File.... </string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -166,7 +166,7 @@
             <number>0</number>
            </property>
            <property name="text">
-            <string>Updating AppImageUpdate...</string>
+            <string/>
            </property>
            <property name="scaledContents">
             <bool>false</bool>
@@ -200,7 +200,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Revising 124 MiB of 200 MiB at 400 Kb/s.</string>
+            <string/>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
@@ -257,7 +257,7 @@
             <string>Cancel Update</string>
            </property>
            <property name="icon">
-            <iconset resource="../resources/resources.qrc">
+            <iconset resource="app_resources/resources.qrc">
              <normaloff>:/exit.png</normaloff>:/exit.png</iconset>
            </property>
           </widget>
@@ -268,7 +268,7 @@
             <string>More Information</string>
            </property>
            <property name="icon">
-            <iconset resource="../resources/resources.qrc">
+            <iconset resource="app_resources/resources.qrc">
              <normaloff>:/more_info_icon.png</normaloff>:/more_info_icon.png</iconset>
            </property>
           </widget>
@@ -279,6 +279,12 @@
         <layout class="QGridLayout" name="gridLayout_5">
          <item row="0" column="1">
           <widget class="QLabel" name="resultIcon">
+           <property name="minimumSize">
+            <size>
+             <width>212</width>
+             <height>212</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
              <width>212</width>
@@ -287,9 +293,6 @@
            </property>
            <property name="text">
             <string/>
-           </property>
-           <property name="pixmap">
-            <pixmap resource="../resources/resources.qrc">:/success.png</pixmap>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -308,8 +311,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Successfully Updated 
- AppImageUpdate-6ffdfijkld3.AppImage</string>
+            <string/>
            </property>
            <property name="scaledContents">
             <bool>true</bool>
@@ -325,7 +327,7 @@
             <string>Back</string>
            </property>
            <property name="icon">
-            <iconset resource="../resources/resources.qrc">
+            <iconset resource="app_resources/resources.qrc">
              <normaloff>:/back.png</normaloff>:/back.png</iconset>
            </property>
           </widget>
@@ -336,7 +338,7 @@
             <string>Open New AppImage</string>
            </property>
            <property name="icon">
-            <iconset resource="../resources/resources.qrc">
+            <iconset resource="app_resources/resources.qrc">
              <normaloff>:/open_appimage_icon.png</normaloff>:/open_appimage_icon.png</iconset>
            </property>
           </widget>
@@ -347,7 +349,7 @@
             <string>Exit</string>
            </property>
            <property name="icon">
-            <iconset resource="../resources/resources.qrc">
+            <iconset resource="app_resources/resources.qrc">
              <normaloff>:/exit.png</normaloff>:/exit.png</iconset>
            </property>
           </widget>
@@ -361,6 +363,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="app_resources/resources.qrc"/>
   <include location="../resources/resources.qrc"/>
  </resources>
  <connections/>
