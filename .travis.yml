@@ -10,7 +10,7 @@ before_install:
 install:
   - # sudo apt-get -y install qt59base
   - # source /opt/qt*/bin/qt*-env.sh
-  - sudo bash build_qt_static.sh 
+  - sudo bash build_resources/build_qt_static.sh 
 
 script:
   - export VERSION=$(git rev-parse --short HEAD)
