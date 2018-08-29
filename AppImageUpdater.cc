@@ -2,6 +2,8 @@
 
 using namespace AppImageUpdaterBridge;
 
+#define SELF_UPDATER_IDLE_TIME 4000 // 4 Secs for now
+
 /* DR => Dereference pointers. */
 #define DR(pointer) (*pointer)
 
@@ -11,23 +13,24 @@ using namespace AppImageUpdaterBridge;
 /* AppImage Delta Revisioner Signals. */
 #define ADRUA_SIGNAL &AppImageDeltaRevisioner::updateAvailable
 
-/* Control Indices in the main widget. */
-#define GOTO_INPUT_PAGE() AUI(mainStackedWidget).setCurrentIndex(INPUT);
-#define GOTO_CHECKING_PAGE() AUI(mainStackedWidget).setCurrentIndex(CHECKING);
-#define GOTO_UPDATING_PAGE() AUI(mainStackedWidget).setCurrentIndex(UPDATING);
-#define GOTO_RESULT_PAGE() AUI(mainStackedWidget).setCurrentIndex(RESULT);
-
 AppImageUpdater::AppImageUpdater()
-	: QWidget()
+	: QWidget(nullptr , Qt::WindowStaysOnTopHint)
 {
     _pUi.setupUi(this);
     setAcceptDrops(true);
-    /* Customize the looks. */
-    AUI(mainStackedWidget).setCurrentIndex(INPUT);
 
-    /* This is oftenly used pixmap , Thus to reduce overhead , We are caching it. */
+    /* Construct tray icon. */
+    _pTIcon = new QSystemTrayIcon(this);
+    _pTIcon->setIcon(QIcon(QPixmap(QString::fromUtf8(":/logo.png"))));
+    connect(_pTIcon , &QSystemTrayIcon::activated , this , &AppImageUpdater::showHideWindow);
+    _pTIcon->show();
+    _pTIcon->showMessage("Running in the Background!" , "Click on the system tray icon to use AppImage Updater.");
+    
+    centerPos = QApplication::desktop()->screen()->rect().center() - this->rect().center();	
+    /* This is oftenly used pixmap , Thus to reduce overhead we are caching it. */
     _pDropHere = QPixmap(QString::fromUtf8(":/dotted_square_drop.png"));
     _pDropNorm = QPixmap(QString::fromUtf8(":/dotted_square.png"));
+    _pWindowIcon = QIcon(QPixmap(QString::fromUtf8(":/logo.png")));
 
     /* Build about message box. */
     {
@@ -53,26 +56,25 @@ AppImageUpdater::AppImageUpdater()
     }
 
 
-    /*
-     * Check for new version of AppImageUpdater in the background but 
-     * don't really do the update unless or until the user asks for it.
-    */
-    _pSelfRevisioner = new AppImageDeltaRevisioner(/*single threaded=*/false ,/*parent=*/this);
-    /* Avoid errors and everything , only do something if we have a new version. */
-    connect(_pSelfRevisioner , ADRUA_SIGNAL , this , &AppImageUpdater::selfUpdateAvailable);
-    _pSelfRevisioner->checkForUpdate(); // check it as soon as possible.
+    /* Check for updates. */
+    _bUpdateStarted = true;
+    _pUpdateDialog = new AppImageUpdaterDialog(centerPos);
+    _pUpdateDialog->setWindowIcon(_pWindowIcon);
+    _pUpdateDialog->setIconPixmap(QPixmap(QString::fromUtf8(":/logo.png")));
+    /* Special connect */
+    connect(_pUpdateDialog , &AppImageUpdaterWidget::quit , this , &AppImageUpdater::quit , Qt::DirectConnection);
 
-    /*
-     * This is the main revisioner used to check update for the given
-     * AppImages.
-     * We are running this also on a new thread since we don't want to
-     * disturb the main gui thread whatsoever.
-    */
-    _pAppImageRevisioner  = new AppImageDeltaRevisioner(false , this);
+    _pUpdateDialog->init();
 
     /* Connect buttons. */
     connect(_pUi.exitBtn , &QPushButton::pressed , this , &AppImageUpdater::quit , Qt::DirectConnection);
     connect(_pUi.aboutBtn , &QPushButton::pressed , this , &AppImageUpdater::showAbout);
+    
+    /* Program logic. */
+    connect(_pUpdateDialog , &AppImageUpdaterWidget::started , this , &AppImageUpdater::handleStarted);
+    connect(_pUpdateDialog , &AppImageUpdaterWidget::canceled , this , &AppImageUpdater::handleCanceled);
+    connect(_pUpdateDialog , &AppImageUpdaterWidget::error , this , &AppImageUpdater::handleError);
+    connect(_pUpdateDialog , &AppImageUpdaterWidget::finished , this , &AppImageUpdater::handleFinished);
     return;
 }
 
@@ -82,6 +84,64 @@ AppImageUpdater::~AppImageUpdater()
     return;
 }
 
+void AppImageUpdater::handleStarted(void)
+{
+	_bUpdateStarted = true;
+	return;
+}
+
+void AppImageUpdater::handleCanceled(void)
+{
+	_bUpdateStarted = false;
+	updateAppImagesInQueue();
+	return;
+}
+
+void AppImageUpdater::handleError(QString eStr , short errorCode)
+{
+	_bUpdateStarted = false;
+	QMessageBox box(this);
+	box.setWindowTitle("Update Failed!");
+	box.move(centerPos);
+	box.resize(QSize(400 , 120));
+	if(errorCode == AppImageUpdaterBridge::INVALID_MAGIC_BYTES){
+	box.setText(QString::fromUtf8("The given file is not a valid AppImage file with respect to AppImage Specification!"));
+	}else{
+	box.setText(QString::fromUtf8("Update failed for the following reason , ") +
+		    AppImageDeltaRevisioner::errorCodeToString(errorCode) + 
+		    QString::fromUtf8("."));
+	}
+	box.setIcon(QMessageBox::Critical);
+	box.exec();
+	updateAppImagesInQueue();
+	return;
+}
+
+void AppImageUpdater::handleFinished(QJsonObject info)
+{
+	auto r = (AppImageUpdaterDialog*)QObject::sender();
+	(void)info;
+	r->deleteLater();
+	_bUpdateStarted = false;
+	updateAppImagesInQueue();
+	return;
+}
+
+/* Show hide window. */
+void AppImageUpdater::showHideWindow(QSystemTrayIcon::ActivationReason reason)
+{
+	if(reason == QSystemTrayIcon::Trigger)
+	{
+		this->move(centerPos);
+		if(this->isVisible()){
+			this->hide();
+		}else{
+			this->show();
+		}
+	}
+	return;
+}
+
 /* Show about dialog box. */
 void AppImageUpdater::showAbout(void)
 {
@@ -89,39 +149,31 @@ void AppImageUpdater::showAbout(void)
 	return;
 }
 
-/* Handle errors. */
-void AppImageUpdater::handleError(short errorCode)
-{
-	return;
-}
-
 /* Updates AppImages in queue. */
 void AppImageUpdater::updateAppImagesInQueue(void)
 {
-	if(_pAppImagePaths.isEmpty())
+	if(_bUpdateStarted == true){
 		return;
+	}
+	if(_pAppImagePaths.isEmpty()){
+		_pTIcon->showMessage("All Updates Completed!" , "AppImageUpdater finished all queued updates.");
+		return;
+	}	
 
-	// setAcceptDrops(false); // Disable any further drops since we started update.
+	_bUpdateStarted = true;
 	_pCurrentAppImagePath = _pAppImagePaths.dequeue();
 
-	_pAppImageRevisioner->setAppImage(_pCurrentAppImagePath);
-	_pAppImageRevisioner->setShowLog(true);
+    	_pUpdateDialog = new AppImageUpdaterDialog(centerPos);
+	_pUpdateDialog->setWindowIcon(_pWindowIcon);
+    	_pUpdateDialog->setIconPixmap(QPixmap(QString::fromUtf8(":/default_icon.png")));
+	_pUpdateDialog->setAppImage(_pCurrentAppImagePath);
+	_pUpdateDialog->init();
 
-		
-	GOTO_CHECKING_PAGE();
-	_pAppImageRevisioner->start();
-	return;
-}
-
-/* Handles update check result for the current AppImage, Aka self update check. */
-void AppImageUpdater::selfUpdateAvailable(bool updateIsAvailable , QString path)
-{
-	Q_UNUSED(path);
-	if(updateIsAvailable){
-		qInfo().noquote() << "A New Version of AppImage Updater is Available!\n"
-			          << "NOT IMPLEMENTED YET.";
-		/* yet to implement. */
-	}
+    	/* Program logic. */
+    	connect(_pUpdateDialog , &AppImageUpdaterWidget::started , this , &AppImageUpdater::handleStarted);
+    	connect(_pUpdateDialog , &AppImageUpdaterWidget::canceled , this , &AppImageUpdater::handleCanceled);
+    	connect(_pUpdateDialog , &AppImageUpdaterWidget::error , this , &AppImageUpdater::handleError);
+    	connect(_pUpdateDialog , &AppImageUpdaterWidget::finished , this , &AppImageUpdater::handleFinished);
 	return;
 }
 
@@ -160,8 +212,15 @@ void AppImageUpdater::dropEvent(QDropEvent *e)
     foreach (const QUrl &url, e->mimeData()->urls()) {
         QString fileName = url.toLocalFile();
         _pAppImagePaths.enqueue(fileName);
+	QString msg;
+	msg.append(fileName);
+	msg.append(" is queued for update.");
+	_pTIcon->showMessage(QString::fromUtf8("AppImage Queued!") , msg);
 	QCoreApplication::processEvents();
     }
-    updateAppImagesInQueue(); 
+
+    if(_bUpdateStarted != true){
+	updateAppImagesInQueue(); 
+    }
     return;
 }

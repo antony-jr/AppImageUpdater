@@ -8,8 +8,15 @@
 #include <QDropEvent>
 #include <QQueue>
 #include <QMessageBox>
+#include <QProgressDialog>
+#include <QTimer>
+#include <QProcess>
+#include <QFileInfo>
+#include <QSystemTrayIcon>
+#include <QDesktopWidget>
 #include <ui_AppImageUpdater.h>
 #include <AppImageUpdaterBridge> /* Unofficial AppImage Updater Library for Qt. */
+#include <AppImageUpdaterDialog.hpp>
 
 class AppImageUpdater : public QWidget
 {
@@ -18,28 +25,27 @@ public:
     AppImageUpdater();
     ~AppImageUpdater();
 private Q_SLOTS:
-    void showAbout(void);
-    void handleError(short);
     void updateAppImagesInQueue(void);
-    void selfUpdateAvailable(bool , QString);
+    void showAbout(void);
+    void showHideWindow(QSystemTrayIcon::ActivationReason);
+    void handleFinished(QJsonObject);
+    void handleError(QString , short);
+    void handleStarted(void);
+    void handleCanceled(void);
 Q_SIGNALS:
     void quit();
 private:
-    /* Indices of the stacked widget. */
-    enum {
-        INPUT,
-        CHECKING,
-        UPDATING,
-        RESULT
-    };
     Ui::MainWidget _pUi;
+    QPoint centerPos;
+    QAtomicInteger<bool> _bUpdateStarted = false;
     QMessageBox _pAboutMessageBox;
     QString _pCurrentAppImagePath;
     QPixmap _pDropHere,
 	    _pDropNorm;
+    QIcon _pWindowIcon;
     QQueue<QString> _pAppImagePaths;
-    AppImageUpdaterBridge::AppImageDeltaRevisioner *_pAppImageRevisioner = nullptr;
-    AppImageUpdaterBridge::AppImageDeltaRevisioner *_pSelfRevisioner = nullptr;
+    AppImageUpdaterDialog *_pUpdateDialog = nullptr;
+    QSystemTrayIcon *_pTIcon = nullptr;
 protected:
     void dragMoveEvent(QDragMoveEvent *);
     void dragLeaveEvent(QDragLeaveEvent *);

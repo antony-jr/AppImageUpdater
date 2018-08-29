@@ -1,16 +1,11 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
     <file>logo.png</file>
+    <file>check.png</file>
+    <file>default_icon.png</file>
     <file>dotted_square.png</file>
     <file>dotted_square_drop.png</file>
-    <file>success.png</file>
-    <file>fail.png</file>
-    <file>more_info_icon.png</file>
-    <file>less_info_icon.png</file>
-    <file>loader.gif</file>
     <file>about.png</file>
-    <file>back.png</file>
-    <file>open_appimage_icon.png</file>
     <file>exit.png</file>
 </qresource>
 </RCC>

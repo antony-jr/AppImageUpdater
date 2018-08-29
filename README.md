@@ -53,7 +53,5 @@ Thank You! :smiley_cat:
 
 # License
 
-The BSD 3-clause "New" or "Revised" License.
-
-Copyright (C) 2017 , antony jr.   
-All Rights Reserved.
+The GNU Lesser General Public License V3.
+Copyright (C) 2018 , Antony Jr.

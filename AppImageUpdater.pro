@@ -13,7 +13,7 @@ DEFINES += "APPIMAGE_UPDATER_BUILD_TIME=\"\\\"$$(APPIMAGE_UPDATER_BUILD_TIME)\\\
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
-HEADERS += AppImageUpdater.hpp 
+HEADERS += AppImageUpdater.hpp AppImageUpdaterDialog.hpp
 SOURCES += AppImageUpdater.cc main.cc
 RESOURCES += app_resources/resources.qrc
 FORMS += AppImageUpdater.ui
