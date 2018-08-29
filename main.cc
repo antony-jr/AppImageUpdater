@@ -9,9 +9,9 @@ int main(int argc, char **argv)
     QApplication::setApplicationName("AppImageUpdater");
     QApplication::setApplicationVersion(APPIMAGE_UPDATER_VERSION);
     
-    AppImageUpdater appWidget;
+    AppImageUpdater mainWidget;
     
     /*  Exit call. */
-    QObject::connect(&appWidget, &AppImageUpdater::quit , &app, &QApplication::quit , Qt::QueuedConnection);
+    QObject::connect(&mainWidget, &AppImageUpdater::quit , &app, &QApplication::quit , Qt::QueuedConnection);
     return app.exec();
 }

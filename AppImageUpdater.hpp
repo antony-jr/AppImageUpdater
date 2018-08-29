@@ -22,7 +22,7 @@ class AppImageUpdater : public QWidget
 {
     Q_OBJECT
 public:
-    AppImageUpdater();
+    AppImageUpdater(QWidget *parent = nullptr);
     ~AppImageUpdater();
 private Q_SLOTS:
     void updateAppImagesInQueue(void);

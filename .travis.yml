@@ -18,7 +18,7 @@ script:
   - export APPIMAGE_UPDATER_COMMIT=$(git rev-parse --short HEAD)
   - export APPIMAGE_UPDATER_BUILD_NO=$TRAVIS_BUILD_NUMBER 
   - export APPIMAGE_UPDATER_BUILD_TIME=$(date) 
-  - /usr/local/Qt-5.10.0/bin/qmake "CONFIG+=logging_disabled" .
+  - /usr/local/Qt-5.10.0/bin/qmake .
   - make -j$(nproc)
   - mkdir -p appdir/usr/bin ; strip AppImageUpdater ; cp AppImageUpdater appdir/usr/bin/
   - mkdir -p appdir/usr/share/applications ; cp build_resources/AppImageUpdater.desktop appdir/usr/share/applications/

@@ -13,8 +13,8 @@ using namespace AppImageUpdaterBridge;
 /* AppImage Delta Revisioner Signals. */
 #define ADRUA_SIGNAL &AppImageDeltaRevisioner::updateAvailable
 
-AppImageUpdater::AppImageUpdater()
-	: QWidget(nullptr , Qt::WindowStaysOnTopHint)
+AppImageUpdater::AppImageUpdater(QWidget *parent)
+	: QWidget(parent , Qt::WindowStaysOnTopHint)
 {
     _pUi.setupUi(this);
     setAcceptDrops(true);
@@ -24,9 +24,11 @@ AppImageUpdater::AppImageUpdater()
     _pTIcon->setIcon(QIcon(QPixmap(QString::fromUtf8(":/logo.png"))));
     connect(_pTIcon , &QSystemTrayIcon::activated , this , &AppImageUpdater::showHideWindow);
     _pTIcon->show();
-    _pTIcon->showMessage("Running in the Background!" , "Click on the system tray icon to use AppImage Updater.");
     
     centerPos = QApplication::desktop()->screen()->rect().center() - this->rect().center();	
+    this->move(centerPos);
+    this->show();
+
     /* This is oftenly used pixmap , Thus to reduce overhead we are caching it. */
     _pDropHere = QPixmap(QString::fromUtf8(":/dotted_square_drop.png"));
     _pDropNorm = QPixmap(QString::fromUtf8(":/dotted_square.png"));
@@ -60,6 +62,7 @@ AppImageUpdater::AppImageUpdater()
     _bUpdateStarted = true;
     _pUpdateDialog = new AppImageUpdaterDialog(centerPos);
     _pUpdateDialog->setWindowIcon(_pWindowIcon);
+    _pUpdateDialog->setShowLog(true);
     _pUpdateDialog->setIconPixmap(QPixmap(QString::fromUtf8(":/logo.png")));
     /* Special connect */
     connect(_pUpdateDialog , &AppImageUpdaterWidget::quit , this , &AppImageUpdater::quit , Qt::DirectConnection);
@@ -135,6 +138,9 @@ void AppImageUpdater::showHideWindow(QSystemTrayIcon::ActivationReason reason)
 		this->move(centerPos);
 		if(this->isVisible()){
 			this->hide();
+  			_pTIcon->showMessage(QString::fromUtf8("Running in the Background!") , 
+					     QString::fromUtf8("Click on the system tray icon to use AppImage Updater."));
+   
 		}else{
 			this->show();
 		}
@@ -166,6 +172,7 @@ void AppImageUpdater::updateAppImagesInQueue(void)
     	_pUpdateDialog = new AppImageUpdaterDialog(centerPos);
 	_pUpdateDialog->setWindowIcon(_pWindowIcon);
     	_pUpdateDialog->setIconPixmap(QPixmap(QString::fromUtf8(":/default_icon.png")));
+	_pUpdateDialog->setShowLog(true);
 	_pUpdateDialog->setAppImage(_pCurrentAppImagePath);
 	_pUpdateDialog->init();
 
