@@ -87,6 +87,15 @@ AppImageUpdater::~AppImageUpdater()
     return;
 }
 
+void AppImageUpdater::closeEvent(QCloseEvent *e)
+{
+	this->hide();
+  	_pTIcon->showMessage(QString::fromUtf8("Running in the Background!") , 
+			     QString::fromUtf8("Click on the system tray icon to use AppImage Updater."));
+	e->ignore();
+	return;
+}
+
 void AppImageUpdater::handleStarted(void)
 {
 	_bUpdateStarted = true;
@@ -103,6 +112,7 @@ void AppImageUpdater::handleCanceled(void)
 void AppImageUpdater::handleError(QString eStr , short errorCode)
 {
 	_bUpdateStarted = false;
+/*
 	QMessageBox box(this);
 	box.setWindowTitle("Update Failed!");
 	box.move(centerPos);
@@ -117,6 +127,7 @@ void AppImageUpdater::handleError(QString eStr , short errorCode)
 	box.setIcon(QMessageBox::Critical);
 	box.exec();
 	updateAppImagesInQueue();
+*/
 	return;
 }
 

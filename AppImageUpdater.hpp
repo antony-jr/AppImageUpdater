@@ -6,6 +6,7 @@
 #include <QDrag>
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QCloseEvent>
 #include <QQueue>
 #include <QMessageBox>
 #include <QProgressDialog>
@@ -47,6 +48,7 @@ private:
     AppImageUpdaterDialog *_pUpdateDialog = nullptr;
     QSystemTrayIcon *_pTIcon = nullptr;
 protected:
+    void closeEvent(QCloseEvent *);
     void dragMoveEvent(QDragMoveEvent *);
     void dragLeaveEvent(QDragLeaveEvent *);
     void dragEnterEvent(QDragEnterEvent *);
