@@ -14,8 +14,11 @@ install:
 
 script:
   - export VERSION=$(git rev-parse --short HEAD)
-  - APPIMAGE_UPDATER_VERSION=1-alpha APPIMAGE_UPDATER_COMMIT=$(git rev-parse --short HEAD) \
-    APPIMAGE_UPDATER_BUILD_NO=$TRAVIS_BUILD_NUMBER APPIMAGE_UPDATER_BUILD_TIME=$(date) /usr/local/Qt-5.10.0/bin/qmake . 
+  - export APPIMAGE_UPDATER_VERSION=1-alpha
+  - export APPIMAGE_UPDATER_COMMIT=$(git rev-parse --short HEAD)
+  - export APPIMAGE_UPDATER_BUILD_NO=$TRAVIS_BUILD_NUMBER 
+  - export APPIMAGE_UPDATER_BUILD_TIME=$(date) 
+  - /usr/local/Qt-5.10.0/bin/qmake "CONFIG+=logging_disabled" .
   - make -j$(nproc)
   - mkdir -p appdir/usr/bin ; strip AppImageUpdater ; cp AppImageUpdater appdir/usr/bin/
   - mkdir -p appdir/usr/share/applications ; cp build_resources/AppImageUpdater.desktop appdir/usr/share/applications/
