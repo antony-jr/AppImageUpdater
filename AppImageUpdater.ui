@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWidget</class>
+ <widget class="QWidget" name="MainWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>424</width>
+    <height>278</height>
+   </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>424</width>
+    <height>278</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>AppImage Updater</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="app_resources/resources.qrc">
+    <normaloff>:/logo.png</normaloff>:/logo.png</iconset>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <widget class="QPushButton" name="exitBtn">
+     <property name="text">
+      <string>Exit</string>
+     </property>
+     <property name="icon">
+      <iconset resource="app_resources/resources.qrc">
+       <normaloff>:/exit.png</normaloff>:/exit.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QPushButton" name="checkForUpdateBtn">
+     <property name="text">
+      <string>Check For Updates</string>
+     </property>
+     <property name="icon">
+      <iconset resource="app_resources/resources.qrc">
+       <normaloff>:/check.png</normaloff>:/check.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="3">
+    <widget class="QLabel" name="instruction">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <italic>false</italic>
+      </font>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string>Drag 'n' Drop AppImage(s) to Update!</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLabel" name="dragAndDropArea">
+     <property name="maximumSize">
+      <size>
+       <width>170</width>
+       <height>140</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="pixmap">
+      <pixmap resource="app_resources/resources.qrc">:/dotted_square.png</pixmap>
+     </property>
+     <property name="scaledContents">
+      <bool>true</bool>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QPushButton" name="aboutBtn">
+     <property name="text">
+      <string>About</string>
+     </property>
+     <property name="icon">
+      <iconset resource="app_resources/resources.qrc">
+       <normaloff>:/about.png</normaloff>:/about.png</iconset>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="app_resources/resources.qrc"/>
+  <include location="app_resources/resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

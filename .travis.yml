@@ -10,17 +10,20 @@ before_install:
 install:
   - # sudo apt-get -y install qt59base
   - # source /opt/qt*/bin/qt*-env.sh
-  - sudo bash build_qt_static.sh 
+  - sudo bash build_resources/build_qt_static.sh 
 
 script:
-  - cd dist/
-  - # cmake ..
-  - /usr/local/Qt-5.10.0/bin/qmake ..  
+  - export VERSION=$(git rev-parse --short HEAD)
+  - export APPIMAGE_UPDATER_VERSION=1-alpha
+  - export APPIMAGE_UPDATER_COMMIT=$(git rev-parse --short HEAD)
+  - export APPIMAGE_UPDATER_BUILD_NO=$TRAVIS_BUILD_NUMBER 
+  - export APPIMAGE_UPDATER_BUILD_TIME=$(date) 
+  - /usr/local/Qt-5.10.0/bin/qmake "CONFIG+=logging_disabled" .
   - make -j$(nproc)
-  - mkdir -p appdir/usr/bin ; strip src/AppImageUpdater ; cp src/AppImageUpdater ./appdir/usr/bin/
-  - mkdir -p appdir/usr/share/applications ; cp ../*.desktop ./appdir/usr/share/applications/
-  - mkdir -p appdir/usr/lib/ ; cp /usr/lib/x86_64-linux-gnu/libk5crypto.so.3 ./appdir/usr/lib/
-  - mkdir -p appdir/usr/share/icons/hicolor/256x256/apps/ ; cp ../*png appdir/usr/share/icons/hicolor/256x256/apps/AppImageUpdater.png
+  - mkdir -p appdir/usr/bin ; strip AppImageUpdater ; cp AppImageUpdater appdir/usr/bin/
+  - mkdir -p appdir/usr/share/applications ; cp build_resources/AppImageUpdater.desktop appdir/usr/share/applications/
+  - # mkdir -p appdir/usr/lib/ ; cp /usr/lib/x86_64-linux-gnu/libk5crypto.so.3 ./appdir/usr/lib/
+  - mkdir -p appdir/usr/share/icons/hicolor/256x256/apps/ ; cp build_resources/AppImageUpdater.png appdir/usr/share/icons/hicolor/256x256/apps/AppImageUpdater.png
   - wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
   - chmod a+x linuxdeployqt-continuous-x86_64.AppImage
   - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
