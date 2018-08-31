@@ -4,11 +4,11 @@
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
-    
-    QTimer timer;
+    app.setQuitOnLastWindowClosed(false);
+
     QApplication::setApplicationName("AppImageUpdater");
     QApplication::setApplicationVersion(APPIMAGE_UPDATER_VERSION);
-    
+
     AppImageUpdater mainWidget;
     
     /*  Exit call. */
