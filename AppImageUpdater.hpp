@@ -15,9 +15,9 @@
 #include <QFileInfo>
 #include <QSystemTrayIcon>
 #include <QDesktopWidget>
+#include <QDirIterator>
 #include <ui_AppImageUpdater.h>
 #include <AppImageUpdaterBridge> /* Unofficial AppImage Updater Library for Qt. */
-#include <AppImageUpdaterDialog.hpp>
 
 class AppImageUpdater : public QWidget
 {
@@ -45,7 +45,7 @@ private:
 	    _pDropNorm;
     QIcon _pWindowIcon;
     QQueue<QString> _pAppImagePaths;
-    AppImageUpdaterDialog *_pUpdateDialog = nullptr;
+    AppImageUpdaterBridge::AppImageUpdaterDialog *_pUpdateDialog = nullptr;
     QSystemTrayIcon *_pTIcon = nullptr;
 protected:
     void closeEvent(QCloseEvent *);

@@ -60,12 +60,14 @@ AppImageUpdater::AppImageUpdater(QWidget *parent)
 
     /* Check for updates. */
     _bUpdateStarted = true;
-    _pUpdateDialog = new AppImageUpdaterDialog(centerPos);
-    _pUpdateDialog->setWindowIcon(_pWindowIcon);
+    _pUpdateDialog = new AppImageUpdaterDialog( 0 , this);
+    _pUpdateDialog->setMovePoint(centerPos);
+    _pUpdateDialog->setShowUpdateConfirmationDialog(true);
+    _pUpdateDialog->setShowFinishDialog(true);
     _pUpdateDialog->setShowLog(true);
     _pUpdateDialog->setIconPixmap(QPixmap(QString::fromUtf8(":/logo.png")));
     /* Special connect */
-    connect(_pUpdateDialog , &AppImageUpdaterWidget::quit , this , &AppImageUpdater::quit , Qt::DirectConnection);
+    connect(_pUpdateDialog , &AppImageUpdaterDialog::quit , this , &AppImageUpdater::quit , Qt::DirectConnection);
 
     _pUpdateDialog->init();
 
@@ -74,10 +76,10 @@ AppImageUpdater::AppImageUpdater(QWidget *parent)
     connect(_pUi.aboutBtn , &QPushButton::pressed , this , &AppImageUpdater::showAbout);
     
     /* Program logic. */
-    connect(_pUpdateDialog , &AppImageUpdaterWidget::started , this , &AppImageUpdater::handleStarted);
-    connect(_pUpdateDialog , &AppImageUpdaterWidget::canceled , this , &AppImageUpdater::handleCanceled);
-    connect(_pUpdateDialog , &AppImageUpdaterWidget::error , this , &AppImageUpdater::handleError);
-    connect(_pUpdateDialog , &AppImageUpdaterWidget::finished , this , &AppImageUpdater::handleFinished);
+    connect(_pUpdateDialog , &AppImageUpdaterDialog::started , this , &AppImageUpdater::handleStarted);
+    connect(_pUpdateDialog , &AppImageUpdaterDialog::canceled , this , &AppImageUpdater::handleCanceled);
+    connect(_pUpdateDialog , &AppImageUpdaterDialog::error , this , &AppImageUpdater::handleError);
+    connect(_pUpdateDialog , &AppImageUpdaterDialog::finished , this , &AppImageUpdater::handleFinished);
     return;
 }
 
@@ -112,22 +114,7 @@ void AppImageUpdater::handleCanceled(void)
 void AppImageUpdater::handleError(QString eStr , short errorCode)
 {
 	_bUpdateStarted = false;
-/*
-	QMessageBox box(this);
-	box.setWindowTitle("Update Failed!");
-	box.move(centerPos);
-	box.resize(QSize(400 , 120));
-	if(errorCode == AppImageUpdaterBridge::INVALID_MAGIC_BYTES){
-	box.setText(QString::fromUtf8("The given file is not a valid AppImage file with respect to AppImage Specification!"));
-	}else{
-	box.setText(QString::fromUtf8("Update failed for the following reason , ") +
-		    AppImageDeltaRevisioner::errorCodeToString(errorCode) + 
-		    QString::fromUtf8("."));
-	}
-	box.setIcon(QMessageBox::Critical);
-	box.exec();
 	updateAppImagesInQueue();
-*/
 	return;
 }
 
@@ -180,18 +167,21 @@ void AppImageUpdater::updateAppImagesInQueue(void)
 	_bUpdateStarted = true;
 	_pCurrentAppImagePath = _pAppImagePaths.dequeue();
 
-    	_pUpdateDialog = new AppImageUpdaterDialog(centerPos);
-	_pUpdateDialog->setWindowIcon(_pWindowIcon);
-    	_pUpdateDialog->setIconPixmap(QPixmap(QString::fromUtf8(":/default_icon.png")));
+    	_pUpdateDialog = new AppImageUpdaterDialog(0 , this);
+	_pUpdateDialog->setMovePoint(centerPos);
+    	_pUpdateDialog->setShowUpdateConfirmationDialog(true);
+    	_pUpdateDialog->setShowFinishDialog(true);
+	_pUpdateDialog->setShowErrorDialog(true);
+	_pUpdateDialog->setIconPixmap(QPixmap(QString::fromUtf8(":/default_icon.png")));
 	_pUpdateDialog->setShowLog(true);
 	_pUpdateDialog->setAppImage(_pCurrentAppImagePath);
 	_pUpdateDialog->init();
 
     	/* Program logic. */
-    	connect(_pUpdateDialog , &AppImageUpdaterWidget::started , this , &AppImageUpdater::handleStarted);
-    	connect(_pUpdateDialog , &AppImageUpdaterWidget::canceled , this , &AppImageUpdater::handleCanceled);
-    	connect(_pUpdateDialog , &AppImageUpdaterWidget::error , this , &AppImageUpdater::handleError);
-    	connect(_pUpdateDialog , &AppImageUpdaterWidget::finished , this , &AppImageUpdater::handleFinished);
+    	connect(_pUpdateDialog , &AppImageUpdaterDialog::started , this , &AppImageUpdater::handleStarted);
+    	connect(_pUpdateDialog , &AppImageUpdaterDialog::canceled , this , &AppImageUpdater::handleCanceled);
+    	connect(_pUpdateDialog , &AppImageUpdaterDialog::error , this , &AppImageUpdater::handleError);
+    	connect(_pUpdateDialog , &AppImageUpdaterDialog::finished , this , &AppImageUpdater::handleFinished);
 	return;
 }
 
@@ -227,13 +217,28 @@ void AppImageUpdater::dropEvent(QDropEvent *e)
 {
     /* Reset back to normal. */
     AUI(dragAndDropArea).setPixmap(_pDropNorm);
+    
+    /* Notification message template. */
+    const QString msg("'%1' is queued for update.");
+	
     foreach (const QUrl &url, e->mimeData()->urls()) {
-        QString fileName = url.toLocalFile();
+	QString fileName = url.toLocalFile();
+	if(QFileInfo(fileName).isDir()){
+		QDirIterator dirIt(fileName , 
+			           QStringList() << "*.AppImage" 
+				   		 << "*.desktop", 
+				   QDir::Files,
+				   QDirIterator::Subdirectories);
+		while (dirIt.hasNext()){
+			auto file = dirIt.next();
+			_pAppImagePaths.enqueue(file);
+			_pTIcon->showMessage(QString::fromUtf8("AppImage Queued!") , msg.arg(file));
+			QCoreApplication::processEvents();
+		}
+		continue;
+	}
         _pAppImagePaths.enqueue(fileName);
-	QString msg;
-	msg.append(fileName);
-	msg.append(" is queued for update.");
-	_pTIcon->showMessage(QString::fromUtf8("AppImage Queued!") , msg);
+	_pTIcon->showMessage(QString::fromUtf8("AppImage Queued!") , msg.arg(fileName));
 	QCoreApplication::processEvents();
     }
 
