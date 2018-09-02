@@ -170,7 +170,8 @@ void AppImageUpdater::updateAppImagesInQueue(void)
     	_pUpdateDialog = new AppImageUpdaterDialog(0 , this);
 	_pUpdateDialog->setMovePoint(centerPos);
     	_pUpdateDialog->setShowUpdateConfirmationDialog(true);
-    	_pUpdateDialog->setShowFinishDialog(true);
+    	_pUpdateDialog->setShowNoUpdateDialog(true);
+	_pUpdateDialog->setShowFinishDialog(true);
 	_pUpdateDialog->setShowErrorDialog(true);
 	_pUpdateDialog->setIconPixmap(QPixmap(QString::fromUtf8(":/default_icon.png")));
 	_pUpdateDialog->setShowLog(true);
