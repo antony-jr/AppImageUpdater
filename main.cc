@@ -1,3 +1,6 @@
+/*
+ *
+*/
 #include <QApplication>
 #include <AppImageUpdater.hpp>
 
