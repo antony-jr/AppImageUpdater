@@ -221,7 +221,7 @@ void AppImageUpdater::dropEvent(QDropEvent *e)
     
     /* Notification message template. */
     const QString msg("'%1' is queued for update.");
-	
+    const QString msgDir("The contents of '%1' has been recursively queued for update!");  
     foreach (const QUrl &url, e->mimeData()->urls()) {
 	QString fileName = url.toLocalFile();
 	if(QFileInfo(fileName).isDir()){
@@ -233,9 +233,9 @@ void AppImageUpdater::dropEvent(QDropEvent *e)
 		while (dirIt.hasNext()){
 			auto file = dirIt.next();
 			_pAppImagePaths.enqueue(file);
-			_pTIcon->showMessage(QString::fromUtf8("AppImage Queued!") , msg.arg(file));
 			QCoreApplication::processEvents();
 		}
+		_pTIcon->showMessage(QString::fromUtf8("AppImage Queued!") , msgDir.arg(fileName));
 		continue;
 	}
         _pAppImagePaths.enqueue(fileName);
