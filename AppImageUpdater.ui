@@ -24,6 +24,27 @@
     <normaloff>:/logo.png</normaloff>:/logo.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
+   <item row="7" column="0" colspan="3">
+    <widget class="QLabel" name="statusLbl">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QPushButton" name="aboutBtn">
+     <property name="text">
+      <string>About</string>
+     </property>
+     <property name="icon">
+      <iconset resource="app_resources/resources.qrc">
+       <normaloff>:/about.png</normaloff>:/about.png</iconset>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QPushButton" name="exitBtn">
      <property name="text">
@@ -60,6 +81,17 @@
      </property>
     </widget>
    </item>
+   <item row="0" column="1">
+    <widget class="QPushButton" name="settingsBtn">
+     <property name="text">
+      <string>Settings</string>
+     </property>
+     <property name="icon">
+      <iconset resource="app_resources/resources.qrc">
+       <normaloff>:/check.png</normaloff>:/check.png</iconset>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="1">
     <widget class="QLabel" name="dragAndDropArea">
      <property name="maximumSize">
@@ -82,17 +114,6 @@
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="2">
-    <widget class="QPushButton" name="aboutBtn">
-     <property name="text">
-      <string>About</string>
-     </property>
-     <property name="icon">
-      <iconset resource="app_resources/resources.qrc">
-       <normaloff>:/about.png</normaloff>:/about.png</iconset>
      </property>
     </widget>
    </item>
