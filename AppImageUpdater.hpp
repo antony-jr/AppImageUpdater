@@ -1,7 +1,6 @@
 #ifndef APPIMAGEUPDATER_HPP_INCLUDED
 #define APPIMAGEUPDATER_HPP_INCLUDED
 
-#include <QMovie>
 #include <QMimeData>
 #include <QDrag>
 #include <QDragEnterEvent>
@@ -18,6 +17,7 @@
 #include <QDirIterator>
 #include <ui_AppImageUpdater.h>
 #include <AppImageUpdaterBridge> /* Unofficial AppImage Updater Library for Qt. */
+#include <SettingsDialog.hpp>
 
 class AppImageUpdater : public QWidget
 {
@@ -25,6 +25,8 @@ class AppImageUpdater : public QWidget
 public:
     AppImageUpdater(QWidget *parent = nullptr);
     ~AppImageUpdater();
+public Q_SLOTS:
+    void gracefulShow(void);
 private Q_SLOTS:
     void updateAppImagesInQueue(void);
     void showAbout(void);
@@ -36,6 +38,7 @@ private Q_SLOTS:
 Q_SIGNALS:
     void quit();
 private:
+    SettingsDialog _pSettings;
     Ui::MainWidget _pUi;
     QPoint centerPos;
     QAtomicInteger<bool> _bUpdateStarted = false;

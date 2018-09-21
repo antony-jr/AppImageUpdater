@@ -1,3 +1,6 @@
 [submodule "AppImageUpdaterBridge"]
 	path = AppImageUpdaterBridge
 	url = https://github.com/antony-jr/AppImageUpdaterBridge
+[submodule "SingleApplication"]
+	path = SingleApplication
+	url = https://github.com/antony-jr/SingleApplication

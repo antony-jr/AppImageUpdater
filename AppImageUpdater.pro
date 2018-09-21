@@ -1,4 +1,5 @@
 include(AppImageUpdaterBridge/AppImageUpdaterBridge.pri)
+include(SingleApplication/singleapplication.pri)
 INCLUDEPATH += . $(PWD)
 TEMPLATE = app
 CONFIG += release static
@@ -13,7 +14,7 @@ DEFINES += "APPIMAGE_UPDATER_BUILD_TIME=\"\\\"$$(APPIMAGE_UPDATER_BUILD_TIME)\\\
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
-HEADERS += AppImageUpdater.hpp
-SOURCES += AppImageUpdater.cc main.cc
+HEADERS += AppImageUpdater.hpp SettingsDialog.hpp
+SOURCES += AppImageUpdater.cc SettingsDialog.cc main.cc
 RESOURCES += app_resources/resources.qrc
-FORMS += AppImageUpdater.ui
+FORMS += AppImageUpdater.ui SettingsDialog.ui

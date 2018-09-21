@@ -60,10 +60,12 @@ AppImageUpdater::AppImageUpdater(QWidget *parent)
 
     /* Check for updates. */
     _bUpdateStarted = true;
+    bool s = _pSettings.isShowUpdateDialogs();
     _pUpdateDialog = new AppImageUpdaterDialog( 0 , this);
     _pUpdateDialog->setMovePoint(centerPos);
-    _pUpdateDialog->setShowUpdateConfirmationDialog(true);
-    _pUpdateDialog->setShowFinishDialog(true);
+    _pUpdateDialog->setShowUpdateConfirmationDialog(s);
+    _pUpdateDialog->setShowNoUpdateDialog(false);
+    _pUpdateDialog->setShowFinishDialog(s);
     _pUpdateDialog->setShowLog(true);
     _pUpdateDialog->setIconPixmap(QPixmap(QString::fromUtf8(":/logo.png")));
     /* Special connect */
@@ -72,6 +74,7 @@ AppImageUpdater::AppImageUpdater(QWidget *parent)
     _pUpdateDialog->init();
 
     /* Connect buttons. */
+    connect(_pUi.settingsBtn , &QPushButton::pressed , &_pSettings , &QDialog::exec);
     connect(_pUi.exitBtn , &QPushButton::pressed , this , &AppImageUpdater::quit , Qt::DirectConnection);
     connect(_pUi.aboutBtn , &QPushButton::pressed , this , &AppImageUpdater::showAbout);
     
@@ -89,11 +92,25 @@ AppImageUpdater::~AppImageUpdater()
     return;
 }
 
+void AppImageUpdater::gracefulShow(void)
+{
+	this->hide();
+	this->move(centerPos);
+  	this->show();		
+	if(_pSettings.isShowSystemTrayNotificationMessages()){
+	_pTIcon->showMessage(QString::fromUtf8("Already Started!") , 
+	QString::fromUtf8("AppImage Updater is running already , Please close this instance to start a new one."));
+	}
+	return;
+}
+
 void AppImageUpdater::closeEvent(QCloseEvent *e)
 {
 	this->hide();
+	if(_pSettings.isShowSystemTrayNotificationMessages()){	
   	_pTIcon->showMessage(QString::fromUtf8("Running in the Background!") , 
 			     QString::fromUtf8("Click on the system tray icon to use AppImage Updater."));
+	}
 	e->ignore();
 	return;
 }
@@ -113,6 +130,8 @@ void AppImageUpdater::handleCanceled(void)
 
 void AppImageUpdater::handleError(QString eStr , short errorCode)
 {
+	(void)eStr;
+	(void)errorCode;
 	_bUpdateStarted = false;
 	updateAppImagesInQueue();
 	return;
@@ -136,9 +155,10 @@ void AppImageUpdater::showHideWindow(QSystemTrayIcon::ActivationReason reason)
 		this->move(centerPos);
 		if(this->isVisible()){
 			this->hide();
-  			_pTIcon->showMessage(QString::fromUtf8("Running in the Background!") , 
+  			if(_pSettings.isShowSystemTrayNotificationMessages()){
+			_pTIcon->showMessage(QString::fromUtf8("Running in the Background!") , 
 					     QString::fromUtf8("Click on the system tray icon to use AppImage Updater."));
-   
+			}
 		}else{
 			this->show();
 		}
@@ -160,19 +180,31 @@ void AppImageUpdater::updateAppImagesInQueue(void)
 		return;
 	}
 	if(_pAppImagePaths.isEmpty()){
+		AUI(statusLbl).setText(QString::fromUtf8("Nothing is Queued for Update."));
+		if(_pSettings.isShowSystemTrayNotificationMessages()){
 		_pTIcon->showMessage("All Updates Completed!" , "AppImageUpdater finished all queued updates.");
+		}
 		return;
 	}	
 
 	_bUpdateStarted = true;
 	_pCurrentAppImagePath = _pAppImagePaths.dequeue();
 
+	const QString msg("Updating %1 , Queued %2 AppImage(s) for Update.");
+	QString AppImageSName = QFileInfo(_pCurrentAppImagePath).fileName();
+	if(AppImageSName.length() > 20){
+		AppImageSName = AppImageSName.left(18);
+		AppImageSName += QString::fromUtf8("..");
+	}
+	AUI(statusLbl).setText(msg.arg(AppImageSName).arg(_pAppImagePaths.size()));
+
+	bool s = _pSettings.isShowUpdateDialogs();
     	_pUpdateDialog = new AppImageUpdaterDialog(0 , this);
 	_pUpdateDialog->setMovePoint(centerPos);
-    	_pUpdateDialog->setShowUpdateConfirmationDialog(true);
-    	_pUpdateDialog->setShowNoUpdateDialog(true);
-	_pUpdateDialog->setShowFinishDialog(true);
-	_pUpdateDialog->setShowErrorDialog(true);
+	_pUpdateDialog->setShowUpdateConfirmationDialog(s);
+	_pUpdateDialog->setShowErrorDialog(s);
+	_pUpdateDialog->setShowNoUpdateDialog(s);
+	_pUpdateDialog->setShowFinishDialog(s);
 	_pUpdateDialog->setIconPixmap(QPixmap(QString::fromUtf8(":/default_icon.png")));
 	_pUpdateDialog->setShowLog(true);
 	_pUpdateDialog->setAppImage(_pCurrentAppImagePath);
@@ -220,6 +252,7 @@ void AppImageUpdater::dropEvent(QDropEvent *e)
     AUI(dragAndDropArea).setPixmap(_pDropNorm);
     
     /* Notification message template. */
+    const QString statusMsg("%1 AppImage(s) Queued for Update.");
     const QString msg("'%1' is queued for update.");
     const QString msgDir("The contents of '%1' has been recursively queued for update!");  
     foreach (const QUrl &url, e->mimeData()->urls()) {
@@ -235,11 +268,16 @@ void AppImageUpdater::dropEvent(QDropEvent *e)
 			_pAppImagePaths.enqueue(file);
 			QCoreApplication::processEvents();
 		}
+	if(_pSettings.isShowSystemTrayNotificationMessages()){
 		_pTIcon->showMessage(QString::fromUtf8("AppImage Queued!") , msgDir.arg(fileName));
+	}
 		continue;
 	}
         _pAppImagePaths.enqueue(fileName);
+	if(_pSettings.isShowSystemTrayNotificationMessages()){
 	_pTIcon->showMessage(QString::fromUtf8("AppImage Queued!") , msg.arg(fileName));
+	}
+	AUI(statusLbl).setText(statusMsg.arg(_pAppImagePaths.size()));
 	QCoreApplication::processEvents();
     }
 
