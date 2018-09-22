@@ -70,6 +70,7 @@ AppImageUpdater::AppImageUpdater(QWidget *parent)
     bool s = _pSettings.isShowUpdateDialogs();
     _pUpdateDialog = new AppImageUpdaterDialog( 0 , this);
     _pUpdateDialog->setMovePoint(centerPos);
+    _pUpdateDialog->setShowProgressDialog(s);
     _pUpdateDialog->setShowUpdateConfirmationDialog(s);
     _pUpdateDialog->setShowNoUpdateDialog(false);
     _pUpdateDialog->setShowFinishDialog(s);
@@ -208,6 +209,7 @@ void AppImageUpdater::updateAppImagesInQueue(void)
 	bool s = _pSettings.isShowUpdateDialogs();
     	_pUpdateDialog = new AppImageUpdaterDialog(0 , this);
 	_pUpdateDialog->setMovePoint(centerPos);
+	_pUpdateDialog->setShowProgressDialog(s);
 	_pUpdateDialog->setShowUpdateConfirmationDialog(s);
 	_pUpdateDialog->setShowErrorDialog(s);
 	_pUpdateDialog->setShowNoUpdateDialog(s);
