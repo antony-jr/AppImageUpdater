@@ -26,8 +26,15 @@ AppImageUpdater::AppImageUpdater(QWidget *parent)
     _pTIcon->show();
     
     centerPos = QApplication::desktop()->screen()->rect().center() - this->rect().center();	
-    this->move(centerPos);
-    this->show();
+
+    /* Do not show the app if it ran on startup. */
+    auto arguments = QCoreApplication::arguments();
+    if(_pSettings.isRunOnStartup() && arguments.contains(QString::fromUtf8("--minimized"))){
+	    this->hide();
+    }else{
+	    this->move(centerPos);
+	    this->show();
+    }
 
     /* This is oftenly used pixmap , Thus to reduce overhead we are caching it. */
     _pDropHere = QPixmap(QString::fromUtf8(":/dotted_square_drop.png"));
@@ -98,8 +105,8 @@ void AppImageUpdater::gracefulShow(void)
 	this->move(centerPos);
   	this->show();		
 	if(_pSettings.isShowSystemTrayNotificationMessages()){
-	_pTIcon->showMessage(QString::fromUtf8("Already Started!") , 
-	QString::fromUtf8("AppImage Updater is running already , Please close this instance to start a new one."));
+	_pTIcon->showMessage(QString::fromUtf8("AppImage Updater") , 
+	QString::fromUtf8("The Application is running already , Please close this instance to start a new one."));
 	}
 	return;
 }
@@ -108,8 +115,8 @@ void AppImageUpdater::closeEvent(QCloseEvent *e)
 {
 	this->hide();
 	if(_pSettings.isShowSystemTrayNotificationMessages()){	
-  	_pTIcon->showMessage(QString::fromUtf8("Running in the Background!") , 
-			     QString::fromUtf8("Click on the system tray icon to use AppImage Updater."));
+  	_pTIcon->showMessage(QString::fromUtf8("AppImage Updater") , 
+			QString::fromUtf8("The Application is running in the background , Click on the system tray icon to use it."));
 	}
 	e->ignore();
 	return;
@@ -156,7 +163,7 @@ void AppImageUpdater::showHideWindow(QSystemTrayIcon::ActivationReason reason)
 		if(this->isVisible()){
 			this->hide();
   			if(_pSettings.isShowSystemTrayNotificationMessages()){
-			_pTIcon->showMessage(QString::fromUtf8("Running in the Background!") , 
+			_pTIcon->showMessage(QString::fromUtf8("AppImage Updater") , 
 					     QString::fromUtf8("Click on the system tray icon to use AppImage Updater."));
 			}
 		}else{
@@ -182,7 +189,7 @@ void AppImageUpdater::updateAppImagesInQueue(void)
 	if(_pAppImagePaths.isEmpty()){
 		AUI(statusLbl).setText(QString::fromUtf8("Nothing is Queued for Update."));
 		if(_pSettings.isShowSystemTrayNotificationMessages()){
-		_pTIcon->showMessage("All Updates Completed!" , "AppImageUpdater finished all queued updates.");
+		_pTIcon->showMessage("AppImage Updater" , "Finished all queued updates.");
 		}
 		return;
 	}	
@@ -269,13 +276,13 @@ void AppImageUpdater::dropEvent(QDropEvent *e)
 			QCoreApplication::processEvents();
 		}
 	if(_pSettings.isShowSystemTrayNotificationMessages()){
-		_pTIcon->showMessage(QString::fromUtf8("AppImage Queued!") , msgDir.arg(fileName));
+		_pTIcon->showMessage(QString::fromUtf8("AppImage Updater") , msgDir.arg(fileName));
 	}
 		continue;
 	}
         _pAppImagePaths.enqueue(fileName);
 	if(_pSettings.isShowSystemTrayNotificationMessages()){
-	_pTIcon->showMessage(QString::fromUtf8("AppImage Queued!") , msg.arg(fileName));
+	_pTIcon->showMessage(QString::fromUtf8("AppImage Updater") , msg.arg(fileName));
 	}
 	AUI(statusLbl).setText(statusMsg.arg(_pAppImagePaths.size()));
 	QCoreApplication::processEvents();

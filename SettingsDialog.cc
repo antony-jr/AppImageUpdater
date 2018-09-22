@@ -38,7 +38,7 @@ bool SettingsDialog::isShowSystemTrayNotificationMessages(void) const {
 }
 
 bool SettingsDialog::isRunOnStartup(void) const {
-	return !IS_CHECKED(_mUi.runOnStartup);
+	return IS_CHECKED(_mUi.runOnStartup);
 }
 
 void SettingsDialog::handleAccepted(void)
@@ -51,11 +51,11 @@ void SettingsDialog::handleAccepted(void)
 	if(!entryFile.open(QIODevice::WriteOnly)){
 		return;
 	}
-
 	entryFile.write(_mDEntry.toLatin1());
 	entryFile.close();
 	_mSettings.setValue("runOnStartup" , true);
 	}else{
+	QFile::remove(QDir::homePath() + QString::fromUtf8("/.config/autostart/AppImageUpdater.desktop"));
 	_mSettings.setValue("runOnStartup" , false);
 	}
 	return;

@@ -17,7 +17,7 @@ class SettingsDialog : public QDialog {
 	*/
 
 	QString _mDEntry = 
-		QString::fromUtf8("[Desktop Entry]\nName=AppImageUpdater\nType=Application\nExec=%1\nTerminal=false");
+		QString::fromUtf8("[Desktop Entry]\nName=AppImageUpdater\nType=Application\nExec=%1 --minimized\nTerminal=false");
 public:
 	SettingsDialog(QWidget *parent = nullptr);
 	~SettingsDialog();
