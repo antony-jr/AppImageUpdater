@@ -1,5 +1,4 @@
 include(AppImageUpdaterBridge/AppImageUpdaterBridge.pri)
-include(SingleApplication/singleapplication.pri)
 INCLUDEPATH += . $(PWD)
 TEMPLATE = app
 LIBS += -lutil
