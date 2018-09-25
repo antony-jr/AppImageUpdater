@@ -17,7 +17,8 @@ AppImageUpdaterStandalone::AppImageUpdaterStandalone(const QString &AppImagePath
         _pUpdateDialog->setShowErrorDialog(true);
         _pUpdateDialog->setShowNoUpdateDialog(true);
         _pUpdateDialog->setShowFinishDialog(true);
-        _pUpdateDialog->setIconPixmap(QPixmap(QString::fromUtf8(":/default_icon.png")));
+        _pUpdateDialog->setWindowIcon(QIcon(QPixmap(QString::fromUtf8(":/logo.png"))));
+	_pUpdateDialog->setIconPixmap(QPixmap(QString::fromUtf8(":/default_icon.png")));
         _pUpdateDialog->setShowLog(true);
         _pUpdateDialog->setAppImage(AppImagePath);
         _pUpdateDialog->init();

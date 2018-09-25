@@ -1,4 +1,4 @@
-#include <SingleApplication>
+#include <QApplication>
 #include <QCommandLineParser>
 #include <AppImageUpdater.hpp>
 #include <AppImageUpdaterStandalone.hpp>
@@ -16,7 +16,7 @@ int main(int argc, char **argv)
         }
     }
 
-    SingleApplication app(argc, argv, isStandalone);
+    QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
     QApplication::setOrganizationName("AppImage");
     QApplication::setApplicationName("AppImageUpdater");
@@ -39,17 +39,13 @@ int main(int argc, char **argv)
 
     AppImageUpdaterStandalone standaloneDialogHandle(parser.value(standalone));
     QObject::connect(&standaloneDialogHandle, &AppImageUpdaterStandalone::quit,
-                     &app, &SingleApplication::quit, Qt::QueuedConnection);
+                     &app, &QApplication::quit, Qt::QueuedConnection);
 
     if(isStandalone) {
         return app.exec();
     }
 
     AppImageUpdater mainWidget(parser.isSet(minimized));
-
-    /* Wake if new instances are opened. */
-    QObject::connect(&app, &SingleApplication::instanceStarted, &mainWidget, &AppImageUpdater::gracefulShow);
-    /*  Exit call. */
-    QObject::connect(&mainWidget, &AppImageUpdater::quit, &app, &SingleApplication::quit, Qt::QueuedConnection);
+    QObject::connect(&mainWidget, &AppImageUpdater::quit, &app, &QApplication::quit, Qt::QueuedConnection);
     return app.exec();
 }
