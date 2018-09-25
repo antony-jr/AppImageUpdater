@@ -18,12 +18,13 @@
 #include <ui_AppImageUpdater.h>
 #include <AppImageUpdaterBridge> /* Unofficial AppImage Updater Library for Qt. */
 #include <SettingsDialog.hpp>
+#include <AuthorizationDialog.hpp>
 
 class AppImageUpdater : public QWidget
 {
     Q_OBJECT
 public:
-    AppImageUpdater(QWidget *parent = nullptr);
+    AppImageUpdater(bool minimized, QWidget *parent = nullptr);
     ~AppImageUpdater();
 public Q_SLOTS:
     void gracefulShow(void);
@@ -31,21 +32,23 @@ private Q_SLOTS:
     void updateAppImagesInQueue(void);
     void showAbout(void);
     void showHideWindow(QSystemTrayIcon::ActivationReason);
+    void handleAuthorizationFinished(QJsonObject);
     void handleFinished(QJsonObject);
-    void handleError(QString , short);
+    void handleError(QString, short);
     void handleStarted(void);
     void handleCanceled(void);
 Q_SIGNALS:
     void quit();
 private:
     SettingsDialog _pSettings;
+    AuthorizationDialog _pAuthorizationDialog;
     Ui::MainWidget _pUi;
     QPoint centerPos;
     QAtomicInteger<bool> _bUpdateStarted = false;
     QMessageBox _pAboutMessageBox;
     QString _pCurrentAppImagePath;
     QPixmap _pDropHere,
-	    _pDropNorm;
+            _pDropNorm;
     QIcon _pWindowIcon;
     QQueue<QString> _pAppImagePaths;
     AppImageUpdaterBridge::AppImageUpdaterDialog *_pUpdateDialog = nullptr;
