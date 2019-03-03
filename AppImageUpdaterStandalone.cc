@@ -8,19 +8,24 @@ AppImageUpdaterStandalone::AppImageUpdaterStandalone(const QString &AppImagePath
     : QObject(parent)
 {
     if(!AppImagePath.isEmpty()) {
-        _pUpdateDialog = new AppImageUpdaterDialog;
-        _pUpdateDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
-        _pUpdateDialog->setMovePoint(QApplication::desktop()->screen(0)->rect().center() - _pUpdateDialog->rect().center());
-        _pUpdateDialog->setShowBeforeStarted(true);
-        _pUpdateDialog->setShowProgressDialog(true);
-        _pUpdateDialog->setShowUpdateConfirmationDialog(false);
-        _pUpdateDialog->setShowErrorDialog(true);
-        _pUpdateDialog->setShowNoUpdateDialog(true);
-        _pUpdateDialog->setShowFinishDialog(true);
+        int flags = AppImageUpdaterDialog::AlertWhenAuthorizationIsRequired |
+		    AppImageUpdaterDialog::ShowProgressDialog |
+		    AppImageUpdaterDialog::ShowUpdateConfirmationDialog |
+		    AppImageUpdaterDialog::ShowFinishedDialog |
+		    AppImageUpdaterDialog::ShowErrorDialog | 
+		    AppImageUpdaterDialog::NotifyWhenNoUpdateIsAvailable |
+		    AppImageUpdaterDialog::ShowBeforeProgress; 
+        
+ 	_pUpdateDialog = new AppImageUpdaterDialog(
+		    		AppImagePath,
+		    		QPixmap(QString::fromUtf8(":/default_icon.png")),
+				(QWidget*)this,
+				flags);
+   
+	_pUpdateDialog->setShowLog(true);	
+       	_pUpdateDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
+        _pUpdateDialog->move(QApplication::desktop()->screen(0)->rect().center() - _pUpdateDialog->rect().center());
         _pUpdateDialog->setWindowIcon(QIcon(QPixmap(QString::fromUtf8(":/logo.png"))));
-	_pUpdateDialog->setIconPixmap(QPixmap(QString::fromUtf8(":/default_icon.png")));
-        _pUpdateDialog->setShowLog(true);
-        _pUpdateDialog->setAppImage(AppImagePath);
         _pUpdateDialog->init();
 
         /* Program logic. */
@@ -33,9 +38,11 @@ AppImageUpdaterStandalone::AppImageUpdaterStandalone(const QString &AppImagePath
 
 AppImageUpdaterStandalone::~AppImageUpdaterStandalone()
 {
+   if(_pUpdateDialog){
     _pUpdateDialog->hide();
     _pUpdateDialog->deleteLater();
-    return;
+   }
+   return;
 }
 
 void AppImageUpdaterStandalone::handleError(QString eStr, short eCode)
@@ -55,7 +62,9 @@ void AppImageUpdaterStandalone::handleFinished(QJsonObject info)
 
 void AppImageUpdaterStandalone::handleCanceled(void)
 {
-    _pUpdateDialog->hide();
+    if(_pUpdateDialog){
+    	_pUpdateDialog->hide();
+    }
     emit quit();
     return;
 }

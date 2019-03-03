@@ -65,16 +65,20 @@ AppImageUpdater::AppImageUpdater(bool minimized, QWidget *parent)
 
     /* Check for updates. */
     _bUpdateStarted = true;
-    bool s = _pSettings.isShowUpdateDialogs();
-    _pUpdateDialog = new AppImageUpdaterDialog( 0, this);
-    _pUpdateDialog->setMovePoint(centerPos);
-    _pUpdateDialog->setAlertAuthorizations(s);
-    _pUpdateDialog->setShowProgressDialog(s);
-    _pUpdateDialog->setShowUpdateConfirmationDialog(s);
-    _pUpdateDialog->setShowNoUpdateDialog(false);
-    _pUpdateDialog->setShowFinishDialog(s);
+    int flags =  0; 
+    if(_pSettings.isShowUpdateDialogs()){
+	    flags = AppImageUpdaterDialog::AlertWhenAuthorizationIsRequired |
+		    AppImageUpdaterDialog::ShowProgressDialog |
+		    AppImageUpdaterDialog::ShowUpdateConfirmationDialog |
+		    AppImageUpdaterDialog::ShowFinishedDialog;
+    }
+    _pUpdateDialog = new AppImageUpdaterDialog(
+		    		QPixmap(QString::fromUtf8(":/logo.png")),
+				this,
+				flags);
     _pUpdateDialog->setShowLog(true);
-    _pUpdateDialog->setIconPixmap(QPixmap(QString::fromUtf8(":/logo.png")));
+    _pUpdateDialog->move(centerPos);
+    
     /* Special connect */
     connect(_pUpdateDialog, &AppImageUpdaterDialog::quit, this, &AppImageUpdater::quit, Qt::DirectConnection);
 
@@ -215,18 +219,22 @@ void AppImageUpdater::updateAppImagesInQueue(void)
     }
     AUI(statusLbl).setText(msg.arg(AppImageSName).arg(_pAppImagePaths.size()));
 
-    bool s = _pSettings.isShowUpdateDialogs();
-    _pUpdateDialog = new AppImageUpdaterDialog(0, this);
-    _pUpdateDialog->setMovePoint(centerPos);
-    _pUpdateDialog->setAlertAuthorizations(s);
-    _pUpdateDialog->setShowProgressDialog(s);
-    _pUpdateDialog->setShowUpdateConfirmationDialog(s);
-    _pUpdateDialog->setShowErrorDialog(s);
-    _pUpdateDialog->setShowNoUpdateDialog(s);
-    _pUpdateDialog->setShowFinishDialog(s);
-    _pUpdateDialog->setIconPixmap(QPixmap(QString::fromUtf8(":/default_icon.png")));
+    int flags =  0; 
+    if(_pSettings.isShowUpdateDialogs()){
+	    flags = AppImageUpdaterDialog::AlertWhenAuthorizationIsRequired |
+		    AppImageUpdaterDialog::ShowProgressDialog |
+		    AppImageUpdaterDialog::ShowUpdateConfirmationDialog |
+		    AppImageUpdaterDialog::ShowFinishedDialog |
+		    AppImageUpdaterDialog::ShowErrorDialog | 
+		    AppImageUpdaterDialog::NotifyWhenNoUpdateIsAvailable;
+    }
+    _pUpdateDialog = new AppImageUpdaterDialog(
+		    		_pCurrentAppImagePath,
+		    		QPixmap(QString::fromUtf8(":/default_icon.png")),
+				this,
+				flags);
     _pUpdateDialog->setShowLog(true);
-    _pUpdateDialog->setAppImage(_pCurrentAppImagePath);
+    _pUpdateDialog->move(centerPos);
     _pUpdateDialog->init();
 
     /* Program logic. */

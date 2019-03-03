@@ -1,6 +1,7 @@
 #ifndef APPIMAGE_UPDATER_STANDALONE_HPP_INCLUDED
 #define APPIMAGE_UPDATER_STANDALONE_HPP_INCLUDED
 #include <AppImageUpdaterBridge>
+#include <AppImageUpdaterDialog>
 #include <QObject>
 #include <QJsonObject>
 

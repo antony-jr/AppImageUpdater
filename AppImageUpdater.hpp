@@ -16,7 +16,8 @@
 #include <QDesktopWidget>
 #include <QDirIterator>
 #include <ui_AppImageUpdater.h>
-#include <AppImageUpdaterBridge> /* Unofficial AppImage Updater Library for Qt. */
+#include <AppImageUpdaterBridge>
+#include <AppImageUpdaterDialog>
 #include <SettingsDialog.hpp>
 #include <AuthorizationDialog.hpp>
 
