@@ -13,7 +13,6 @@
 #include <QProcess>
 #include <QFileInfo>
 #include <QSystemTrayIcon>
-#include <QDesktopWidget>
 #include <QDirIterator>
 #include <ui_AppImageUpdater.h>
 #include <AppImageUpdaterBridge>

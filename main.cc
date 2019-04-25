@@ -5,17 +5,6 @@
 
 int main(int argc, char **argv)
 {
-    /*
-     * Quick course test to check if we have standalone.
-    */
-    bool isStandalone = false;
-    for(int i = 1 ; i < argc ; ++i) {
-        if(!qstrcmp(argv[i], "--standalone-update-dialog")) {
-            isStandalone =  true;
-            break;
-        }
-    }
-
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
     QApplication::setOrganizationName("AppImage");
@@ -37,12 +26,11 @@ int main(int argc, char **argv)
     parser.addOption(standalone);
     parser.process(app);
 
-    AppImageUpdaterStandalone standaloneDialogHandle(parser.value(standalone));
-    QObject::connect(&standaloneDialogHandle, &AppImageUpdaterStandalone::quit,
+    if(!parser.value(standalone).isEmpty()){ 
+	    AppImageUpdaterStandalone standaloneDialogHandle(parser.value(standalone));
+	    QObject::connect(&standaloneDialogHandle, &AppImageUpdaterStandalone::quit,
                      &app, &QApplication::quit, Qt::QueuedConnection);
-
-    if(isStandalone) {
-        return app.exec();
+    return app.exec();
     }
 
     AppImageUpdater mainWidget(parser.isSet(minimized));

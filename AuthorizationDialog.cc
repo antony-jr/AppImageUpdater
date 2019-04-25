@@ -59,6 +59,7 @@ void AuthorizationDialog::showError(QString eStr)
 
 void AuthorizationDialog::doAuthorize(QString errorString, short errorCode, QString appimagePath)
 {
+    Q_UNUSED(errorCode);
     emit started();
     arguments.clear();
     arguments << QString::fromUtf8("--standalone-update-dialog")
@@ -67,7 +68,8 @@ void AuthorizationDialog::doAuthorize(QString errorString, short errorCode, QStr
     (_pUi.reasonLbl)->setText(QString::fromUtf8("Authorization is required for %1 because %2").arg(appimagePath, errorString));
     (_pUi.passwordTxt)->setText(QString());
     /*
-     * As we cannot pipe the password to su in QProcess, we need to setup a pseudo-terminal for it
+     * As we cannot pipe the password to sudo in QProcess, 
+     * we need to setup a pseudo-terminal for it
     */
     int masterFD = -1;
     int slaveFD = -1;
@@ -159,19 +161,12 @@ void AuthorizationDialog::doAuthorize(QString errorString, short errorCode, QStr
         QByteArray errData;
         flags = ::fcntl(masterFD, F_GETFD);
         int bytes = 0;
-        int errBytes = 0;
         char buf[1024];
-        char errBuf[1024];
         while (bytes >= 0) {
             int state;
             if (::waitpid(child, &state, WNOHANG) == -1)
                 break;
             bytes = ::read(masterFD, buf, 1023);
-            errBytes = ::read(pipedData[0], errBuf, 1023);
-            if (errBytes > 0) {
-                errData.append(buf, errBytes);
-                errBytes=0;
-            }
             if (bytes > 0) {
                 const QString line = QString::fromLatin1(buf, bytes);
                 if (re.indexIn(line) != -1) {
@@ -182,18 +177,16 @@ void AuthorizationDialog::doAuthorize(QString errorString, short errorCode, QStr
                     loop.exec();
 
                     const QString password = (_pUi.passwordTxt)->text();
-                    if (password.isEmpty() || this->result() != QDialog::Accepted) {
-                        QByteArray pwd = password.toLatin1();
-                        for (int i = 0; i < 3; ++i) {
-                            ::write(masterFD, pwd.data(), pwd.length());
-                            ::write(masterFD, "\n", 1);
-                        }
-                        metaObject->method(metaObject->indexOfMethod(QMetaObject::normalizedSignature("showError(QString)")))
-                        .invoke(this, Q_ARG(QString, QString::fromUtf8("you never gave any valid password.")));
-
-                        emit finished(QJsonObject());
-                        return;
-                    }
+                    if (this->result() != QDialog::Accepted) {
+			    /* Note: 
+			     *  Do not break here , if we do break here then on the end of this
+			     *  loop , we wait for sudo to exit but it never does.
+			     *  So we simply close and exit.
+			    */  
+			    ::close(pipedData[1]);
+			    emit finished(QJsonObject());
+			    return;
+		    }
                     QByteArray pwd = password.toLatin1();
                     ::write(masterFD, pwd.data(), pwd.length());
                     ::write(masterFD, "\n", 1);
@@ -203,21 +196,16 @@ void AuthorizationDialog::doAuthorize(QString errorString, short errorCode, QStr
             if (bytes == 0)
                 ::usleep(100000);
         }
-        if (QString(errData).split(QString::fromUtf8("[sudo]")).count() >= 3) {
+        int status;
+        child = ::wait(&status);
+        ::close(pipedData[1]);
+        if (status) {
             metaObject->method(metaObject->indexOfMethod(QMetaObject::normalizedSignature("showError(QString)")))
             .invoke(this, Q_ARG(QString,
                                 QString::fromUtf8("the password you gave has been rejected.")));
 
-            emit finished(QJsonObject());
-            return;
         }
-
-        int status;
-        child = ::wait(&status);
-        const int exited = WIFEXITED(status);
-        const int exitStatus = WEXITSTATUS(status);
-        ::close(pipedData[1]);
-        emit finished(QJsonObject());
+	emit finished(QJsonObject());
         return;
     }
 

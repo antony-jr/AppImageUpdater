@@ -1,30 +1,26 @@
 #include <AppImageUpdaterStandalone.hpp>
-#include <QDesktopServices>
-#include <QDesktopWidget>
+#include <QScreen>
 
 using AppImageUpdaterBridge::AppImageUpdaterDialog;
 
 AppImageUpdaterStandalone::AppImageUpdaterStandalone(const QString &AppImagePath, QObject *parent)
     : QObject(parent)
 {
-    if(!AppImagePath.isEmpty()) {
         int flags = AppImageUpdaterDialog::AlertWhenAuthorizationIsRequired |
 		    AppImageUpdaterDialog::ShowProgressDialog |
-		    AppImageUpdaterDialog::ShowUpdateConfirmationDialog |
 		    AppImageUpdaterDialog::ShowFinishedDialog |
 		    AppImageUpdaterDialog::ShowErrorDialog | 
 		    AppImageUpdaterDialog::NotifyWhenNoUpdateIsAvailable |
 		    AppImageUpdaterDialog::ShowBeforeProgress; 
-        
  	_pUpdateDialog = new AppImageUpdaterDialog(
 		    		AppImagePath,
 		    		QPixmap(QString::fromUtf8(":/default_icon.png")),
-				(QWidget*)this,
+				nullptr,
 				flags);
    
 	_pUpdateDialog->setShowLog(true);	
        	_pUpdateDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
-        _pUpdateDialog->move(QApplication::desktop()->screen(0)->rect().center() - _pUpdateDialog->rect().center());
+        _pUpdateDialog->move(QGuiApplication::primaryScreen()->geometry().center() - _pUpdateDialog->rect().center());
         _pUpdateDialog->setWindowIcon(QIcon(QPixmap(QString::fromUtf8(":/logo.png"))));
         _pUpdateDialog->init();
 
@@ -32,16 +28,12 @@ AppImageUpdaterStandalone::AppImageUpdaterStandalone(const QString &AppImagePath
         connect(_pUpdateDialog, &AppImageUpdaterDialog::canceled, this, &AppImageUpdaterStandalone::handleCanceled);
         connect(_pUpdateDialog, &AppImageUpdaterDialog::error, this, &AppImageUpdaterStandalone::handleError);
         connect(_pUpdateDialog, &AppImageUpdaterDialog::finished, this, &AppImageUpdaterStandalone::handleFinished);
-        return;
-    }
 }
 
 AppImageUpdaterStandalone::~AppImageUpdaterStandalone()
 {
-   if(_pUpdateDialog){
-    _pUpdateDialog->hide();
-    _pUpdateDialog->deleteLater();
-   }
+   _pUpdateDialog->hide();
+   _pUpdateDialog->deleteLater();
    return;
 }
 

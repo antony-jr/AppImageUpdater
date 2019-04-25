@@ -1,4 +1,5 @@
 #include <AppImageUpdater.hpp>
+#include <QScreen>
 
 using namespace AppImageUpdaterBridge;
 
@@ -17,7 +18,7 @@ AppImageUpdater::AppImageUpdater(bool minimized, QWidget *parent)
     : QWidget(parent, Qt::WindowStaysOnTopHint)
 {
     _pUi.setupUi(this);
-    centerPos = QApplication::desktop()->screen(0)->rect().center() - this->rect().center();
+    centerPos = QGuiApplication::primaryScreen()->geometry().center();
     setAcceptDrops(true);
 
     /* Construct tray icon. */
@@ -30,7 +31,7 @@ AppImageUpdater::AppImageUpdater(bool minimized, QWidget *parent)
     if(_pSettings.isRunOnStartup() && minimized) {
         this->hide();
     } else {
-        this->move(centerPos);
+        this->move(centerPos - this->rect().center());
         this->show();
     }
 
@@ -77,7 +78,7 @@ AppImageUpdater::AppImageUpdater(bool minimized, QWidget *parent)
 				this,
 				flags);
     _pUpdateDialog->setShowLog(true);
-    _pUpdateDialog->move(centerPos);
+    _pUpdateDialog->move(centerPos - _pUpdateDialog->rect().center());
     
     /* Special connect */
     connect(_pUpdateDialog, &AppImageUpdaterDialog::quit, this, &AppImageUpdater::quit, Qt::DirectConnection);
@@ -108,7 +109,7 @@ AppImageUpdater::~AppImageUpdater()
 void AppImageUpdater::gracefulShow(void)
 {
     this->hide();
-    this->move(centerPos);
+    this->move(centerPos - this->rect().center());
     this->show();
     if(_pSettings.isShowSystemTrayNotificationMessages()) {
         _pTIcon->showMessage(QString::fromUtf8("AppImage Updater"),
@@ -173,7 +174,7 @@ void AppImageUpdater::handleAuthorizationFinished(QJsonObject info)
 void AppImageUpdater::showHideWindow(QSystemTrayIcon::ActivationReason reason)
 {
     if(reason == QSystemTrayIcon::Trigger) {
-        this->move(centerPos);
+        this->move(centerPos - this->rect().center());
         if(this->isVisible()) {
             this->hide();
             if(_pSettings.isShowSystemTrayNotificationMessages()) {
@@ -234,7 +235,7 @@ void AppImageUpdater::updateAppImagesInQueue(void)
 				this,
 				flags);
     _pUpdateDialog->setShowLog(true);
-    _pUpdateDialog->move(centerPos);
+    _pUpdateDialog->move(centerPos - _pUpdateDialog->rect().center());
     _pUpdateDialog->init();
 
     /* Program logic. */
