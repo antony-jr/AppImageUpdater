@@ -8,9 +8,10 @@
 class AppImageUpdaterStandalone : public QObject
 {
     Q_OBJECT
+    AppImageUpdaterBridge::AppImageDeltaRevisioner *m_Updater = nullptr;
     AppImageUpdaterBridge::AppImageUpdaterDialog *_pUpdateDialog = nullptr;
 public:
-    AppImageUpdaterStandalone(const QString&, QObject *parent = nullptr);
+    AppImageUpdaterStandalone(QString, QObject *parent = nullptr);
     ~AppImageUpdaterStandalone();
 private Q_SLOTS:
     void handleError(QString, short);

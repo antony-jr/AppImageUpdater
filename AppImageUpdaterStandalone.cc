@@ -1,30 +1,26 @@
 #include <AppImageUpdaterStandalone.hpp>
+#include <QFileInfo>
 #include <QScreen>
 
 using AppImageUpdaterBridge::AppImageUpdaterDialog;
+using AppImageUpdaterBridge::AppImageDeltaRevisioner;
 
-AppImageUpdaterStandalone::AppImageUpdaterStandalone(const QString &AppImagePath, QObject *parent)
+AppImageUpdaterStandalone::AppImageUpdaterStandalone(QString AppImagePath, QObject *parent)
     : QObject(parent)
 {
-        int flags = AppImageUpdaterDialog::AlertWhenAuthorizationIsRequired |
-		    AppImageUpdaterDialog::ShowProgressDialog |
-		    AppImageUpdaterDialog::ShowFinishedDialog |
-		    AppImageUpdaterDialog::ShowErrorDialog | 
-		    AppImageUpdaterDialog::NotifyWhenNoUpdateIsAvailable |
-		    AppImageUpdaterDialog::ShowBeforeProgress; 
- 	_pUpdateDialog = new AppImageUpdaterDialog(
-		    		AppImagePath,
-		    		QPixmap(QString::fromUtf8(":/default_icon.png")),
-				nullptr,
-				flags);
-   
-	_pUpdateDialog->setShowLog(true);	
+
+	m_Updater = new AppImageDeltaRevisioner(AppImagePath , this);
+	m_Updater->setShowLog(true);
+
+        int flags = (AppImageUpdaterDialog::Default ^ AppImageUpdaterDialog::ShowBeforeProgress) |
+		    AppImageUpdaterDialog::AlertWhenAuthorizationIsRequired;
+ 	_pUpdateDialog = new AppImageUpdaterDialog(QPixmap(QString::fromUtf8(":/default_icon.png")),nullptr,flags);	
+
        	_pUpdateDialog->setWindowFlags(Qt::WindowStaysOnTopHint);
         _pUpdateDialog->move(QGuiApplication::primaryScreen()->geometry().center() - _pUpdateDialog->rect().center());
-        _pUpdateDialog->setWindowIcon(QIcon(QPixmap(QString::fromUtf8(":/logo.png"))));
-        _pUpdateDialog->init();
+        _pUpdateDialog->init(m_Updater , QFileInfo(AppImagePath).baseName());
 
-        /* Program logic. */
+	/* Program logic. */
         connect(_pUpdateDialog, &AppImageUpdaterDialog::canceled, this, &AppImageUpdaterStandalone::handleCanceled);
         connect(_pUpdateDialog, &AppImageUpdaterDialog::error, this, &AppImageUpdaterStandalone::handleError);
         connect(_pUpdateDialog, &AppImageUpdaterDialog::finished, this, &AppImageUpdaterStandalone::handleFinished);
@@ -32,8 +28,10 @@ AppImageUpdaterStandalone::AppImageUpdaterStandalone(const QString &AppImagePath
 
 AppImageUpdaterStandalone::~AppImageUpdaterStandalone()
 {
-   _pUpdateDialog->hide();
-   _pUpdateDialog->deleteLater();
+   if(_pUpdateDialog){
+	_pUpdateDialog->hide();
+	_pUpdateDialog->deleteLater();
+   }
    return;
 }
 

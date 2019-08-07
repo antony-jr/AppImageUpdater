@@ -51,6 +51,7 @@ private:
             _pDropNorm;
     QIcon _pWindowIcon;
     QQueue<QString> _pAppImagePaths;
+    AppImageUpdaterBridge::AppImageDeltaRevisioner *m_Updater = nullptr;
     AppImageUpdaterBridge::AppImageUpdaterDialog *_pUpdateDialog = nullptr;
     QSystemTrayIcon *_pTIcon = nullptr;
 protected:
