@@ -74,7 +74,8 @@ AppImageUpdater::AppImageUpdater(bool minimized, QWidget *parent)
     if(_pSettings.isShowUpdateDialogs()){
 	    flags = (AppImageUpdaterDialog::Default ^ 
 	             AppImageUpdaterDialog::ShowErrorDialog ^ 
-		     AppImageUpdaterDialog::ShowBeforeProgress) | AppImageUpdaterDialog::AlertWhenAuthorizationIsRequired;
+		     AppImageUpdaterDialog::ShowBeforeProgress ^ 
+		     AppImageUpdaterDialog::NotifyWhenNoUpdateIsAvailable) | AppImageUpdaterDialog::AlertWhenAuthorizationIsRequired;
     }
    
     _pUpdateDialog = new AppImageUpdaterDialog(QPixmap(QString::fromUtf8(":/default_icon.png")),this,flags);
