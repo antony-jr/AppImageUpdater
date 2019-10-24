@@ -196,6 +196,42 @@ void AppImageUpdater::showAbout(void)
     return;
 }
 
+void AppImageUpdater::handleAppImageInformation(QJsonObject info){
+    int flags =  0; 
+    QString applicationName;
+    QJsonObject updInfo = (info["UpdateInformation"]).toObject();
+    QString transportType = (updInfo["transport"]).toString();
+
+ 
+    if(_pSettings.isShowUpdateDialogs()){
+	    flags = (AppImageUpdaterDialog::Default ^ AppImageUpdaterDialog::ShowBeforeProgress) | 
+		    AppImageUpdaterDialog::AlertWhenAuthorizationIsRequired;
+    }
+
+    _pUpdateDialog = new AppImageUpdaterDialog(QPixmap(QString::fromUtf8(":/default_icon.png")),this,flags);
+    _pUpdateDialog->move(centerPos - _pUpdateDialog->rect().center());
+
+    if(transportType == QString::fromUtf8("gh-releases-zsync") ||
+       transportType == QString::fromUtf8("bintray-zsync")){
+	    applicationName = (updInfo["repo"]).toString();
+    }else{
+	    applicationName = QFileInfo(_pCurrentAppImagePath).baseName();
+    }
+
+    _pUpdateDialog->init(m_Updater, applicationName);
+
+    /* Program logic. */
+    connect(&_pAuthorizationDialog, &AuthorizationDialog::started, _pUpdateDialog, &QDialog::hide, Qt::DirectConnection);
+    connect(_pUpdateDialog, &AppImageUpdaterDialog::requiresAuthorization, &_pAuthorizationDialog, &AuthorizationDialog::handleAuthorization);
+    connect(&_pAuthorizationDialog, &AuthorizationDialog::finished, this, &AppImageUpdater::handleAuthorizationFinished, Qt::UniqueConnection);
+    connect(_pUpdateDialog, &AppImageUpdaterDialog::started, this, &AppImageUpdater::handleStarted);
+    connect(_pUpdateDialog, &AppImageUpdaterDialog::canceled, this, &AppImageUpdater::handleCanceled);
+    connect(_pUpdateDialog, &AppImageUpdaterDialog::error, this, &AppImageUpdater::handleError);
+    connect(_pUpdateDialog, &AppImageUpdaterDialog::finished, this, &AppImageUpdater::handleFinished);
+    return;
+
+}
+
 /* Updates AppImages in queue. */
 void AppImageUpdater::updateAppImagesInQueue(void)
 {
@@ -221,28 +257,13 @@ void AppImageUpdater::updateAppImagesInQueue(void)
     }
     AUI(statusLbl).setText(msg.arg(AppImageSName).arg(_pAppImagePaths.size()));
 
+    QObject::connect(m_Updater,
+		    &AppImageDeltaRevisioner::embededInformation, 
+		    this, &AppImageUpdater::handleAppImageInformation,
+		    Qt::UniqueConnection);
 
     m_Updater->setAppImage(_pCurrentAppImagePath);
-
-    int flags =  0; 
-    if(_pSettings.isShowUpdateDialogs()){
-	    flags = (AppImageUpdaterDialog::Default ^ AppImageUpdaterDialog::ShowBeforeProgress) | 
-		    AppImageUpdaterDialog::AlertWhenAuthorizationIsRequired;
-    }
-
-    _pUpdateDialog = new AppImageUpdaterDialog(QPixmap(QString::fromUtf8(":/default_icon.png")),this,flags);
-    _pUpdateDialog->move(centerPos - _pUpdateDialog->rect().center());
-
-    _pUpdateDialog->init(m_Updater, QFileInfo(_pCurrentAppImagePath).baseName());
-
-    /* Program logic. */
-    connect(&_pAuthorizationDialog, &AuthorizationDialog::started, _pUpdateDialog, &QDialog::hide, Qt::DirectConnection);
-    connect(_pUpdateDialog, &AppImageUpdaterDialog::requiresAuthorization, &_pAuthorizationDialog, &AuthorizationDialog::handleAuthorization);
-    connect(&_pAuthorizationDialog, &AuthorizationDialog::finished, this, &AppImageUpdater::handleAuthorizationFinished, Qt::UniqueConnection);
-    connect(_pUpdateDialog, &AppImageUpdaterDialog::started, this, &AppImageUpdater::handleStarted);
-    connect(_pUpdateDialog, &AppImageUpdaterDialog::canceled, this, &AppImageUpdater::handleCanceled);
-    connect(_pUpdateDialog, &AppImageUpdaterDialog::error, this, &AppImageUpdater::handleError);
-    connect(_pUpdateDialog, &AppImageUpdaterDialog::finished, this, &AppImageUpdater::handleFinished);
+    m_Updater->getAppImageEmbededInformation();
     return;
 }
 

@@ -32,6 +32,7 @@ private Q_SLOTS:
     void updateAppImagesInQueue(void);
     void showAbout(void);
     void showHideWindow(QSystemTrayIcon::ActivationReason);
+    void handleAppImageInformation(QJsonObject);
     void handleAuthorizationFinished(QJsonObject);
     void handleFinished(QJsonObject);
     void handleError(QString, short);
