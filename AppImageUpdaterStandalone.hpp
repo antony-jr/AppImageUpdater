@@ -8,15 +8,19 @@
 class AppImageUpdaterStandalone : public QObject
 {
     Q_OBJECT
+
+    int flags;
+    QString m_AppImagePath;
     AppImageUpdaterBridge::AppImageDeltaRevisioner *m_Updater = nullptr;
     AppImageUpdaterBridge::AppImageUpdaterDialog *_pUpdateDialog = nullptr;
 public:
-    AppImageUpdaterStandalone(QString, QObject *parent = nullptr);
+    AppImageUpdaterStandalone(QString, int, QObject *parent = nullptr);
     ~AppImageUpdaterStandalone();
 private Q_SLOTS:
     void handleError(QString, short);
     void handleFinished(QJsonObject);
     void handleCanceled(void);
+    void handleAppImageInformation(QJsonObject);
 Q_SIGNALS:
     void quit();
 };
