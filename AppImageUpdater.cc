@@ -1,5 +1,7 @@
 #include <AppImageUpdater.hpp>
 #include <QScreen>
+#include <QMenu>
+#include <QAction>
 
 using namespace AppImageUpdaterBridge;
 
@@ -24,6 +26,16 @@ AppImageUpdater::AppImageUpdater(bool minimized, QWidget *parent)
     /* Construct tray icon. */
     _pTIcon = new QSystemTrayIcon(this);
     _pTIcon->setIcon(QIcon(QPixmap(QString::fromUtf8(":/logo.png"))));
+    // Menu context for the tray icon
+    QMenu *menu = new QMenu(this);
+    menu->addAction(QString::fromUtf8("Show / Hide"),
+		    this,
+		    &AppImageUpdater::showHide);
+    menu->addAction(QString::fromUtf8("Quit"),
+		    this,
+		    &AppImageUpdater::quit);
+
+    _pTIcon->setContextMenu(menu);
     connect(_pTIcon, &QSystemTrayIcon::activated, this, &AppImageUpdater::showHideWindow);
     _pTIcon->show();
 
@@ -172,6 +184,19 @@ void AppImageUpdater::handleAuthorizationFinished(QJsonObject info)
 }
 
 /* Show hide window. */
+void AppImageUpdater::showHide(void){
+        this->move(centerPos - this->rect().center());
+        if(this->isVisible()) {
+            this->hide();
+            if(_pSettings.isShowSystemTrayNotificationMessages()) {
+                _pTIcon->showMessage(QString::fromUtf8("AppImage Updater"),
+                                     QString::fromUtf8("Click on the system tray icon to use AppImage Updater."));
+            }
+        } else {
+            this->show();
+        }
+
+}
 void AppImageUpdater::showHideWindow(QSystemTrayIcon::ActivationReason reason)
 {
     if(reason == QSystemTrayIcon::Trigger) {

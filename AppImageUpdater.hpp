@@ -31,6 +31,7 @@ public Q_SLOTS:
 private Q_SLOTS:
     void updateAppImagesInQueue(void);
     void showAbout(void);
+    void showHide(void); 
     void showHideWindow(QSystemTrayIcon::ActivationReason);
     void handleAppImageInformation(QJsonObject);
     void handleAuthorizationFinished(QJsonObject);
