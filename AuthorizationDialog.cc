@@ -62,8 +62,27 @@ void AuthorizationDialog::doAuthorize(QString errorString, short errorCode, QStr
     Q_UNUSED(errorCode);
     emit started();
     arguments.clear();
+
+    // Also append all the program arguments to this
+    auto prog_args = QCoreApplication::arguments();
+    bool skipNext = true; // To skip the program name
+    for(QString arg : prog_args){
+	    if(skipNext){
+		    skipNext = false;
+		    continue;
+	    }
+	    if(arg == "--standalone-update-dialog" || arg == "-d"){
+		    skipNext = true;
+		    continue;
+	    }
+	    arguments << arg;
+    } 
     arguments << QString::fromUtf8("--standalone-update-dialog")
-              << appimagePath;
+              << appimagePath 
+	      << QString::fromUtf8("--noconfirm");
+
+    qDebug() << "Will be invoking updater as root with args: " << arguments;
+
     const QString fallback = program + QLatin1String(" ") + arguments.join(QLatin1String(" "));
     (_pUi.reasonLbl)->setText(QString::fromUtf8("Authorization is required for %1 because %2").arg(appimagePath, errorString));
     (_pUi.passwordTxt)->setText(QString());

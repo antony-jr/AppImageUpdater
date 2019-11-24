@@ -108,7 +108,7 @@ AppImageUpdater::AppImageUpdater(bool minimized, QWidget *parent)
     connect(&_pAuthorizationDialog, &AuthorizationDialog::finished, this, &AppImageUpdater::handleAuthorizationFinished, Qt::UniqueConnection);
     connect(_pUpdateDialog, &AppImageUpdaterDialog::started, this, &AppImageUpdater::handleStarted);
     connect(_pUpdateDialog, &AppImageUpdaterDialog::canceled, this, &AppImageUpdater::handleCanceled);
-    connect(_pUpdateDialog, &AppImageUpdaterDialog::error, this, &AppImageUpdater::handleError);
+    connect(_pUpdateDialog, &AppImageUpdaterDialog::error, this, &AppImageUpdater::handleAutoUpdateError);
     connect(_pUpdateDialog, &AppImageUpdaterDialog::finished, this, &AppImageUpdater::handleFinished);
     return;
 }
@@ -155,11 +155,32 @@ void AppImageUpdater::handleCanceled(void)
     return;
 }
 
+void AppImageUpdater::handleAutoUpdateError(QString eStr, short errorCode){
+	(void)eStr;
+	(void)errorCode;
+	_bUpdateStarted = false;
+	updateAppImagesInQueue();
+ 
+}
 
-void AppImageUpdater::handleError(QString eStr, short errorCode)
+void AppImageUpdater::handleError(short errorCode)
 {
-    (void)eStr;
-    (void)errorCode;
+    // Ignore all permission errors.
+    if(errorCode == AppImageUpdaterBridge::NoReadPermission ||
+            errorCode == AppImageUpdaterBridge::NoPermissionToReadSourceFile ||
+            errorCode == AppImageUpdaterBridge::NoPermissionToReadWriteTargetFile) {
+	    return;
+    }
+    if(_pSettings.isShowUpdateDialogs()){
+    QMessageBox box(this);
+    box.setWindowTitle(QString::fromUtf8("Update Failed"));
+    box.setIcon(QMessageBox::Critical);
+    box.setText(QString::fromUtf8("Update failed for '") + 
+		QFileInfo(_pCurrentAppImagePath).fileName() + 
+		QString::fromUtf8("': ") + AppImageUpdaterBridge::errorCodeToDescriptionString(errorCode));
+    box.exec(); 
+    }
+
     _bUpdateStarted = false;
     updateAppImagesInQueue();
     return;
@@ -229,7 +250,9 @@ void AppImageUpdater::handleAppImageInformation(QJsonObject info){
 
  
     if(_pSettings.isShowUpdateDialogs()){
-	    flags = (AppImageUpdaterDialog::Default ^ AppImageUpdaterDialog::ShowBeforeProgress) | 
+	    flags = (AppImageUpdaterDialog::Default ^ 
+		     AppImageUpdaterDialog::ShowErrorDialog ^ 
+		     AppImageUpdaterDialog::ShowBeforeProgress) | 
 		    AppImageUpdaterDialog::AlertWhenAuthorizationIsRequired;
     }
 
@@ -245,13 +268,15 @@ void AppImageUpdater::handleAppImageInformation(QJsonObject info){
 
     _pUpdateDialog->init(m_Updater, applicationName);
 
+    connect(m_Updater, &AppImageDeltaRevisioner::error, this, &AppImageUpdater::handleError,
+	    Qt::UniqueConnection);
+
     /* Program logic. */
     connect(&_pAuthorizationDialog, &AuthorizationDialog::started, _pUpdateDialog, &QDialog::hide, Qt::DirectConnection);
     connect(_pUpdateDialog, &AppImageUpdaterDialog::requiresAuthorization, &_pAuthorizationDialog, &AuthorizationDialog::handleAuthorization);
     connect(&_pAuthorizationDialog, &AuthorizationDialog::finished, this, &AppImageUpdater::handleAuthorizationFinished, Qt::UniqueConnection);
     connect(_pUpdateDialog, &AppImageUpdaterDialog::started, this, &AppImageUpdater::handleStarted);
     connect(_pUpdateDialog, &AppImageUpdaterDialog::canceled, this, &AppImageUpdater::handleCanceled);
-    connect(_pUpdateDialog, &AppImageUpdaterDialog::error, this, &AppImageUpdater::handleError);
     connect(_pUpdateDialog, &AppImageUpdaterDialog::finished, this, &AppImageUpdater::handleFinished);
     return;
 

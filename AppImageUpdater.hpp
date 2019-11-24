@@ -36,7 +36,8 @@ private Q_SLOTS:
     void handleAppImageInformation(QJsonObject);
     void handleAuthorizationFinished(QJsonObject);
     void handleFinished(QJsonObject);
-    void handleError(QString, short);
+    void handleError(short);
+    void handleAutoUpdateError(QString, short);
     void handleStarted(void);
     void handleCanceled(void);
 Q_SIGNALS:
