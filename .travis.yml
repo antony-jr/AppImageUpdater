@@ -23,7 +23,7 @@ script:
   - cd cli
   - /usr/local/Qt-5.10.0/bin/qmake .
   - make -j$(nproc)
-  - mkdri -p appdir/usr/bin ; strip appimageupdater ; cp appimageupdater appdir/usr/bin/
+  - mkdir -p appdir/usr/bin ; strip appimageupdater ; cp appimageupdater appdir/usr/bin/
   - cd ..
   - mkdir -p appdir/usr/bin ; strip AppImageUpdater ; cp AppImageUpdater appdir/usr/bin/
   - mkdir -p appdir/usr/share/applications ; cp build_resources/AppImageUpdater.desktop appdir/usr/share/applications/
