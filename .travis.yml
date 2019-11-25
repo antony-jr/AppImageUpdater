@@ -20,6 +20,11 @@ script:
   - export APPIMAGE_UPDATER_BUILD_TIME=$(date) 
   - /usr/local/Qt-5.10.0/bin/qmake .
   - make -j$(nproc)
+  - cd cli
+  - /usr/local/Qt-5.10.0/bin/qmake .
+  - make -j$(nproc)
+  - mkdri -p appdir/usr/bin ; strip appimageupdater ; cp appimageupdater appdir/usr/bin/
+  - cd ..
   - mkdir -p appdir/usr/bin ; strip AppImageUpdater ; cp AppImageUpdater appdir/usr/bin/
   - mkdir -p appdir/usr/share/applications ; cp build_resources/AppImageUpdater.desktop appdir/usr/share/applications/
   - mkdir -p appdir/usr/share/icons/hicolor/256x256/apps/ ; cp build_resources/AppImageUpdater.png appdir/usr/share/icons/hicolor/256x256/apps/AppImageUpdater.png
@@ -31,10 +36,16 @@ script:
   - wget -c -nv "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" 
   - chmod +x appimagetool-x86_64.AppImage
   - ./appimagetool-x86_64.AppImage -u "gh-releases-zsync|antony-jr|AppImageUpdater|continuous|AppImageUpdater*-x86_64.AppImage.zsync" appdir 
+  - cd cli
+  - ../linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -bundle-non-qt-libs
+  - ../appimagetool-x86_64.AppImage -u "gh-releases-zsync|antony-jr|AppImageUpdater|continuous|appimageupdater*-x86_64.AppImage.zsync" appdir
+  - cp appimageupdater*.AppImage ..
+  - cp *zsync ..
+  - cd ..
 
 after_success:
   - wget "https://github.com/probonopd/uploadtool/raw/master/upload.sh"
-  - bash upload.sh AppImageUpdater*.AppImage *zsync
+  - bash upload.sh AppImageUpdater*.AppImage appimageupdater*.AppImage *zsync
   
 branches:
   except:
