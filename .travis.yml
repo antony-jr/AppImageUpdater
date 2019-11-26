@@ -47,10 +47,9 @@ script:
 after_success:
   - wget "https://github.com/probonopd/uploadtool/raw/master/upload.sh"
   - bash upload.sh AppImageUpdater*.AppImage*
-  - UPLOADTOOL_SUFFIX="continuous-cli" bash upload.sh appimageupdater*.AppImage*
+  - UPLOADTOOL_SUFFIX=cli bash upload.sh appimageupdater*.AppImage*
 
 branches:
   except:
     - # Do not build tags that we create when we upload to GitHub Releases
     - /^(?i:continuous)/
-    - /^(?i:continuous-cli)/
