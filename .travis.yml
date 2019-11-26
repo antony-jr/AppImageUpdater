@@ -46,7 +46,7 @@ script:
 
 after_success:
   - wget "https://github.com/probonopd/uploadtool/raw/master/upload.sh"
-  - bash upload.sh AppImageUpdater*.AppImage* appimageupdater*.AppImage*
+  - bash upload.sh appimageupdater*.AppImage* AppImageUpdater*.AppImage*
 
 branches:
   except:
