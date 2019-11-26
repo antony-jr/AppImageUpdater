@@ -38,7 +38,7 @@ script:
   - ./appimagetool-x86_64.AppImage -u "gh-releases-zsync|antony-jr|AppImageUpdater|continuous|AppImageUpdater*-x86_64.AppImage.zsync" appdir 
   - cd cli
   - ../linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -bundle-non-qt-libs
-  - ../appimagetool-x86_64.AppImage -u "gh-releases-zsync|antony-jr|AppImageUpdater|continuous|appimageupdater*-x86_64.AppImage.zsync" appdir
+  - ../appimagetool-x86_64.AppImage -u "gh-releases-zsync|antony-jr|AppImageUpdater|continuous-cli|appimageupdater*-x86_64.AppImage.zsync" appdir
   - cp appimageupdater*.AppImage ..
   - cp *zsync ..
   - cd ..
@@ -46,9 +46,11 @@ script:
 
 after_success:
   - wget "https://github.com/probonopd/uploadtool/raw/master/upload.sh"
-  - bash upload.sh appimageupdater*.AppImage* AppImageUpdater*.AppImage*
+  - bash upload.sh AppImageUpdater*.AppImage*
+  - UPLOADTOOL_SUFFIX="continuous-cli" bash upload.sh appimageupdater*.AppImage*
 
 branches:
   except:
     - # Do not build tags that we create when we upload to GitHub Releases
     - /^(?i:continuous)/
+    - /^(?i:continuous-cli)/
