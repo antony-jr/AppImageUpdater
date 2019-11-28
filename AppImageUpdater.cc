@@ -39,6 +39,9 @@ AppImageUpdater::AppImageUpdater(bool minimized, QWidget *parent)
     connect(_pTIcon, &QSystemTrayIcon::activated, this, &AppImageUpdater::showHideWindow);
     _pTIcon->show();
 
+    // Set window flags to stay on top for About Dialog
+    _pAboutMessageBox.setWindowFlags(Qt::WindowStaysOnTopHint);
+
     /* Do not show the app if it ran on startup. */
     if(_pSettings.isRunOnStartup() && minimized) {
         this->hide();

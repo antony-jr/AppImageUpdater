@@ -9,7 +9,7 @@
 #define BOOL_CHECKED(B) (B == true) ? Qt::Checked : Qt::Unchecked
 
 SettingsDialog::SettingsDialog(QWidget *parent)
-    : QDialog(parent)
+    : QDialog(parent , Qt::WindowStaysOnTopHint)
 {
     _mUi.setupUi(this);
     (_mUi.doNotShowUpdateDialogs)->setCheckState(BOOL_CHECKED(_mSettings.value("doNotShowUpdateDialogs").toBool()));

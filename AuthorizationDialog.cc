@@ -25,7 +25,7 @@
 #define SU_COMMAND "/usr/bin/sudo"
 
 AuthorizationDialog::AuthorizationDialog(QWidget *parent)
-    : QDialog(parent)
+    : QDialog(parent, Qt::WindowStaysOnTopHint)
 {
     _pUi.setupUi(this);
     auto arguments = QCoreApplication::arguments();
