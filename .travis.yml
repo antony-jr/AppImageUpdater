@@ -18,10 +18,10 @@ script:
   - export APPIMAGE_UPDATER_COMMIT=$(git rev-parse --short HEAD)
   - export APPIMAGE_UPDATER_BUILD_NO=$TRAVIS_BUILD_NUMBER 
   - export APPIMAGE_UPDATER_BUILD_TIME=$(date) 
-  - /usr/local/Qt-5.10.0/bin/qmake .
+  - /usr/local/Qt-5.12.8/bin/qmake .
   - make -j$(nproc)
   - cd cli
-  - /usr/local/Qt-5.10.0/bin/qmake .
+  - /usr/local/Qt-5.12.8/bin/qmake .
   - make -j$(nproc)
   - mkdir -p appdir/usr/bin ; strip appimageupdater ; cp appimageupdater appdir/usr/bin/
   - cd ..
