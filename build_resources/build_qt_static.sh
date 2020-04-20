@@ -5,7 +5,7 @@ if [ ! -d "/usr/local/Qt-5.12.8" ]; then
     wget -c "https://download.qt.io/archive/qt/5.12/5.12.8/submodules/qtbase-everywhere-src-5.12.8.tar.xz"
     tar -xvf qtbase-everywhere-src-5.12.8.tar.xz
     cd qtbase-everywhere-src-5.12.8
-    ./configure -static -release -optimize-size -silent -opensource -confirm-license -opengl -nomake examples -qt-xcb -qt-xkbcommon -sm -qt-libpng -no-libjpeg -no-icu -qt-zlib -qt-pcre -gtk -system-freetype -qt-harfbuzz
+    ./configure -static -release -optimize-size -silent -opensource -confirm-license -opengl -nomake examples -qt-xcb -sm -qt-libpng -no-libjpeg -no-icu -qt-zlib -qt-pcre -gtk -system-freetype -qt-harfbuzz
     make -j$(nproc) && sudo make install
 fi
 
