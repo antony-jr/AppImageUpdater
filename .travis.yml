@@ -1,15 +1,15 @@
 language: cpp
 compiler: gcc
 sudo: require
-dist: trusty
+# dist: trusty
+dist: xenial
 
 before_install:
-  - sudo add-apt-repository ppa:beineri/opt-qt-5.10.1-trusty -y
+  - sudo add-apt-repository ppa:beineri/opt-qt-5.12.7-xenial -y
   - sudo apt-get update -qq
 
 install:
-  - sudo apt-get -y install qt510base
-  - source /opt/qt*/bin/qt*-env.sh
+  - sudo apt-get -y install qt512base
   - # sudo bash build_resources/build_qt_static.sh 
 
 script:
@@ -17,6 +17,7 @@ script:
   - cat /opt/qt*/bin/qt*-env.sh >> test.sh
   - cat test.sh
   - source test.sh
+  - set +x
   - export VERSION=$(git rev-parse --short HEAD)
   - export APPIMAGE_UPDATER_VERSION=1-alpha
   - export APPIMAGE_UPDATER_COMMIT=$(git rev-parse --short HEAD)
@@ -49,9 +50,9 @@ script:
   - ls # for debug
 
 after_success:
-  - wget "https://github.com/probonopd/uploadtool/raw/master/upload.sh"
-  - bash upload.sh AppImageUpdater*.AppImage*
-  - UPLOADTOOL_SUFFIX=cli bash upload.sh appimageupdater*.AppImage*
+  - # wget "https://github.com/probonopd/uploadtool/raw/master/upload.sh"
+  - # bash upload.sh AppImageUpdater*.AppImage*
+  - # UPLOADTOOL_SUFFIX=cli bash upload.sh appimageupdater*.AppImage*
 
 branches:
   except:
