@@ -13,6 +13,10 @@ install:
   - # sudo bash build_resources/build_qt_static.sh 
 
 script:
+  - echo "set -x" > test.sh
+  - cat /opt/qt*/bin/qt*-env.sh >> test.sh
+  - cat test.sh
+  - source test.sh
   - export VERSION=$(git rev-parse --short HEAD)
   - export APPIMAGE_UPDATER_VERSION=1-alpha
   - export APPIMAGE_UPDATER_COMMIT=$(git rev-parse --short HEAD)
