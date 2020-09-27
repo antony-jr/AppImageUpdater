@@ -39,7 +39,7 @@ script:
   - git clone https://github.com/antony-jr/AppImageUpdaterBridge
   - cd AppImageUpdaterBridge
   - git checkout 2.x
-  - cmake -DDECENTRALIZED_UPDATE_ENABLED=ON .
+  - cmake -DDECENTRALIZED_UPDATE_ENABLED=ON -DSTATIC_LINK_TORRENT_RASTERBAR=ON .
   - make -j$(nproc)
   - sudo make install
   - cd .. # Finally we can build our main application
