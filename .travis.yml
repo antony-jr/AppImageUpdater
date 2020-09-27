@@ -29,12 +29,12 @@ script:
   - echo "using gcc ;" > ~/user-config.jam
   - export BOOST_ROOT=$PWD
   - export BOOST_BUILD_PATH=$PWD/tools/build
-  - b2 cxxflags="-std=c++14" install --with-system > /dev/null
+  - sudo b2 cxxflags="-std=c++14" install --with-system > /dev/null
   - cd ..
   - wget -q "https://github.com/arvidn/libtorrent/releases/download/libtorrent-1.2.8/libtorrent-rasterbar-1.2.8.tar.gz"
   - tar -xf libtorrent-rasterbar-1.2.8.tar.gz
   - cd libtorrent-rasterbar-1.2.8
-  - b2 cxxflags="-std=c++14" variant=release boost-link=static link=static fpic=on crypto=openssl runtime-link=static install
+  - sudo b2 cxxflags="-std=c++14" variant=release boost-link=static link=static fpic=on crypto=openssl runtime-link=static install
   - cd ..
   - git clone https://github.com/antony-jr/AppImageUpdaterBridge
   - cd AppImageUpdaterBridge
