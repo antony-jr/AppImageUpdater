@@ -14,9 +14,8 @@
 #include <QFileInfo>
 #include <QSystemTrayIcon>
 #include <QDirIterator>
+#include <QAppImageUpdate>
 #include <ui_AppImageUpdater.h>
-#include <AppImageUpdaterBridge>
-#include <AppImageUpdaterDialog>
 #include <SettingsDialog.hpp>
 #include <AuthorizationDialog.hpp>
 
@@ -29,17 +28,17 @@ public:
 public Q_SLOTS:
     void gracefulShow(void);
 private Q_SLOTS:
-    void updateAppImagesInQueue(void);
-    void showAbout(void);
-    void showHide(void); 
+    void updateAppImagesInQueue();    
+    void showAbout();
+    void showHide(); 
     void showHideWindow(QSystemTrayIcon::ActivationReason);
-    void handleAppImageInformation(QJsonObject);
+    void handleAppImageInformation(QJsonObject, short);
     void handleAuthorizationFinished(QJsonObject);
-    void handleFinished(QJsonObject);
+    void handleFinished(QJsonObject, short);
     void handleError(short);
-    void handleAutoUpdateError(QString, short);
-    void handleStarted(void);
-    void handleCanceled(void);
+    void handleAutoUpdateError(short);
+    void handleStarted(short);
+    void handleCanceled(short);
 Q_SIGNALS:
     void quit();
 private:
@@ -54,8 +53,7 @@ private:
             _pDropNorm;
     QIcon _pWindowIcon;
     QQueue<QString> _pAppImagePaths;
-    AppImageUpdaterBridge::AppImageDeltaRevisioner *m_Updater = nullptr;
-    AppImageUpdaterBridge::AppImageUpdaterDialog *_pUpdateDialog = nullptr;
+    QAppImageUpdate *m_Updater = nullptr;
     QSystemTrayIcon *_pTIcon = nullptr;
 protected:
     void closeEvent(QCloseEvent *);

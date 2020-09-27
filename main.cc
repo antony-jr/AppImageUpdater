@@ -1,16 +1,18 @@
 #include <QApplication>
 #include <QCommandLineParser>
+#include <QAppImageUpdate>
 #include <AppImageUpdater.hpp>
 #include <AppImageUpdaterStandalone.hpp>
-#include <AppImageUpdaterDialog>
 
-using AppImageUpdaterBridge::AppImageUpdaterDialog;
+#ifndef APPIMAGE_UPDATER_VERSION
+#define APPIMAGE_UPDATER_VERSION "2"
+#endif
 
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
-    int standaloneFlags = AppImageUpdaterDialog::Default ^ AppImageUpdaterDialog::ShowBeforeProgress; 
-	 
+    int standaloneFlags = QAppImageUpdate::GuiFlag::Default ^ QAppImageUpdate::GuiFlag::ShowBeforeProgress; 
+
     app.setQuitOnLastWindowClosed(false);
     QApplication::setOrganizationName("AppImage");
     QApplication::setApplicationName("AppImageUpdater");
@@ -45,15 +47,16 @@ int main(int argc, char **argv)
 
     if(!parser.value(standalone).isEmpty()){ 
 	    if(parser.isSet(noconfirm)){
-		    standaloneFlags ^= AppImageUpdaterDialog::ShowUpdateConfirmationDialog;
+		    standaloneFlags ^= QAppImageUpdate::GuiFlag::ShowUpdateConfirmationDialog;
+		    standaloneFlags |= QAppImageUpdate::GuiFlag::NoConfirmTorrentUsage;
 	    }
 
 	    if(parser.isSet(beforeProgress)){
-		    standaloneFlags |= AppImageUpdaterDialog::ShowBeforeProgress;
+		    standaloneFlags |= QAppImageUpdate::GuiFlag::ShowBeforeProgress;
 	    }
 
 	    if(parser.isSet(silent)){
-		    standaloneFlags ^= AppImageUpdaterDialog::ShowProgressDialog;
+		    standaloneFlags ^= QAppImageUpdate::GuiFlag::ShowProgressDialog;
 	    }
 
 	    AppImageUpdaterStandalone standaloneDialogHandle(parser.value(standalone), standaloneFlags);
