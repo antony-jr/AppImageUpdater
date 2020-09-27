@@ -15,14 +15,14 @@ script:
   - Xvfb :100 -ac &
   - export DISPLAY=:100.0
   - wget -q "https://www.openssl.org/source/openssl-1.1.1h.tar.gz"
-  - tar -xvf openssl-1.1.1h.tar.gz 
+  - tar -xf openssl-1.1.1h.tar.gz 
   - cd openssl-1.1.1h
   - ./config no-shared
   - make -j$(nproc) > /dev/null
   - sudo make install > /dev/null
   - cd ..
   - wget -q "https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.tar.gz"
-  - tar -xvf boost_1_74_0.tar.gz
+  - tar -xf boost_1_74_0.tar.gz
   - cd boost_1_74_0
   - ./bootstrap.sh
   - sudo cp b2 /usr/bin/
@@ -32,7 +32,7 @@ script:
   - b2 cxxflags="-std=c++14" install --with-system > /dev/null
   - cd ..
   - wget -q "https://github.com/arvidn/libtorrent/releases/download/libtorrent-1.2.8/libtorrent-rasterbar-1.2.8.tar.gz"
-  - tar -xvf libtorrent-rasterbar-1.2.8.tar.gz
+  - tar -xf libtorrent-rasterbar-1.2.8.tar.gz
   - cd libtorrent-rasterbar-1.2.8
   - b2 cxxflags="-std=c++14" variant=release boost-link=static link=static fpic=on crypto=openssl runtime-link=static install
   - cd ..
