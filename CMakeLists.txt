@@ -6,13 +6,11 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
-set(OPENSSL_USE_STATIC_LIBS TRUE)
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-find_package(OpenSSL REQUIRED)
 find_package(QAppImageUpdate)
 find_package(Qt5Gui)
 find_package(Qt5Concurrent)
@@ -44,4 +42,4 @@ add_executable(AppImageUpdater main.cc
 			     AuthorizationDialog.cc
 			     app_resources/resources.qrc)
 target_link_libraries(AppImageUpdater PUBLIC Qt5::Concurrent Qt5::Gui util pthread dl)
-target_link_libraries(AppImageUpdater PRIVATE QAppImageUpdate OpenSSL::Crypto OpenSSL::SSL)
+target_link_libraries(AppImageUpdater PRIVATE QAppImageUpdate)
