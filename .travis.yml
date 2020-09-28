@@ -17,7 +17,7 @@ script:
   - wget -q "https://www.openssl.org/source/openssl-1.1.1h.tar.gz"
   - tar -xf openssl-1.1.1h.tar.gz 
   - cd openssl-1.1.1h
-  - ./config shared
+  - ./config no-shared
   - make -j$(nproc) > /dev/null
   - sudo make install > /dev/null
   - cd ..
@@ -29,7 +29,7 @@ script:
   - echo "using gcc ;" > ~/user-config.jam
   - export BOOST_ROOT=$PWD
   - export BOOST_BUILD_PATH=$PWD/tools/build
-  - sudo b2 cxxflags="-std=c++14" install --with-system > /dev/null
+  - sudo BOOST_ROOT=$PWD BOOST_BUILD_PATH=$PWD/tools/build b2 cxxflags="-std=c++14" variant=release link=static install -j$(nproc) --with-system --with-chrono --with-random > /dev/null
   - cd ..
   - wget -q "https://github.com/arvidn/libtorrent/releases/download/libtorrent-1.2.8/libtorrent-rasterbar-1.2.8.tar.gz"
   - tar -xf libtorrent-rasterbar-1.2.8.tar.gz
@@ -39,16 +39,15 @@ script:
   - git clone https://github.com/antony-jr/AppImageUpdaterBridge
   - cd AppImageUpdaterBridge
   - git checkout 2.x
-  - cmake -DDECENTRALIZED_UPDATE_ENABLED=ON -DSTATIC_LINK_TORRENT_RASTERBAR=ON .
+  - mkdir build
+  - cd build
+  - cmake -DBUILD_AS_SHARED_LIB=ON -DDECENTRALIZED_UPDATE_ENABLED=ON -DSTATIC_LINK_TORRENT_RASTERBAR=ON ..
   - make -j$(nproc)
   - sudo make install
+  - cd ..
+  - rm -rf build
   - cd .. # Finally we can build our main application
-  - export VERSION=$(git rev-parse --short HEAD)
-  - export APPIMAGE_UPDATER_VERSION=2-alpha
-  - export APPIMAGE_UPDATER_COMMIT=$(git rev-parse --short HEAD)
-  - export APPIMAGE_UPDATER_BUILD_NO=$TRAVIS_BUILD_NUMBER 
-  - export APPIMAGE_UPDATER_BUILD_TIME=$(date) 
-  - cmake .
+  - cmake -DVERSION=$(git rev-parse --short HEAD) -DAPPIMAGE_UPDATER_VERSION=2-alpha -DAPPIMAGE_UPDATER_COMMIT=$(git rev-parse --short HEAD) -DAPPIMAGE_UPDATER_BUILD_NO=$TRAVIS_BUILD_NUMBER -DAPPIMAGE_UPDATER_BUILD_TIME=$(date) .
   - make -j$(nproc)
   - mkdir -p appdir/usr/bin ; strip AppImageUpdater ; cp AppImageUpdater appdir/usr/bin/
   - mkdir -p appdir/usr/share/applications ; cp build_resources/AppImageUpdater.desktop appdir/usr/share/applications/
