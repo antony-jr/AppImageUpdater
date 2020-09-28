@@ -43,5 +43,5 @@ add_executable(AppImageUpdater main.cc
 			     SettingsDialog.cc
 			     AuthorizationDialog.cc
 			     app_resources/resources.qrc)
-target_link_libraries(AppImageUpdater PUBLIC Qt5::Concurrent Qt5::Gui util pthread)
+target_link_libraries(AppImageUpdater PUBLIC Qt5::Concurrent Qt5::Gui util pthread dl)
 target_link_libraries(AppImageUpdater PRIVATE QAppImageUpdate OpenSSL::Crypto OpenSSL::SSL)
