@@ -11,7 +11,6 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-find_package(OpenSSL)
 find_package(QAppImageUpdate)
 find_package(Qt5Gui)
 find_package(Qt5Concurrent)
@@ -43,4 +42,4 @@ add_executable(AppImageUpdater main.cc
 			     AuthorizationDialog.cc
 			     app_resources/resources.qrc)
 target_link_libraries(AppImageUpdater PUBLIC Qt5::Concurrent Qt5::Gui util)
-target_link_libraries(AppImageUpdater PRIVATE QAppImageUpdate OpenSSL::Crypto OpenSSL::SSL)
+target_link_libraries(AppImageUpdater PRIVATE QAppImageUpdate)
