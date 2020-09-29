@@ -53,6 +53,9 @@ script:
   - export VERSION=$(git rev-parse --short HEAD)
   - cmake -DAPPIMAGE_UPDATER_VERSION=2-alpha -DAPPIMAGE_UPDATER_COMMIT=$(git rev-parse --short HEAD) -DAPPIMAGE_UPDATER_BUILD_NO=$TRAVIS_BUILD_NUMBER -DAPPIMAGE_UPDATER_BUILD_TIME=$(date) .
   - make -j$(nproc)
+  - mkdir -p appdir/usr/lib
+  - cp /lib/x86_64-linux-gnu/libssl* appdir/usr/lib/
+  - cp /lib/x86_64-linux-gnu/libcrypto* appdir/usr/lib/
   - mkdir -p appdir/usr/bin ; strip AppImageUpdater ; cp AppImageUpdater appdir/usr/bin/
   - mkdir -p appdir/usr/share/applications ; cp build_resources/AppImageUpdater.desktop appdir/usr/share/applications/
   - mkdir -p appdir/usr/share/icons/hicolor/256x256/apps/ ; cp build_resources/AppImageUpdater.png appdir/usr/share/icons/hicolor/256x256/apps/AppImageUpdater.png
