@@ -1,0 +1,7 @@
+<RCC>
+<qresource>
+    <file>main.qml</file>
+    <file>Components/MainMenu.qml</file>
+    <file>Components/AboutPage.qml</file>
+</qresource>
+</RCC>

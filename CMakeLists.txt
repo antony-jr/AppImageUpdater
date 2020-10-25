@@ -14,6 +14,8 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 find_package(QAppImageUpdate)
 find_package(Qt5Gui)
 find_package(Qt5Concurrent)
+find_package(Qt5Qml)
+find_package(Qt5QuickControls2)
 
 # Include Directories.
 include_directories(${CMAKE_BINARY_DIR})
@@ -40,6 +42,12 @@ add_executable(AppImageUpdater main.cc
 			     AppImageUpdaterStandalone.cc 
 			     SettingsDialog.cc
 			     AuthorizationDialog.cc
-			     app_resources/resources.qrc)
-target_link_libraries(AppImageUpdater PUBLIC Qt5::Concurrent Qt5::Gui util)
+			     app_resources/resources.qrc
+			     qml/qml.qrc)
+target_link_libraries(AppImageUpdater PUBLIC 
+				      Qt5::Concurrent 
+				      Qt5::Gui 
+				      Qt5::Qml 
+				      Qt5::QuickControls2
+				      util)
 target_link_libraries(AppImageUpdater PRIVATE QAppImageUpdate)
