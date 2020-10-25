@@ -4,9 +4,7 @@
 #include <QIcon>
 #include <QCommandLineParser>
 
-#ifndef APPIMAGE_UPDATER_VERSION
-#define APPIMAGE_UPDATER_VERSION "2"
-#endif
+#include <BuildConstants.hpp>
 
 int main(int argc, char **argv)
 {
@@ -14,7 +12,7 @@ int main(int argc, char **argv)
     QApplication::setOrganizationName("ShareMyHost");
     QApplication::setApplicationName("ShareMyHost");
 
-    //qmlRegisterType<Clipper>("Core.Clipper", 1, 0, "Clipper");
+    qmlRegisterType<BuildConstants>("Core.BuildConstants", 1, 0, "BuildConstants");
     
     app.setWindowIcon(QIcon(QString::fromUtf8(":/logo.png")));
     QQuickStyle::setStyle("Material"); // Use Google Material Design

@@ -5,6 +5,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
 
+import Core.BuildConstants 1.0
 
 GridLayout {
 	visible: false
@@ -24,6 +25,10 @@ GridLayout {
 	    	Layout.row: 0
 	    	Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
 	    	Layout.topMargin: 10
+		
+		BuildConstants { 
+			id: bconstants
+		}
 
 		RowLayout{
 			Layout.preferredWidth: parent.width; 
@@ -38,19 +43,24 @@ GridLayout {
 		}
 
 		RowLayout {
-			Layout.preferredWidth: parent.width; 
-			Layout.preferredHeight: parent.height;
+			Layout.alignment: Qt.AlignHCenter
 			Label {
 				Layout.preferredWidth: parent.Layout.preferredWidth;
-				horizontalAlignment: Qt.AlignHCenter
+				horizontalAlignment: Qt.AlignHLeft
 				verticalAlignment: Qt.AlignTop
 				leftPadding: 10
 				wrapMode: Text.WordWrap
 				textFormat: Text.RichText
 				text: qsTr("<br>") + 
-				      qsTr(" QAppImageUpdate &nbsp;&nbsp;: <b>v2.0.0</b><br>") +
-				      qsTr(" Torrent Rasterbar &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <b>v1.2.8</b><br>") +
-				      qsTr(" AppImage Updater &nbsp; : <b>v2.0.0</b><br>") 
+				      qsTr(" QAppImageUpdate &nbsp;&nbsp;: <b>v") +
+			              bconstants.getQAppImageUpdateVersion() +
+				      qsTr("</b><br>") + 
+				      qsTr(" Torrent Rasterbar &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;: <b>v") +
+				      bconstants.getTorrentVersion() +
+				      qsTr("</b><br>") + 	
+				      qsTr(" AppImage Updater &nbsp; : <b>v")  +
+				      bconstants.getVersion() +
+				      qsTr("</b><br>")
 			}
 		}
 
@@ -63,7 +73,13 @@ GridLayout {
 			horizontalAlignment: Qt.AlignHCenter
 			verticalAlignment: Qt.AlignTop
 			text: 
-			      qsTr("Commit <b>900ea84</b>, build <b>129</b> built on <b>Wed Sep 23 19:37:20 UTC 2020</b>.<br>") +
+			      qsTr("Commit <b>") + 
+			      bconstants.getCommit() + 
+			      qsTr("</b>, build <b>") +
+			      bconstants.getBuildNo() + 
+			      qsTr("</b> built on <b>") +
+			      bconstants.getBuildTime() + 
+			      qsTr("</b>.<br>") +
 			      qsTr("Lesser GNU Public License.<br>") +
 			      qsTr("Copyright \u00A9 Antony Jr.<br>")
 			wrapMode: Text.WordWrap

@@ -34,14 +34,7 @@ if(APPIMAGE_UPDATER_BUILD_TIME)
 endif()
 
 add_executable(AppImageUpdater main.cc
-	                     AppImageUpdater.hpp 
-			     AppImageUpdaterStandalone.hpp
-			     SettingsDialog.hpp
-			     AuthorizationDialog.hpp 
-			     AppImageUpdater.cc 
-			     AppImageUpdaterStandalone.cc 
-			     SettingsDialog.cc
-			     AuthorizationDialog.cc
+	                     BuildConstants.hpp
 			     app_resources/resources.qrc
 			     qml/qml.qrc)
 target_link_libraries(AppImageUpdater PUBLIC 

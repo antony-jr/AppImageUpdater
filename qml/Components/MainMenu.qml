@@ -19,6 +19,11 @@ MenuBar {
 	Menu {
 	    title: qsTr("Help")
 	    MenuItem {
+		text: qsTr("Check For Update")
+		onTriggered: {
+		}
+	    }
+	    MenuItem {
 		text: qsTr("About")
 		onTriggered: {
 			mainWindow.showAboutPage();	
