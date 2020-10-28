@@ -1,12 +1,9 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
-    <file>shield.png</file>
     <file>logo.png</file>
-    <file>check.png</file>
     <file>default_icon.png</file>
     <file>dotted_square.png</file>
     <file>dotted_square_drop.png</file>
-    <file>about.png</file>
-    <file>exit.png</file>
+    <file>ajr_logo.png</file>
 </qresource>
 </RCC>
