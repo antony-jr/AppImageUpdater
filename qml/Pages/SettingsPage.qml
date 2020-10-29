@@ -9,7 +9,10 @@ Page {
     title: qsTr("Settings")
 
     ColumnLayout {
-        Layout.preferredWidth: parent.width
+        id: settingsColLayout
+	property real factor: 100;
+
+	Layout.preferredWidth: parent.width
         Layout.preferredHeight: parent.height
         anchors.fill: parent
         anchors.top: parent.top
@@ -20,6 +23,7 @@ Page {
         spacing: 0
 
         Switch {
+	    Layout.preferredWidth: parent.Layout.preferredWidth - settingsColLayout.factor
             Layout.alignment: Qt.AlignCenter
             checked: settings_manager.isDarkMode
             text: qsTr("Enable Dark Mode")
@@ -33,7 +37,9 @@ Page {
         }
 
         Switch {
-            Layout.alignment: Qt.AlignCenter
+	      Layout.preferredWidth: parent.Layout.preferredWidth - settingsColLayout.factor
+           
+	    Layout.alignment: Qt.AlignCenter
             checked: settings_manager.isAllowSystemTrayNotification
             text: qsTr("Allow System Tray Notification")
             onClicked: {
@@ -42,7 +48,9 @@ Page {
         }
 
         Switch {
-            Layout.alignment: Qt.AlignCenter
+   Layout.preferredWidth: parent.Layout.preferredWidth - settingsColLayout.factor
+                      
+Layout.alignment: Qt.AlignCenter
             checked: settings_manager.isRunOnStartup
             text: qsTr("Run at Startup")
             onClicked: {
@@ -51,7 +59,9 @@ Page {
         }
 
         Switch {
-            Layout.alignment: Qt.AlignCenter
+   Layout.preferredWidth: parent.Layout.preferredWidth - settingsColLayout.factor
+           
+           Layout.alignment: Qt.AlignCenter
             checked: settings_manager.isDecentralizedUpdateEnabled
             text: qsTr("Use Decentralized Update")
             onClicked: {
@@ -63,17 +73,36 @@ Page {
         }
 
         Switch {
-            Layout.alignment: Qt.AlignCenter
+   Layout.preferredWidth: parent.Layout.preferredWidth - settingsColLayout.factor
+            
+          Layout.alignment: Qt.AlignCenter
             checked: settings_manager.isProxyEnabled
             text: qsTr("Enable Proxy")
             onClicked: {
                 settings_manager.isProxyEnabled = checked;
             }
         }
+ 
+	ColumnLayout {
+	    Layout.alignment: Qt.AlignCenter
+           Layout.preferredWidth: parent.Layout.preferredWidth - (110 + settingsColLayout.factor)
+ 	            Label {
+              font.pixelSize: (function() {
+                    var factor = 0.03;
+                    var calculatedHPxSize = parent.Layout.preferredHeight * factor;
+                    var calculatedWPxSize = parent.Layout.preferredWidth * factor;
+                    if (calculatedHPxSize > calculatedWPxSize)
+                        return calculatedWPxSize;
+                    else
+                        return calculatedHPxSize;
+                })()
+		text: qsTr("<h4>Proxy Settings</h2>");
+                wrapMode: Text.WordWrap
+                textFormat: Text.RichText
+            }
 
-        RowLayout {
-            Layout.alignment: Qt.AlignCenter
 
+	RowLayout {
             TextField {
                 placeholderText: qsTr("Proxy Host")
                 text: settings_manager.ProxyHost
@@ -102,8 +131,7 @@ Page {
         }
 
         RowLayout {
-            Layout.alignment: Qt.AlignCenter
-
+           
             Label {
                 text: qsTr("Proxy Type: ")
                 enabled: settings_manager.isProxyEnabled
@@ -130,8 +158,7 @@ Page {
         }
 
         RowLayout {
-            Layout.alignment: Qt.AlignCenter
-
+           
             TextField {
                 placeholderText: qsTr("Username")
                 text: settings_manager.ProxyUser
@@ -152,6 +179,7 @@ Page {
             }
 
         }
+	} //col
 
     }
 

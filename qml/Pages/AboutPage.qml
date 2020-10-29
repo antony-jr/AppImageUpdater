@@ -41,12 +41,6 @@ Page {
         anchors.bottom: parent.bottom
         spacing: 0
 
-        Button {
-            Layout.alignment: Qt.AlignCenter | Qt.AlignVTop
-            text: qsTr("Check For Update")
-            Material.background: Material.Teal
-        }
-
         Image {
             Layout.alignment: Qt.AlignCenter | Qt.AlignVCenter
             cache: true

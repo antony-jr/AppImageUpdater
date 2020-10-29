@@ -10,12 +10,12 @@ import QtQuick.Window 2.0
 
 ApplicationWindow {
     id: root
-
+    flags: Qt.WindowStaysOnTopHint
     title: qsTr("AppImage Updater")
     width: 650
     height: 500
     minimumWidth: 400
-    minimumHeight: 450
+    minimumHeight: 500
     visible: true
     Material.theme: Material.Light // Use google material design
     Component.onCompleted: {
@@ -23,10 +23,57 @@ ApplicationWindow {
         setY(Screen.height / 2 - height / 2);
         if (settings_manager.isDarkMode)
             root.Material.theme = Material.Dark;
+     } 
 
+    /// Notify routine 
+    function notify(str) {
+	notificationPopup.notifyText = str;
+	notificationPopup.open();
     }
 
     /// Popups used.
+    Timer {
+	id: notificationTimer
+       	interval: 1000; running: false; repeat: false
+        onTriggered: { notificationTimer.stop(); notificationPopup.close(); } 
+    }
+
+    Popup {
+	property string notifyText: "";
+        id: notificationPopup
+
+        x: (root.width / 2) - (notificationPopup.width / 2)
+        y: (root.height / 2) - (notificationPopup.height / 2)
+        width: 250
+        height: 70
+        modal: true
+        focus: true
+    	onOpened: {
+		notificationTimer.start();
+	}
+
+	ColumnLayout {
+            anchors.fill: parent
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+
+            Label {
+                Layout.alignment: Qt.AlignCenter
+                Layout.preferredWidth: parent.width
+                Layout.preferredHeight: parent.height
+		horizontalAlignment: Text.AlignHCenter
+		verticalAlignment: Text.AlignVCenter
+		font.pixelSize: 8
+		text: notificationPopup.notifyText
+                wrapMode: Text.WordWrap
+                textFormat: Text.RichText
+            }
+
+        }
+
+    }
     Popup {
         id: btWarningPopup
 
@@ -36,9 +83,8 @@ ApplicationWindow {
         height: root.height - 250
         modal: true
         focus: true
-        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
-
-        ColumnLayout {
+        
+	ColumnLayout {
             anchors.fill: parent
             anchors.top: parent.top
             anchors.left: parent.left
@@ -107,6 +153,41 @@ ApplicationWindow {
         Column {
             anchors.fill: parent
 
+	    ItemDelegate {
+                text: qsTr("Completed Update(s)")
+                width: parent.width
+                onClicked: {
+    		    stackView.push("qrc:/Pages/CompletedPage.qml");
+                    drawer.close();
+                }
+            }
+	    
+	    ItemDelegate {
+                text: qsTr("Failed Update(s)")
+                width: parent.width
+                onClicked: {
+                  stackView.push("qrc:/Pages/FailedPage.qml"); 
+		  drawer.close();
+                }
+            }
+
+	    ItemDelegate {
+                text: qsTr("Queued Update(s)")
+                width: parent.width
+                onClicked: {
+                    stackView.push("qrc:/Pages/QueuedPage.qml");
+		    drawer.close();
+                }
+            }
+
+	    ItemDelegate {
+                text: qsTr("Check For Update")
+                width: parent.width
+                onClicked: {
+                    drawer.close();
+                }
+            }
+	
             ItemDelegate {
                 text: qsTr("Settings")
                 width: parent.width
@@ -125,6 +206,14 @@ ApplicationWindow {
                 }
             }
 
+ 	    ItemDelegate {
+                text: qsTr("Quit")
+                width: parent.width
+                onClicked: {
+                    drawer.close();
+		    Qt.quit();
+                }
+            }
         }
 
     }
@@ -140,7 +229,7 @@ ApplicationWindow {
         anchors.bottom: parent.bottom
     }
 
-    header: ToolBar {
+     header: ToolBar {
         contentHeight: toolButton.implicitHeight
 
         ToolButton {
@@ -160,7 +249,5 @@ ApplicationWindow {
             text: stackView.currentItem.title
             anchors.centerIn: parent
         }
-
     }
-
 }
