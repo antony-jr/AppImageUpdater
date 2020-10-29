@@ -2,6 +2,7 @@
 <qresource>
     <file>main.qml</file>
     <file>Pages/HomePage.qml</file>
+    <file>Pages/SettingsPage.qml</file>
     <file>Pages/AboutPage.qml</file>
 </qresource>
 </RCC>

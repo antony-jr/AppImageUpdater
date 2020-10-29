@@ -35,6 +35,8 @@ endif()
 
 add_executable(AppImageUpdater main.cc
 	                     BuildConstants.hpp
+			     SettingsManager.hpp
+			     SettingsManager.cc
 			     app_resources/resources.qrc
 			     qml/qml.qrc)
 target_link_libraries(AppImageUpdater PUBLIC 

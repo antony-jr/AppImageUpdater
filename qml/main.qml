@@ -6,6 +6,10 @@ import QtQuick.Dialogs 1.3
 import QtQuick.Layouts 1.12
 import QtQuick.Window 2.0
 
+// All C++ Communication Objects
+import Core.BuildConstants 1.0
+import Core.SettingsManager 1.0
+
 ApplicationWindow {
     id: root
 
@@ -19,7 +23,82 @@ ApplicationWindow {
     Component.onCompleted: {
         setX(Screen.width / 2 - width / 2);
         setY(Screen.height / 2 - height / 2);
+
+	if(settings_manager.isDarkMode) {
+		root.Material.theme = Material.Dark;
+	}
     }
+
+    /// Popups used.
+    Popup {
+        id: btWarningPopup
+        x: (root.width / 2)  - (btWarningPopup.width / 2)
+	y: (root.height / 4) - (btWarningPopup.height / 4)
+	width: root.width /2 
+	height: root.height - 200
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
+   	ColumnLayout {
+        	anchors.fill: parent
+		anchors.top: parent.top
+        	anchors.left: parent.left
+        	anchors.right: parent.right
+        	anchors.bottom: parent.bottom
+           
+		Label {
+            	Layout.alignment: Qt.AlignHCenter | Qt.AlignVTop
+	   		Layout.preferredWidth: parent.width
+		Layout.preferredHeight: parent.height   
+        font.pixelSize: (function() {
+                var factor = 0.03;
+                var calculatedHPxSize = btWarningPopup.height * factor;
+                var calculatedWPxSize = btWarningPopup.width * factor;
+                if (calculatedHPxSize > calculatedWPxSize)
+                    return calculatedWPxSize;
+                else
+                    return calculatedHPxSize;
+            })()
+            text: qsTr("<b><h1><font color='red'>Privacy Warning</font></h2></b><br>") +
+	    (function() { 
+		var r = qsTr("");
+		r += qsTr("At the moment the so called <i>'Decentralized Update'</i>");
+		r += qsTr(" is achieved with the <b>BitTorrent protocol</b>. ");
+		r += qsTr(" In any P2P network your <b>IP address will be shared publically</b> with");
+		r += qsTr(" peers and the entire world.");
+		r += qsTr(" This means that anyone can see your IP address downloading some software ");
+		r += qsTr("which is a serious privacy breach in our opinion, So if you really care about ");
+		r += qsTr("privacy please don't use this feature. ");
+		r += qsTr("This also consumes more bandwidth than normal download");
+		r += qsTr(", So for mobile networks and metered networks please don't");
+		r += qsTr(" enable this feature. ");
+		r += qsTr(" This is only suitable for users who update large number of");
+		r += qsTr(" AppImages or a large one.");
+		r += qsTr("This is also very useful in a local network. ");
+		r += qsTr("<br><br>");
+		r += qsTr("<b><i>TL;DR Do not enable this if you don't know what you are doing!");
+		r += qsTr(" This is only for brave hearts! ");
+		r += qsTr("No one is responsible if you do something wrong!</i></b><br><br>");
+		return r;
+	    })()
+
+            wrapMode: Text.WordWrap
+            textFormat: Text.RichText
+            onLinkActivated: Qt.openUrlExternally(link)
+        }
+	} 
+    }
+    // ---
+
+    // Backend Core
+    BuildConstants {
+        id: bconstants
+    }
+
+    SettingsManager {
+       id: settings_manager
+    }
+    // ---
 
     Drawer {
         id: drawer
@@ -29,6 +108,15 @@ ApplicationWindow {
 
         Column {
             anchors.fill: parent
+
+            ItemDelegate {
+                text: qsTr("Settings")
+                width: parent.width
+                onClicked: {
+                    stackView.push("qrc:/Pages/SettingsPage.qml");
+                    drawer.close();
+                }
+            }
 
             ItemDelegate {
                 text: qsTr("About")
