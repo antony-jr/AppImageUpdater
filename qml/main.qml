@@ -10,6 +10,13 @@ import QtQuick.Window 2.0
 
 ApplicationWindow {
     id: root
+
+    /// Notify routine
+    function notify(str) {
+        notificationPopup.notifyText = str;
+        notificationPopup.open();
+    }
+
     flags: Qt.WindowStaysOnTopHint
     title: qsTr("AppImage Updater")
     width: 650
@@ -23,24 +30,26 @@ ApplicationWindow {
         setY(Screen.height / 2 - height / 2);
         if (settings_manager.isDarkMode)
             root.Material.theme = Material.Dark;
-     } 
 
-    /// Notify routine 
-    function notify(str) {
-	notificationPopup.notifyText = str;
-	notificationPopup.open();
     }
 
     /// Popups used.
     Timer {
-	id: notificationTimer
-       	interval: 1000; running: false; repeat: false
-        onTriggered: { notificationTimer.stop(); notificationPopup.close(); } 
+        id: notificationTimer
+
+        interval: 1000
+        running: false
+        repeat: false
+        onTriggered: {
+            notificationTimer.stop();
+            notificationPopup.close();
+        }
     }
 
     Popup {
-	property string notifyText: "";
         id: notificationPopup
+
+        property string notifyText: ""
 
         x: (root.width / 2) - (notificationPopup.width / 2)
         y: (root.height / 2) - (notificationPopup.height / 2)
@@ -48,11 +57,11 @@ ApplicationWindow {
         height: 70
         modal: true
         focus: true
-    	onOpened: {
-		notificationTimer.start();
-	}
+        onOpened: {
+            notificationTimer.start();
+        }
 
-	ColumnLayout {
+        ColumnLayout {
             anchors.fill: parent
             anchors.top: parent.top
             anchors.left: parent.left
@@ -63,10 +72,10 @@ ApplicationWindow {
                 Layout.alignment: Qt.AlignCenter
                 Layout.preferredWidth: parent.width
                 Layout.preferredHeight: parent.height
-		horizontalAlignment: Text.AlignHCenter
-		verticalAlignment: Text.AlignVCenter
-		font.pixelSize: 8
-		text: notificationPopup.notifyText
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                font.pixelSize: 8
+                text: notificationPopup.notifyText
                 wrapMode: Text.WordWrap
                 textFormat: Text.RichText
             }
@@ -74,17 +83,18 @@ ApplicationWindow {
         }
 
     }
+
     Popup {
         id: btWarningPopup
 
         x: (root.width / 2) - (btWarningPopup.width / 2)
         y: (root.height / 4) - (btWarningPopup.height / 4)
-        width: root.width /1.5
+        width: root.width / 1.5
         height: root.height - 250
         modal: true
         focus: true
-        
-	ColumnLayout {
+
+        ColumnLayout {
             anchors.fill: parent
             anchors.top: parent.top
             anchors.left: parent.left
@@ -153,41 +163,41 @@ ApplicationWindow {
         Column {
             anchors.fill: parent
 
-	    ItemDelegate {
+            ItemDelegate {
                 text: qsTr("Completed Update(s)")
                 width: parent.width
                 onClicked: {
-    		    stackView.push("qrc:/Pages/CompletedPage.qml");
+                    stackView.push("qrc:/Pages/CompletedPage.qml");
                     drawer.close();
                 }
             }
-	    
-	    ItemDelegate {
+
+            ItemDelegate {
                 text: qsTr("Failed Update(s)")
                 width: parent.width
                 onClicked: {
-                  stackView.push("qrc:/Pages/FailedPage.qml"); 
-		  drawer.close();
+                    stackView.push("qrc:/Pages/FailedPage.qml");
+                    drawer.close();
                 }
             }
 
-	    ItemDelegate {
+            ItemDelegate {
                 text: qsTr("Queued Update(s)")
                 width: parent.width
                 onClicked: {
                     stackView.push("qrc:/Pages/QueuedPage.qml");
-		    drawer.close();
+                    drawer.close();
                 }
             }
 
-	    ItemDelegate {
+            ItemDelegate {
                 text: qsTr("Check For Update")
                 width: parent.width
                 onClicked: {
                     drawer.close();
                 }
             }
-	
+
             ItemDelegate {
                 text: qsTr("Settings")
                 width: parent.width
@@ -206,14 +216,15 @@ ApplicationWindow {
                 }
             }
 
- 	    ItemDelegate {
+            ItemDelegate {
                 text: qsTr("Quit")
                 width: parent.width
                 onClicked: {
                     drawer.close();
-		    Qt.quit();
+                    Qt.quit();
                 }
             }
+
         }
 
     }
@@ -229,7 +240,7 @@ ApplicationWindow {
         anchors.bottom: parent.bottom
     }
 
-     header: ToolBar {
+    header: ToolBar {
         contentHeight: toolButton.implicitHeight
 
         ToolButton {
@@ -249,5 +260,7 @@ ApplicationWindow {
             text: stackView.currentItem.title
             anchors.centerIn: parent
         }
+
     }
+
 }

@@ -9,26 +9,28 @@ Page {
     title: qsTr("Drag and Drop AppImage(s) to Update!")
 
     DropArea {
-	id: appimageDropArea
+        id: appimageDropArea
+
         anchors.fill: parent
         onEntered: {
-		defaultLayout.visible = false;
-		dropLayout.visible = true;
-	}
-	onExited: {
-		dropLayout.visible = false;
-		defaultLayout.visible = true;
-	}
-	onDropped: {
+            defaultLayout.visible = false;
+            dropLayout.visible = true;
+        }
+        onExited: {
+            dropLayout.visible = false;
+            defaultLayout.visible = true;
+        }
+        onDropped: {
             console.log(drop.text);
-	    notify("<h1>Queued Item to Updater</h1>");
-	    dropLayout.visible = false;
-	    defaultLayout.visible = true;
+            notify("<h1>Queued Item to Updater</h1>");
+            dropLayout.visible = false;
+            defaultLayout.visible = true;
         }
     }
 
     ColumnLayout {
-	id: dropLayout
+        id: dropLayout
+
         Layout.preferredWidth: parent.width
         Layout.preferredHeight: parent.height
         anchors.fill: parent
@@ -37,8 +39,8 @@ Page {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         spacing: 2
-	visible: false
-      	
+        visible: false
+
         Image {
             cache: true
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVTop
@@ -47,11 +49,12 @@ Page {
             fillMode: Image.PreserveAspectFit
             source: "qrc:/drop_image.png"
         }
-   }
-   
+
+    }
 
     ColumnLayout {
-	id: defaultLayout
+        id: defaultLayout
+
         Layout.preferredWidth: parent.width
         Layout.preferredHeight: parent.height
         anchors.fill: parent
@@ -69,6 +72,7 @@ Page {
             fillMode: Image.PreserveAspectFit
             source: "qrc:/dotted_square.png"
         }
+
     }
 
 }

@@ -17,8 +17,6 @@ Page {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         spacing: 2
-
-
     }
 
 }

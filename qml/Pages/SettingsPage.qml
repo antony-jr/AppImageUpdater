@@ -10,9 +10,10 @@ Page {
 
     ColumnLayout {
         id: settingsColLayout
-	property real factor: 100;
 
-	Layout.preferredWidth: parent.width
+        property real factor: 100
+
+        Layout.preferredWidth: parent.width
         Layout.preferredHeight: parent.height
         anchors.fill: parent
         anchors.top: parent.top
@@ -23,7 +24,7 @@ Page {
         spacing: 0
 
         Switch {
-	    Layout.preferredWidth: parent.Layout.preferredWidth - settingsColLayout.factor
+            Layout.preferredWidth: parent.Layout.preferredWidth - settingsColLayout.factor
             Layout.alignment: Qt.AlignCenter
             checked: settings_manager.isDarkMode
             text: qsTr("Enable Dark Mode")
@@ -37,9 +38,8 @@ Page {
         }
 
         Switch {
-	      Layout.preferredWidth: parent.Layout.preferredWidth - settingsColLayout.factor
-           
-	    Layout.alignment: Qt.AlignCenter
+            Layout.preferredWidth: parent.Layout.preferredWidth - settingsColLayout.factor
+            Layout.alignment: Qt.AlignCenter
             checked: settings_manager.isAllowSystemTrayNotification
             text: qsTr("Allow System Tray Notification")
             onClicked: {
@@ -48,9 +48,8 @@ Page {
         }
 
         Switch {
-   Layout.preferredWidth: parent.Layout.preferredWidth - settingsColLayout.factor
-                      
-Layout.alignment: Qt.AlignCenter
+            Layout.preferredWidth: parent.Layout.preferredWidth - settingsColLayout.factor
+            Layout.alignment: Qt.AlignCenter
             checked: settings_manager.isRunOnStartup
             text: qsTr("Run at Startup")
             onClicked: {
@@ -59,9 +58,8 @@ Layout.alignment: Qt.AlignCenter
         }
 
         Switch {
-   Layout.preferredWidth: parent.Layout.preferredWidth - settingsColLayout.factor
-           
-           Layout.alignment: Qt.AlignCenter
+            Layout.preferredWidth: parent.Layout.preferredWidth - settingsColLayout.factor
+            Layout.alignment: Qt.AlignCenter
             checked: settings_manager.isDecentralizedUpdateEnabled
             text: qsTr("Use Decentralized Update")
             onClicked: {
@@ -73,21 +71,21 @@ Layout.alignment: Qt.AlignCenter
         }
 
         Switch {
-   Layout.preferredWidth: parent.Layout.preferredWidth - settingsColLayout.factor
-            
-          Layout.alignment: Qt.AlignCenter
+            Layout.preferredWidth: parent.Layout.preferredWidth - settingsColLayout.factor
+            Layout.alignment: Qt.AlignCenter
             checked: settings_manager.isProxyEnabled
             text: qsTr("Enable Proxy")
             onClicked: {
                 settings_manager.isProxyEnabled = checked;
             }
         }
- 
-	ColumnLayout {
-	    Layout.alignment: Qt.AlignCenter
-           Layout.preferredWidth: parent.Layout.preferredWidth - (110 + settingsColLayout.factor)
- 	            Label {
-              font.pixelSize: (function() {
+
+        ColumnLayout {
+            Layout.alignment: Qt.AlignCenter
+            Layout.preferredWidth: parent.Layout.preferredWidth - (110 + settingsColLayout.factor)
+
+            Label {
+                font.pixelSize: (function() {
                     var factor = 0.03;
                     var calculatedHPxSize = parent.Layout.preferredHeight * factor;
                     var calculatedWPxSize = parent.Layout.preferredWidth * factor;
@@ -96,90 +94,89 @@ Layout.alignment: Qt.AlignCenter
                     else
                         return calculatedHPxSize;
                 })()
-		text: qsTr("<h4>Proxy Settings</h2>");
+                text: qsTr("<h4>Proxy Settings</h2>")
                 wrapMode: Text.WordWrap
                 textFormat: Text.RichText
             }
 
-
-	RowLayout {
-            TextField {
-                placeholderText: qsTr("Proxy Host")
-                text: settings_manager.ProxyHost
-                enabled: settings_manager.isProxyEnabled
-                onEditingFinished: {
-                    settings_manager.ProxyHost = text;
+            RowLayout {
+                TextField {
+                    placeholderText: qsTr("Proxy Host")
+                    text: settings_manager.ProxyHost
+                    enabled: settings_manager.isProxyEnabled
+                    onEditingFinished: {
+                        settings_manager.ProxyHost = text;
+                    }
                 }
+
+                TextField {
+                    placeholderText: qsTr("Proxy Port")
+                    text: settings_manager.ProxyPort.toLocaleString()
+                    enabled: settings_manager.isProxyEnabled
+                    inputMask: "999999"
+                    onEditingFinished: {
+                        settings_manager.ProxyPort = Number(text);
+                    }
+
+                    validator: IntValidator {
+                        bottom: 0
+                        top: 66666
+                    }
+
+                }
+
             }
 
-            TextField {
-                placeholderText: qsTr("Proxy Port")
-                text: settings_manager.ProxyPort.toLocaleString()
-                enabled: settings_manager.isProxyEnabled
-                inputMask: "999999"
-                onEditingFinished: {
-                    settings_manager.ProxyPort = Number(text);
+            RowLayout {
+                Label {
+                    text: qsTr("Proxy Type: ")
+                    enabled: settings_manager.isProxyEnabled
                 }
 
-                validator: IntValidator {
-                    bottom: 0
-                    top: 66666
+                ComboBox {
+                    model: ["Socks 5", "HTTP(S)"]
+                    enabled: settings_manager.isProxyEnabled
+                    Component.onCompleted: {
+                        var x = find(settings_manager.ProxyType, Qt.MatchExactly);
+                        if (x == -1)
+                            settings_manager.ProxyType = model[0];
+                        else
+                            currentIndex = x;
+                    }
+                    onActivated: {
+                        settings_manager.ProxyType = model[index];
+                    }
+                    onHighlighted: {
+                        settings_manager.ProxyType = model[index];
+                    }
                 }
 
             }
+
+            RowLayout {
+                TextField {
+                    placeholderText: qsTr("Username")
+                    text: settings_manager.ProxyUser
+                    enabled: settings_manager.isProxyEnabled
+                    onEditingFinished: {
+                        settings_manager.ProxyUser = text;
+                    }
+                }
+
+                TextField {
+                    placeholderText: qsTr("Password")
+                    text: settings_manager.ProxyPass
+                    echoMode: TextInput.Password
+                    enabled: settings_manager.isProxyEnabled
+                    onEditingFinished: {
+                        settings_manager.ProxyPass = text;
+                    }
+                }
+
+            }
+            //col
 
         }
-
-        RowLayout {
-           
-            Label {
-                text: qsTr("Proxy Type: ")
-                enabled: settings_manager.isProxyEnabled
-            }
-
-            ComboBox {
-                model: ["Socks 5", "HTTP(S)"]
-                enabled: settings_manager.isProxyEnabled
-                Component.onCompleted: {
-                    var x = find(settings_manager.ProxyType, Qt.MatchExactly);
-                    if (x == -1)
-                        settings_manager.ProxyType = model[0];
-                    else
-                        currentIndex = x;
-                }
-                onActivated: {
-                    settings_manager.ProxyType = model[index];
-                }
-                onHighlighted: {
-                    settings_manager.ProxyType = model[index];
-                }
-            }
-
-        }
-
-        RowLayout {
-           
-            TextField {
-                placeholderText: qsTr("Username")
-                text: settings_manager.ProxyUser
-                enabled: settings_manager.isProxyEnabled
-                onEditingFinished: {
-                    settings_manager.ProxyUser = text;
-                }
-            }
-
-            TextField {
-                placeholderText: qsTr("Password")
-                text: settings_manager.ProxyPass
-                echoMode: TextInput.Password
-                enabled: settings_manager.isProxyEnabled
-                onEditingFinished: {
-                    settings_manager.ProxyPass = text;
-                }
-            }
-
-        }
-	} //col
 
     }
 
