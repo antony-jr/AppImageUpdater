@@ -32,8 +32,8 @@ ApplicationWindow {
 
         x: (root.width / 2) - (btWarningPopup.width / 2)
         y: (root.height / 4) - (btWarningPopup.height / 4)
-        width: root.width / 2
-        height: root.height - 200
+        width: root.width /1.5
+        height: root.height - 250
         modal: true
         focus: true
         closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
@@ -50,7 +50,7 @@ ApplicationWindow {
                 Layout.preferredWidth: parent.width
                 Layout.preferredHeight: parent.height
                 font.pixelSize: (function() {
-                    var factor = 0.03;
+                    var factor = 0.032;
                     var calculatedHPxSize = btWarningPopup.height * factor;
                     var calculatedWPxSize = btWarningPopup.width * factor;
                     if (calculatedHPxSize > calculatedWPxSize)

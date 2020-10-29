@@ -67,10 +67,6 @@ Page {
             checked: settings_manager.isProxyEnabled
             text: qsTr("Enable Proxy")
             onClicked: {
-                /// Warn about Tor and BT.
-
-                if (checked && settings_manager.isDecentralizedUpdateEnabled) {
-                }
                 settings_manager.isProxyEnabled = checked;
             }
         }
