@@ -194,7 +194,7 @@ ApplicationWindow {
 	   	}
 
 		RoundButton {
-			property int count : 1;
+			property int count : 0;
 			id: completedCount
 			anchors.right: parent.right	
 			text: qsTr("1");
