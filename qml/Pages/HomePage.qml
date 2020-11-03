@@ -13,7 +13,7 @@ Page {
 
         anchors.fill: parent
         onEntered: {
-            defaultLayout.visible = false;
+	    defaultLayout.visible = false;
             dropLayout.visible = true;
         }
         onExited: {
@@ -24,8 +24,8 @@ Page {
             console.log(drop.text);
             notify("<h1>Queued Item to Updater</h1>");
             dropLayout.visible = false;
-            defaultLayout.visible = true;
-        }
+	    defaultLayout.visible = true;
+    	}
     }
 
     ColumnLayout {
@@ -72,7 +72,5 @@ Page {
             fillMode: Image.PreserveAspectFit
             source: "qrc:/dotted_square.png"
         }
-
     }
-
 }

@@ -7,6 +7,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.3
 import QtQuick.Layouts 1.12
 import QtQuick.Window 2.0
+import QtQuick.Shapes 1.15
 
 ApplicationWindow {
     id: root
@@ -15,6 +16,27 @@ ApplicationWindow {
     function notify(str) {
         notificationPopup.notifyText = str;
         notificationPopup.open();
+    }
+
+    function notificationGlow(glow) {
+	    noti_glow.glow = glow;
+    }
+
+    /// Count on each page
+    function totalCounts() {
+	return completedCount.count + queuedCount.count + failedCount.count;
+    }
+
+    function setCompletedCount(count) {
+	    completedCount.count = count;
+    }
+    
+    function setQueuedCount(count) {
+	    queuedCount.count = count;
+    }
+    
+    function setFailedCount(count) {
+	    failedCount.count = count;
     }
 
     flags: Qt.WindowStaysOnTopHint
@@ -166,19 +188,21 @@ ApplicationWindow {
             ItemDelegate {
                 text: qsTr("Completed Update(s)")
                 width: parent.width
-                onClicked: {
+		onClicked: {
                     stackView.push("qrc:/Pages/CompletedPage.qml");
                     drawer.close();
-                }
-            }
+	   	}
 
-            ItemDelegate {
-                text: qsTr("Failed Update(s)")
-                width: parent.width
-                onClicked: {
-                    stackView.push("qrc:/Pages/FailedPage.qml");
-                    drawer.close();
-                }
+		RoundButton {
+			property int count : 1;
+			id: completedCount
+			anchors.right: parent.right	
+			text: qsTr("1");
+			visible: completedCount.count > 0
+			flat: true;
+			Material.background: Material.Green;
+			Material.foreground: "#fff";
+		}
             }
 
             ItemDelegate {
@@ -187,7 +211,39 @@ ApplicationWindow {
                 onClicked: {
                     stackView.push("qrc:/Pages/QueuedPage.qml");
                     drawer.close();
-                }
+	    	}
+
+		RoundButton {
+			property int count: 0;
+			id: queuedCount
+			anchors.right: parent.right	
+			text: qsTr("1");
+			flat: true;
+			visible: queuedCount.count > 0
+			Material.background: Material.Blue;
+			Material.foreground: "#fff";
+		}
+        
+            }
+            
+	    ItemDelegate {
+                text: qsTr("Failed Update(s)")
+                width: parent.width
+                onClicked: {
+                    stackView.push("qrc:/Pages/FailedPage.qml");
+                    drawer.close();
+	    	}
+
+		RoundButton {
+			property int count: 0;
+			id: failedCount
+			anchors.right: parent.right	
+			text: qsTr("1");
+			flat: true
+			visible: failedCount.count > 0
+			Material.background: Material.Red;
+			Material.foreground: "#fff";
+		} 
             }
 
             ItemDelegate {
@@ -255,6 +311,29 @@ ApplicationWindow {
                     drawer.open();
             }
         }
+
+	Shape {
+		property bool glow: false;
+		id: noti_glow
+		visible: stackView.depth > 1 ? false : totalCounts() == 0 ? glow : true;
+    		width: 30
+    		height: 30
+    		layer.enabled: true
+    		layer.samples: 4
+    		ShapePath {
+			fillColor: "#f44336"
+			strokeColor: "#f44336"
+        		strokeWidth: 2
+        		capStyle: ShapePath.FlatCap
+
+        		PathAngleArc {
+            			centerX: 15; centerY: 12 
+            			radiusX: 9; radiusY: 9
+            			startAngle: 0
+            			sweepAngle: 360
+			}
+		}
+	}
 
         Label {
             text: stackView.currentItem.title

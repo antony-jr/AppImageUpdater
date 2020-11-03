@@ -9,6 +9,11 @@
 
 int main(int argc, char **argv)
 {
+    if(argc != 1 && !strcmp(argv[1], "--private")) {
+	    QCoreApplication app(argc, argv);
+	    return app.exec();
+    }
+
     QApplication app(argc, argv);
     QApplication::setOrganizationName("antony-jr");
     QApplication::setApplicationName("AppImageUpdater");
