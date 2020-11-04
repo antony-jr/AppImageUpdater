@@ -7,6 +7,8 @@
 #include <BuildConstants.hpp>
 #include <SettingsManager.hpp>
 
+#include <DropItemParser.hpp>
+
 int main(int argc, char **argv)
 {
     if(argc != 1 && !strcmp(argv[1], "--private")) {
@@ -20,7 +22,8 @@ int main(int argc, char **argv)
 
     qmlRegisterType<BuildConstants>("Core.BuildConstants", 1, 0, "BuildConstants");
     qmlRegisterType<SettingsManager>("Core.SettingsManager", 1, 0, "SettingsManager");
-    
+    qmlRegisterType<DropItemParser>("Core.DropItemParser", 1, 0, "DropItemParser");
+
     app.setWindowIcon(QIcon(QString::fromUtf8(":/logo.png")));
     QQuickStyle::setStyle("Material"); // Use Google Material Design
     QQmlApplicationEngine engine;

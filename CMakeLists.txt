@@ -12,6 +12,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 find_package(QAppImageUpdate)
+find_package(libappimage)
 find_package(Qt5Gui)
 find_package(Qt5Concurrent)
 find_package(Qt5Qml)
@@ -34,7 +35,10 @@ if(APPIMAGE_UPDATER_BUILD_TIME)
 endif()
 
 add_executable(AppImageUpdater main.cc
+			     DropItemParser.hpp
+			     DropItemParser.cc
 	                     BuildConstants.hpp
+			     BuildConstants.cc
 			     SettingsManager.hpp
 			     SettingsManager.cc
 			     app_resources/resources.qrc
@@ -46,3 +50,4 @@ target_link_libraries(AppImageUpdater PUBLIC
 				      Qt5::QuickControls2
 				      util)
 target_link_libraries(AppImageUpdater PRIVATE QAppImageUpdate)
+target_link_libraries(AppImageUpdater PRIVATE libappimage)

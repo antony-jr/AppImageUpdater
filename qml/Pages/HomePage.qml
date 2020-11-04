@@ -1,3 +1,4 @@
+import Core.DropItemParser 1.0
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
@@ -7,6 +8,20 @@ import QtQuick.Layouts 1.12
 Page {
     visible: true
     title: qsTr("Drag and Drop AppImage(s) to Update!")
+
+    DropItemParser {
+	id: dropParser
+	onLoading: {
+	     defaultLayout.fetching = true;
+        }
+	onFailed: {
+	    defaultLayout.fetching = false; 
+	}
+	onFinished:  {
+	    defaultLayout.fetching = false;	
+	    notify("<h1>Queued Item to Updater</h1>");
+     	}
+    }
 
     DropArea {
         id: appimageDropArea
@@ -20,12 +35,17 @@ Page {
             dropLayout.visible = false;
             defaultLayout.visible = true;
         }
-        onDropped: {
-            console.log(drop.text);
-            notify("<h1>Queued Item to Updater</h1>");
-            dropLayout.visible = false;
-	    defaultLayout.visible = true;
-    	}
+	onDropped: {
+	    dropLayout.visible = false; 
+       	    defaultLayout.visible = true; 
+	    if(drop.hasUrls) {
+		    dropParser.clearBuffer();
+		    for(var i = 0; i < drop.urls.length; ++i) {
+			    dropParser.appendToBuffer(drop.urls[i]);
+		    }
+		    dropParser.start();
+	    }
+	}
     }
 
     ColumnLayout {
@@ -53,7 +73,9 @@ Page {
     }
 
     ColumnLayout {
-        id: defaultLayout
+	property bool updating: false;
+	property bool fetching: false;
+	id: defaultLayout
 
         Layout.preferredWidth: parent.width
         Layout.preferredHeight: parent.height
@@ -64,13 +86,20 @@ Page {
         anchors.bottom: parent.bottom
         spacing: 2
 
-        Image {
+	Image {
+	    visible: !defaultLayout.updating && !defaultLayout.fetching
             cache: true
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVTop
             Layout.preferredHeight: (parent.Layout.preferredHeight) * 0.85
             Layout.preferredWidth: (parent.Layout.preferredWidth) * 0.85
             fillMode: Image.PreserveAspectFit
             source: "qrc:/dotted_square.png"
-        }
+    	}
+
+	ProgressBar {
+	    visible: !defaultLayout.updating && defaultLayout.fetching
+	    indeterminate: true
+ 	    Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+	}
     }
 }
