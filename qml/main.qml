@@ -14,6 +14,7 @@ ApplicationWindow {
     id: root
     property bool updating: false;
     property bool updateLoading: false;
+    property bool showUpdateChoice: false;
     property string currentAppImageIconSrc: qsTr("");
     property string currentAppImageName: qsTr("");
     property string currentAppImageReleaseNotes: qsTr("");
@@ -192,6 +193,7 @@ ApplicationWindow {
 		root.currentAppImageReleaseNotes = info["ReleaseNotes"];
 		root.updateLoading = false;
 		root.updating = true;
+		root.showUpdateChoice = true;
 	}
 	onFinished: {
 	}

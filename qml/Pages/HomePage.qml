@@ -134,7 +134,6 @@ Page {
 
 	ScrollView {
 		id: releaseScrollView
-	    	Material.elevation: 4
 		visible: root.updating && root.currentAppImageReleaseNotes.length > 0
 		contentWidth: root.width - 50
 		Layout.preferredWidth: parent.Layout.preferredWidth - 50 
@@ -152,6 +151,7 @@ Page {
 		readOnly: true;
 		text: root.currentAppImageReleaseNotes;
 		wrapMode: Text.WordWrap
+		color: settings_manager.isDarkMode ? "#fff" : "#212121";
 		textFormat: Text.RichText
                 onLinkActivated: Qt.openUrlExternally(link)
       	      }
@@ -159,9 +159,36 @@ Page {
 	      background: Rectangle {
 		      width: releaseScrollView.implicitWidth;
 		      height: releaseScrollView.implicitHeight;
-		      color: "#fff"; 
+		      color: settings_manager.isDarkMode ? "#212121" : "#fff"; 
 	      }
       
       } // Close ScrollView
+
+      RowLayout {
+	      Layout.alignment: Qt.AlignCenter
+	      visible: root.showUpdateChoice
+	      Button {
+		      text: qsTr("Accept Update");
+		       Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light;
+		      highlighted: true
+		      Material.background: Material.Green;
+
+	      }
+
+	      Button {
+		      text: qsTr("Skip Update");
+		       Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light;
+		      highlighted: true
+		      Material.background: Material.Red;
+	      }
+
+	      Button {
+		      text: qsTr("Accept All");
+		      Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light;
+		      highlighted: true
+		      Material.background: Material.Teal;
+
+	      }
+      }
     }
 }
