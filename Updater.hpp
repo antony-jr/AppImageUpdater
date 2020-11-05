@@ -1,31 +1,35 @@
 #ifndef UPDATER_HPP_INCLUDED
 #define UPDATER_HPP_INCLUDED
 #include <QObject>
-#include <QStringList>
+#include <QString>
+#include <QByteArray>
+#include <QJsonObject>
+#include <QThread>
+#include <QVariant>
+class UpdaterPrivate;
 class Updater : public QObject {
 	Q_OBJECT
-	int n_Queued,
-	    n_Failed,
-	    n_Completed;
-	struct AppImage {
-		QString path;
-		QString name;
-		QByteArray *icon = nullptr;
-	};
-	QVector<AppImage> m_AppImages;
+	UpdaterPrivate *m_Private;
+	QThread *m_Thread;
 public:
 	Updater(QObject *parent = nullptr);
 	~Updater();
 public Q_SLOTS:
-	void queue(const QString&, const QString&, QByteArray*);
-	void start();
+	void queue(const QString&, const QString&, QVariant icon);
+	void toggleNoConfirm();
+	void continueCurrentUpdate();
+	void cancelCurrentUpdate();
+	void cancelAll();
 Q_SIGNALS:
-	void queuedCountChanged(int);
-        void failedCountChanged(int);
-	void completedCountChanged(int);
+	void queuedCountChanged(int n);
+        void failedCountChanged(int n);
+	void completedCountChanged(int n);
 
 	void loading();
-	void finished();
+	void metaInfo(QJsonObject info);
+	void failed(QJsonObject info);
+	void finished(QJsonObject info);
+	void finishedAll();
 };
 
 #endif // UPDATER_HPP_INCLUDED

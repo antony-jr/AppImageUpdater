@@ -6,6 +6,8 @@
 #include <QCoreApplication>
 #include <QFile>
 #include <DropItemParser.hpp>
+#include <QBuffer>
+#include <QPixmap>
 #include <QDebug>
 
 #include <appimage/core/AppImage.h>
@@ -28,10 +30,10 @@ std::vector<std::string> split_string(const std::string& str,
     strings.push_back(str.substr(prev));
     return strings;
 }
-static QPair<QString,QByteArray*> getAppImageNameAndIcon(const QString &appimagePath) {
-	QPair <QString, QByteArray*> r;
+static QPair<QString,QByteArray> getAppImageNameAndIcon(const QString &appimagePath) {
+	QPair <QString, QByteArray> r;
 	r.first = QString();
-	r.second = nullptr;
+	r.second = QByteArray();
 	
 	appimage::core::AppImage *appimage;
         appimage::utils::ResourcesExtractor *res;
@@ -39,6 +41,7 @@ static QPair<QString,QByteArray*> getAppImageNameAndIcon(const QString &appimage
 	try {
 		appimage = new appimage::core::AppImage(appimagePath.toStdString());
 	}catch(...) {
+		qDebug() << "Cannot contstruct AppImage";
 		return r;
 	}
 
@@ -48,6 +51,7 @@ static QPair<QString,QByteArray*> getAppImageNameAndIcon(const QString &appimage
 		if(appimage) {
 			delete appimage;
 		}
+		qDebug() << "Cannot Resource Extract";
 		return r;
 	}
 
@@ -75,7 +79,7 @@ static QPair<QString,QByteArray*> getAppImageNameAndIcon(const QString &appimage
 
 		if(entry[0] == "Name") {
 			r.first = QString::fromStdString(entry[1]);
-			if(r.second) {
+			if(!r.second.isEmpty()) {
 				break;
 			}
 		}
@@ -83,13 +87,28 @@ static QPair<QString,QByteArray*> getAppImageNameAndIcon(const QString &appimage
 			auto paths = res->getIconFilePaths(entry[1]);
 			if(paths.size()) {
 				auto iconData = res->extract(paths[paths.size()-1]);
-				r.second = new QByteArray(iconData.data(), iconData.size());
+				r.second = QByteArray(iconData.data(), iconData.size());
 			}
 			if(!r.first.isEmpty()) {
 				break;
 			}
 		}
 		QCoreApplication::processEvents();
+	}
+
+	if(r.first.isEmpty()) {
+		r.first = QFileInfo(appimagePath).baseName();
+	}
+
+	if(r.second.isEmpty()) {
+		/// Give Default Icon
+		 QPixmap *pixmap = new QPixmap(":logo.png");
+		 QByteArray icon;
+		 QBuffer buffer(&icon);
+		 buffer.open(QIODevice::WriteOnly);
+		 pixmap->save(&buffer, "PNG"); // writes pixmap into bytes in PNG format
+		 r.second = icon;
+		 delete pixmap;
 	}
 
 	delete res;
@@ -163,11 +182,11 @@ void DropItemParser::start() {
 			/// Check if the file is actually an AppImage.
 			auto appimageInformation = getAppImageNameAndIcon(file);
 			if(appimageInformation.first.isEmpty() || 
-			   appimageInformation.second == nullptr) {
+			   appimageInformation.second.isEmpty()) {
 				continue;
 			}
 			++enqueued;
-			emit enqueue(file, appimageInformation.first, appimageInformation.second);
+			emit enqueue(file, appimageInformation.first, QVariant(appimageInformation.second));
 			QCoreApplication::processEvents();
             	}
 		continue;
@@ -176,7 +195,8 @@ void DropItemParser::start() {
 	/// It is a file then try loading it as AppImage.
 	auto appimageInformation = getAppImageNameAndIcon(info.absoluteFilePath());
 	if(appimageInformation.first.isEmpty() || 
-	   appimageInformation.second == nullptr) {
+	   appimageInformation.second.isEmpty()) {
+		qDebug() << "Empty";
 		/// Most probably not an AppImage. Let's see if it's Desktop file.
 		
 		QFile file(info.absoluteFilePath());
@@ -210,11 +230,15 @@ void DropItemParser::start() {
 
 		appimageInformation = getAppImageNameAndIcon(path);
 		if(appimageInformation.first.isEmpty() || 
-	   	   appimageInformation.second == nullptr) {
+	   	   appimageInformation.second.isEmpty()) {
 			continue;
 		}
 		++enqueued;
-		emit enqueue(path, appimageInformation.first, appimageInformation.second);	
+	
+		emit enqueue(path, appimageInformation.first, QVariant(appimageInformation.second));	
+	}else{
+	++enqueued;
+	emit enqueue(info.absoluteFilePath(), appimageInformation.first, QVariant(appimageInformation.second));		
 	}
 	QCoreApplication::processEvents();
 	}

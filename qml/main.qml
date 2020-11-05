@@ -1,3 +1,4 @@
+import Core.Updater 1.0
 import Core.BuildConstants 1.0
 import Core.SettingsManager 1.0
 import QtQuick 2.12
@@ -9,8 +10,13 @@ import QtQuick.Layouts 1.12
 import QtQuick.Window 2.0
 import QtQuick.Shapes 1.15
 
-ApplicationWindow {
+ApplicationWindow {	
     id: root
+    property bool updating: false;
+    property bool updateLoading: false;
+    property string currentAppImageIconSrc: qsTr("");
+    property string currentAppImageName: qsTr("");
+    property string currentAppImageReleaseNotes: qsTr("");
 
     /// Notify routine
     function notify(str) {
@@ -173,6 +179,39 @@ ApplicationWindow {
 
     SettingsManager {
         id: settings_manager
+    }
+
+    Updater {
+	id: coreUpdater
+	onLoading: {
+		root.updateLoading = true;
+	}
+	onMetaInfo: {
+		root.currentAppImageIconSrc = "image://AIImage/" + info["ImageId"];
+		root.currentAppImageName = info["Name"];
+		root.currentAppImageReleaseNotes = info["ReleaseNotes"];
+		root.updateLoading = false;
+		root.updating = true;
+	}
+	onFinished: {
+	}
+
+	onFinishedAll: {
+		root.updateLoading = false;
+		root.updating = false;
+	}
+	onCompletedCountChanged: {
+		setCompletedCount(n);
+	}
+
+	onFailedCountChanged: {
+		setFailedCount(n);	
+	}
+
+	onQueuedCountChanged: {
+		
+		setQueuedCount(n);
+	}
     }
     // ---
 

@@ -16,11 +16,14 @@ Page {
         }
 	onFailed: {
 	    defaultLayout.fetching = false; 
+        }
+	onEnqueue: {
+	    coreUpdater.queue(absolutePath, appName, icon);
 	}
 	onFinished:  {
 	    defaultLayout.fetching = false;	
 	    notify("<h1>Queued Item to Updater</h1>");
-     	}
+    	}
     }
 
     DropArea {
@@ -73,7 +76,6 @@ Page {
     }
 
     ColumnLayout {
-	property bool updating: false;
 	property bool fetching: false;
 	id: defaultLayout
 
@@ -87,7 +89,7 @@ Page {
         spacing: 2
 
 	Image {
-	    visible: !defaultLayout.updating && !defaultLayout.fetching
+	    visible: !root.updating && !defaultLayout.fetching && !root.updateLoading
             cache: true
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVTop
             Layout.preferredHeight: (parent.Layout.preferredHeight) * 0.85
@@ -97,9 +99,69 @@ Page {
     	}
 
 	ProgressBar {
-	    visible: !defaultLayout.updating && defaultLayout.fetching
+	    visible: defaultLayout.fetching || root.updateLoading
 	    indeterminate: true
  	    Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+        }
+
+	Image {
+	    visible: root.updating
+	    cache: true
+   	    Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+            Layout.preferredHeight: 125
+	    Layout.preferredWidth: 125
+	    fillMode: Image.PreserveAspectFit
+	    source: root.currentAppImageIconSrc
+        }
+	
+	Label {
+		visible: root.updating
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                font.pixelSize: (function() {
+                    var factor = 0.04;
+                    var calculatedHPxSize = parent.Layout.preferredHeight * factor;
+                    var calculatedWPxSize = parent.Layout.preferredWidth * factor;
+                    if (calculatedHPxSize > calculatedWPxSize)
+                        return calculatedWPxSize;
+                    else
+                        return calculatedHPxSize;
+		})()
+		text: "<h1>" + root.currentAppImageName + "</h1>"
+                wrapMode: Text.WordWrap
+                textFormat: Text.RichText
+                onLinkActivated: Qt.openUrlExternally(link)
 	}
+
+	ScrollView {
+		id: releaseScrollView
+	    	Material.elevation: 4
+		visible: root.updating && root.currentAppImageReleaseNotes.length > 0
+		contentWidth: root.width - 50
+		Layout.preferredWidth: parent.Layout.preferredWidth - 50 
+		Layout.preferredHeight: parent.Layout.preferredHeight - 250
+		Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+		ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+		ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+		clip: true
+
+		 ScrollBar.horizontal.interactive: false;
+
+		TextEdit {
+		 width: root.width - 80	 
+		 visible: root.updating && root.currentAppImageReleaseNotes.length > 0	
+		readOnly: true;
+		text: root.currentAppImageReleaseNotes;
+		wrapMode: Text.WordWrap
+		textFormat: Text.RichText
+                onLinkActivated: Qt.openUrlExternally(link)
+      	      }
+
+	      background: Rectangle {
+		      width: releaseScrollView.implicitWidth;
+		      height: releaseScrollView.implicitHeight;
+		      color: "#fff"; 
+	      }
+      
+      } // Close ScrollView
     }
 }

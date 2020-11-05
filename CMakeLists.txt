@@ -35,6 +35,13 @@ if(APPIMAGE_UPDATER_BUILD_TIME)
 endif()
 
 add_executable(AppImageUpdater main.cc
+			     global.hpp
+			     Updater_p.hpp
+			     Updater_p.cc
+			     Updater.hpp
+			     Updater.cc
+			     AppImageImageProvider.hpp
+			     AppImageImageProvider.cc
 			     DropItemParser.hpp
 			     DropItemParser.cc
 	                     BuildConstants.hpp

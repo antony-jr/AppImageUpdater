@@ -1,0 +1,5 @@
+#ifndef APPIMAGE_UPDATER_GLOBAL_HPP_INCLUDED
+#define APPIMAGE_UPDATER_GLOBAL_HPP_INCLUDED
+class AppImageImageProvider;
+extern AppImageImageProvider *g_AppImageImageProvider;
+#endif
