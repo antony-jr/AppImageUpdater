@@ -11,6 +11,7 @@ class UpdaterPrivate : public QObject {
 	    n_Failed,
 	    n_Completed;
 	bool b_NoConfirm;
+	bool b_Running;
 	struct AppImage {
 		QString path;
 		QString name;

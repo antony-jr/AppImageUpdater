@@ -185,9 +185,12 @@ ApplicationWindow {
     Updater {
 	id: coreUpdater
 	onLoading: {
+		root.updating = false;
+		root.showUpdateChoice = false;
 		root.updateLoading = true;
 	}
 	onMetaInfo: {
+		console.log("Got Meta Data");
 		root.currentAppImageIconSrc = "image://AIImage/" + info["ImageId"];
 		root.currentAppImageName = info["Name"];
 		root.currentAppImageReleaseNotes = info["ReleaseNotes"];
@@ -195,11 +198,18 @@ ApplicationWindow {
 		root.updating = true;
 		root.showUpdateChoice = true;
 	}
+
+	onFailed: {
+		console.log("Failed Update");
+	}
+	
 	onFinished: {
+			
 	}
 
 	onFinishedAll: {
 		root.updateLoading = false;
+		root.showUpdateChoice = false;
 		root.updating = false;
 	}
 	onCompletedCountChanged: {
@@ -210,8 +220,7 @@ ApplicationWindow {
 		setFailedCount(n);	
 	}
 
-	onQueuedCountChanged: {
-		
+	onQueuedCountChanged: {		
 		setQueuedCount(n);
 	}
     }

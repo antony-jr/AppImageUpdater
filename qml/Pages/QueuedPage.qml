@@ -18,5 +18,7 @@ Page {
         anchors.bottom: parent.bottom
         spacing: 2
     }
-
+    Component.onCompleted: {
+	    setQueuedCount(0);
+    } 
 }

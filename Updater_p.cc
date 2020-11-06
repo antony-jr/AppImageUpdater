@@ -11,7 +11,8 @@ UpdaterPrivate::UpdaterPrivate(QObject *parent)
 	  n_Queued(0),
 	  n_Failed(0),
 	  n_Completed(0),
-	  b_NoConfirm(false)
+	  b_NoConfirm(false),
+	  b_Running(false)
 {
 	m_Updater = new QAppImageUpdate(/*single threaded=*/false, /*parent=*/this);
 
@@ -66,6 +67,7 @@ void UpdaterPrivate::toggleNoConfirm() {
 
 void UpdaterPrivate::continueCurrentUpdate() {
 	m_Settings.sync();
+	b_Running = true;
 	bool useBt = m_Settings.value("V2.isDecentralizedUpdateEnabled").toBool();
 	if(useBt) {
 		m_Updater->start(QAppImageUpdate::Action::UpdateWithTorrent);
@@ -73,12 +75,17 @@ void UpdaterPrivate::continueCurrentUpdate() {
 		m_Updater->start();
 	}
 }
+
 void UpdaterPrivate::cancelCurrentUpdate() {
 	if(m_CurrentAppImage.isEmpty()) {
 		return;
 	}
 
-	m_Updater->cancel();
+	if(b_Running) {
+		m_Updater->cancel();
+	}else {
+		updateNextAppImage();
+	}
 }
 
 void UpdaterPrivate::cancelAll() {
@@ -94,6 +101,8 @@ void UpdaterPrivate::cancelAll() {
 
 //// Private Qt Slots.
 void UpdaterPrivate::onFinishAction(QJsonObject info, short action) {
+	b_Running = false;
+	qDebug() << "Finished Action";
 	if(action == QAppImageUpdate::Action::Update ||
 	   action == QAppImageUpdate::Action::UpdateWithTorrent) {
 		++n_Completed;
@@ -133,6 +142,7 @@ void UpdaterPrivate::onFinishAction(QJsonObject info, short action) {
 		
 		if(b_NoConfirm) {
 			m_Settings.sync();
+			b_Running = true;
 			bool useBt = m_Settings.value("V2.isDecentralizedUpdateEnabled").toBool();
 
 			if(useBt){
@@ -150,6 +160,7 @@ void UpdaterPrivate::onStartAction(short action) {
 
 void UpdaterPrivate::onErrorAction(short code, short action) {
 	Q_UNUSED(action);
+	b_Running = false;
 	QJsonObject r {
 		{ "ErrorMsg" , QAppImageUpdate::errorCodeToDescriptionString(code) },
 		{ "AbsolutePath" , m_CurrentAppImage.path} ,
@@ -160,9 +171,12 @@ void UpdaterPrivate::onErrorAction(short code, short action) {
 	++n_Failed;
 	emit failed(r);
 	emit failedCountChanged(n_Failed);
+
+	updateNextAppImage();
 }
 
 void UpdaterPrivate::onCancelAction(short action) {
+	b_Running = false;
 	Q_UNUSED(action);
 	updateNextAppImage();
 }
@@ -180,7 +194,8 @@ void UpdaterPrivate::updateNextAppImage() {
 	m_CurrentAppImage = m_AppImages.dequeue();
 	--n_Queued;
 	emit queuedCountChanged(n_Queued);
-	
+
+	m_Updater->clear();	
 	m_Updater->setAppImage(m_CurrentAppImage.path);
 	m_Settings.sync();
 	bool useProxy = m_Settings.value("V2.isProxyEnabled").toBool();
@@ -207,5 +222,6 @@ void UpdaterPrivate::updateNextAppImage() {
 			proxy.setPassword(passwd);
 		}
 	}
-	m_Updater->start(QAppImageUpdate::Action::CheckForUpdate);	
+	b_Running = true;
+	m_Updater->start(QAppImageUpdate::Action::CheckForUpdate);
 }

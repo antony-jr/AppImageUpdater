@@ -22,7 +22,7 @@ Page {
 	}
 	onFinished:  {
 	    defaultLayout.fetching = false;	
-	    notify("<h1>Queued Item to Updater</h1>");
+	    ///notify("<h1>Queued Item to Updater</h1>");
     	}
     }
 
@@ -147,6 +147,7 @@ Page {
 
 		TextEdit {
 		 width: root.width - 80	 
+		 height: parent.height - 10
 		 visible: root.updating && root.currentAppImageReleaseNotes.length > 0	
 		readOnly: true;
 		text: root.currentAppImageReleaseNotes;
@@ -172,7 +173,9 @@ Page {
 		       Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light;
 		      highlighted: true
 		      Material.background: Material.Green;
-
+		      onClicked: {
+			      coreUpdater.continueCurrentUpdate();
+		      }
 	      }
 
 	      Button {
@@ -180,6 +183,9 @@ Page {
 		       Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light;
 		      highlighted: true
 		      Material.background: Material.Red;
+		      onClicked: {
+			      coreUpdater.cancelCurrentUpdate();
+		      }
 	      }
 
 	      Button {
@@ -187,7 +193,10 @@ Page {
 		      Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light;
 		      highlighted: true
 		      Material.background: Material.Teal;
-
+		      onClicked: {
+			      coreUpdater.toggleNoConfirm();
+			      coreUpdater.continueCurrentUpdate();
+		      }
 	      }
       }
     }
