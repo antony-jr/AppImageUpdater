@@ -55,6 +55,13 @@ void UpdaterPrivate::queue(const QString &path, const QString &name, QVariant ic
 	m_AppImages.enqueue(app);
 	++n_Queued;
 	emit queuedCountChanged(n_Queued);
+	
+	QJsonObject r {
+	   {"AbsolutePath" , app.path},
+	   {"Name", app.name},
+	   {"ImageId", app.image_id}
+	};
+	emit queued(r);
 
 	if(m_CurrentAppImage.isEmpty()) {
 		updateNextAppImage();

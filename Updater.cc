@@ -33,6 +33,9 @@ Updater::Updater(QObject *parent)
 
 	connect(m_Private, &UpdaterPrivate::metaInfo,
 		    this, &Updater::metaInfo);
+	
+	connect(m_Private, &UpdaterPrivate::queued,
+		    this, &Updater::queued);
 
 	connect(m_Private, &UpdaterPrivate::failed,
 		    this, &Updater::failed);

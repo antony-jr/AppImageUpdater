@@ -27,6 +27,7 @@ Q_SIGNALS:
 
 	void loading();
 	void metaInfo(QJsonObject info);
+	void queued(QJsonObject info);
 	void failed(QJsonObject info);
 	void finished(QJsonObject info);
 	void finishedAll();

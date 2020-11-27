@@ -19,6 +19,19 @@ ApplicationWindow {
     property string currentAppImageName: qsTr("");
     property string currentAppImageReleaseNotes: qsTr("");
 
+    /// All Lists    
+    ListModel { 
+	id: completedUpdatesList
+    }
+
+    /// Show AppImage Paths.
+    function showAppImagePaths(Title, New, Old) {
+	pathsPopup.newAppImagePath = New;
+	pathsPopup.oldAppImagePath = Old;
+	pathsPopup.title = Title;
+	pathsPopup.open();
+    }
+
     /// Notify routine
     function notify(str) {
         notificationPopup.notifyText = str;
@@ -114,6 +127,53 @@ ApplicationWindow {
     }
 
     Popup {
+	property string title;
+	property string newAppImagePath;
+	property string oldAppImagePath;
+        id: pathsPopup
+        x: (root.width / 2) - (pathsPopup.width / 2)
+        y: (root.height / 4) - (pathsPopup.height / 4)
+        width: root.width / 1.5
+        height: 150
+        modal: true
+        focus: true
+
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+
+            Label {
+                Layout.alignment: Qt.AlignHCenter | Qt.AlignVTop
+                Layout.preferredWidth: parent.width
+                Layout.preferredHeight: parent.height
+                font.pixelSize: (function() {
+                    var factor = 0.03;
+                    var calculatedHPxSize = root.height * factor;
+                    var calculatedWPxSize = root.width * factor;
+                    if (calculatedHPxSize > calculatedWPxSize)
+                        return calculatedWPxSize;
+                    else
+                        return calculatedHPxSize;
+                })()
+                text: qsTr("<b>NEW: </b>") + 
+		      pathsPopup.newAppImagePath + "<br/><br/>" + 
+		      qsTr("<b>OLD: </b>") + 
+		      pathsPopup.oldAppImagePath;
+
+                wrapMode: Text.WordWrap
+                textFormat: Text.RichText
+                onLinkActivated: Qt.openUrlExternally(link)
+            }
+
+        }
+
+    }
+
+
+    Popup {
         id: btWarningPopup
 
         x: (root.width / 2) - (btWarningPopup.width / 2)
@@ -204,7 +264,7 @@ ApplicationWindow {
 	}
 	
 	onFinished: {
-			
+		completedUpdatesList.append(info);			
 	}
 
 	onFinishedAll: {
