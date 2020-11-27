@@ -20,9 +20,6 @@ Page {
     }
     Component.onCompleted: {
 	    setCompletedCount(0);
-	    completedUpdatesList.append({"Name": "ShareMyHost",
-					 "NewAbsPath": "/home/antonyjr/Developer/AppImageUpdater/build/ShareMyHost-a839fd9f-x86_64.AppImage",
-					"OldAbsPath": "/home/antonyjr/Developer/AppImageUpdater/build/ShareMyHost-a8kd84kdf-x86_64.AppImage"});
     } 
 
     ColumnLayout {
@@ -64,7 +61,7 @@ Page {
             		Layout.preferredHeight: 130
             		Layout.preferredWidth: 130
             		fillMode: Image.PreserveAspectFit
-            		source: "qrc:/ajr_logo.png"
+            		 source: "image://AIImage/" + ImageId
 			}
 
 			ColumnLayout {
