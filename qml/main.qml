@@ -213,19 +213,38 @@ ApplicationWindow {
 	}
 
 	onQueued: {
-		queuedUpdatesList.append(info);
+		queuedUpdatesList.append(info);		
 	}
 	
 	onFailed: {
+		for(var i = 0; i < queuedUpdatesList.count; ++i) {
+			if(!queuedUpdatesList[i]) {
+				break;
+			}
+			if(queuedUpdatesList[i]["Hash"] == info["Hash"]) {
+				queuedUpdatesList.remove(i);
+				break;
+			}
+		}
 		failedUpdatesList.append(info);
 	}	
 
 	onFinished: {
+		for(var i = 0; i < queuedUpdatesList.count; ++i) {
+			if(!queuedUpdatesList[i]) {
+				break;
+			}
+			if(queuedUpdatesList[i]["Hash"] == info["Hash"]) {
+				queuedUpdatesList.remove(i);
+				break;
+			}
+		}	
 		info["Seeding"] = false;
 		completedUpdatesList.append(info);
 	}
 
 	onFinishedAll: {
+		queuedUpdatesList.clear();
 		root.updateLoading = false;
 		root.showUpdateChoice = false;
 		root.updating = false;

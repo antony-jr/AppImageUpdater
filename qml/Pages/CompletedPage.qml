@@ -51,10 +51,9 @@ Page {
 
 		delegate: Pane {
 		width: parent.width - 20
-		height: 150
+		height: contentCol.implicitHeight + 40
 		Material.elevation: 4	
 		RowLayout {
-			///width: parent.width - 10
 			Image {
           		Layout.alignment: Qt.AlignHLeft | Qt.AlignVCenter
             		cache: true
@@ -65,7 +64,9 @@ Page {
 			}
 
 			ColumnLayout {
+			id: contentCol
 			Label {
+			  Layout.preferredWidth: root.width - 180
                 	  font.pixelSize: (function() {
                     	   var factor = 0.03;
                     	   var calculatedHPxSize = root.height * factor;
@@ -79,11 +80,52 @@ Page {
                 	  wrapMode: Text.WordWrap
                 	  textFormat: Text.RichText
                 	  onLinkActivated: Qt.openUrlExternally(link)
+
             		}
 
+			RowLayout {
+			Rectangle {
+			id: absPathLblRec
+			Layout.preferredWidth: absPathLbl.implicitWidth
+			Layout.preferredHeight: absPathLbl.implicitHeight
+			color: "#00BCD4"
+			Label {
+			id: absPathLbl
+                	Layout.preferredWidth: root.width - 180 
+			font.pixelSize: (function() {
+                    	   var factor = 0.03;
+                    	   var calculatedHPxSize = root.height * factor;
+                    	   var calculatedWPxSize = root.width * factor;
+                    	   if (calculatedHPxSize > calculatedWPxSize)
+                           	return calculatedWPxSize;
+                    	   else
+                        	return calculatedHPxSize;
+                	  })()
+                	  text: "New Version"
+                	  wrapMode: Text.WordWrap
+            		}
+			}
+			
+
+			Label {
+                	Layout.preferredWidth: root.width - (200 + absPathLbl.implicitWidth) 
+			font.pixelSize: (function() {
+                    	   var factor = 0.03;
+                    	   var calculatedHPxSize = root.height * factor;
+                    	   var calculatedWPxSize = root.width * factor;
+                    	   if (calculatedHPxSize > calculatedWPxSize)
+                           	return calculatedWPxSize;
+                    	   else
+                        	return calculatedHPxSize;
+                	  })()
+                	text: NewAbsPath
+                	  wrapMode: Text.WordWrap
+            		}
+			}
+
 			Flow {
-				width: root.width - 175 
-				spacing: 8
+			Layout.preferredWidth: root.width - 175 
+			spacing: 8
 
 			RowLayout {
 				width: 200

@@ -13,8 +13,8 @@ class UpdaterPrivate : public QObject {
 	bool b_NoConfirm;
 	bool b_Running;
 	struct AppImage {
-		QString path;
 		QString name;
+		QString path;
 		QString image_id;
 		bool isEmpty() {
 			return (path.isEmpty());

@@ -54,7 +54,7 @@ Page {
                 height: 150
                 Material.elevation: 4
                 RowLayout {
-                        ///width: parent.width - 10
+                        width: parent.width - 100
                         Image {
                         Layout.alignment: Qt.AlignHLeft | Qt.AlignVCenter
                         cache: true

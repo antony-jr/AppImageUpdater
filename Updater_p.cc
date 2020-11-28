@@ -53,10 +53,12 @@ void UpdaterPrivate::queue(const QString &path, const QString &name, QVariant ic
 	}
 
 	m_AppImages.enqueue(app);
+
 	++n_Queued;
 	emit queuedCountChanged(n_Queued);
 	
 	QJsonObject r {
+	   {"Hash", app.image_id },
 	   {"AbsolutePath" , app.path},
 	   {"Name", app.name},
 	   {"ImageId", app.image_id}
@@ -117,6 +119,7 @@ void UpdaterPrivate::onFinishAction(QJsonObject info, short action) {
 			{"Updated" , true},
 			{"NewAbsPath" , info["OldVersionPath"].toString() },
 			{"OldAbsPath" , m_CurrentAppImage.path },
+			{"Hash", m_CurrentAppImage.image_id},
 			{"ImageId" , m_CurrentAppImage.image_id},
 			{"Name" , m_CurrentAppImage.name }
 		};
@@ -130,6 +133,7 @@ void UpdaterPrivate::onFinishAction(QJsonObject info, short action) {
 			{"Updated" , false},
 			{"NewAbsPath" , m_CurrentAppImage.path },
 			{"OldAbsPath" , m_CurrentAppImage.path },
+			{"Hash", m_CurrentAppImage.image_id},
 			{"ImageId" , m_CurrentAppImage.image_id},
 			{"Name" , m_CurrentAppImage.name }
 			};
@@ -142,6 +146,7 @@ void UpdaterPrivate::onFinishAction(QJsonObject info, short action) {
 		QJsonObject r {
 			{"AbsolutePath", m_CurrentAppImage.path },
 			{"ReleaseNotes", info["ReleaseNotes"].toString() },
+			{"Hash", m_CurrentAppImage.image_id},
 			{"ImageId" , m_CurrentAppImage.image_id},
 			{"Name", m_CurrentAppImage.name }
 		};
@@ -171,8 +176,9 @@ void UpdaterPrivate::onErrorAction(short code, short action) {
 	QJsonObject r {
 		{ "ErrorMsg" , QAppImageUpdate::errorCodeToDescriptionString(code) },
 		{ "AbsolutePath" , m_CurrentAppImage.path} ,
+		{ "Hash", m_CurrentAppImage.image_id}, 
 		{ "ImageId" , m_CurrentAppImage.image_id},	
-		{ "Name" , m_CurrentAppImage.name} 
+		{ "Name" , m_CurrentAppImage.name},
 	};
 
 	++n_Failed;
