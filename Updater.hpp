@@ -16,6 +16,7 @@ public:
 	~Updater();
 public Q_SLOTS:
 	void queue(const QString&, const QString&, QVariant icon);
+	void retry(const QJsonObject&);
 	void toggleNoConfirm();
 	void continueCurrentUpdate();
 	void cancelCurrentUpdate();
@@ -30,6 +31,7 @@ Q_SIGNALS:
 	void queued(QJsonObject info);
 	void failed(QJsonObject info);
 	void finished(QJsonObject info);
+	void retrySent(QString hash);
 	void finishedAll();
 };
 

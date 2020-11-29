@@ -34,6 +34,34 @@ UpdaterPrivate::~UpdaterPrivate() {
 	cancelAll();
 }
 
+void UpdaterPrivate::retry(const QJsonObject &json) {
+	emit retrySent(json["Hash"].toString());
+	AppImage app;
+	app.path = json["AbsolutePath"].toString();
+	app.name = json["Name"].toString();
+	app.image_id = json["ImageId"].toString();
+	
+	m_AppImages.enqueue(app);
+	++n_Queued;
+	emit queuedCountChanged(n_Queued);
+
+	--n_Failed;
+	emit failedCountChanged(n_Failed);
+
+	QJsonObject r {
+	   {"Hash", app.image_id },
+	   {"AbsolutePath" , app.path},
+	   {"Name", app.name},
+	   {"ImageId", app.image_id}
+	};
+	emit queued(r);
+
+	if(m_CurrentAppImage.isEmpty()) {
+		updateNextAppImage();
+	}
+
+}
+
 void UpdaterPrivate::queue(const QString &path, const QString &name, QVariant icon) {
 	if(path.isEmpty()) {
 		return;
@@ -56,7 +84,7 @@ void UpdaterPrivate::queue(const QString &path, const QString &name, QVariant ic
 
 	++n_Queued;
 	emit queuedCountChanged(n_Queued);
-	
+
 	QJsonObject r {
 	   {"Hash", app.image_id },
 	   {"AbsolutePath" , app.path},

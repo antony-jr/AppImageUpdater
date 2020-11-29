@@ -28,6 +28,7 @@ public:
 	UpdaterPrivate(QObject *parent = nullptr);
 	~UpdaterPrivate();
 public Q_SLOTS:
+	void retry(const QJsonObject&);
 	void queue(const QString&, const QString&, QVariant);
 	void toggleNoConfirm();
 	void continueCurrentUpdate();
@@ -50,6 +51,7 @@ Q_SIGNALS:
 	void queued(QJsonObject);
 	void failed(QJsonObject);
 	void finished(QJsonObject);
+	void retrySent(QString hash);
 	void finishedAll();
 };
 

@@ -224,8 +224,7 @@ Page {
 			RowLayout {
 				width: UsedTorrent ? 200 : 80
 				Button {
-					text: WaitOpen ? qsTr("Wait") : qsTr("Open")
-					enabled: !WaitOpen
+					text: qsTr("Open")
 					Material.background: Material.Teal
 					Material.foreground: "#ffffff"
 					onClicked: { 

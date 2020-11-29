@@ -220,35 +220,37 @@ ApplicationWindow {
 		root.showUpdateChoice = true;
 	}
 
+	onRetrySent: {
+		for(var i = 0; i < failedUpdatesList.count; ++i) {
+			var obj = failedUpdatesList.get(i);
+			if(obj) {
+				if(obj["Hash"] == hash) {
+					failedUpdatesList.remove(i);
+					break;
+				}
+			}
+		}	
+	}
+
 	onQueued: {
 		queuedUpdatesList.append(info);		
+	
 	}
 	
 	onFailed: {
-		for(var i = 0; i < queuedUpdatesList.count; ++i) {
-			if(!queuedUpdatesList[i]) {
-				break;
-			}
-			if(queuedUpdatesList[i]["Hash"] == info["Hash"]) {
-				queuedUpdatesList.remove(i);
-				break;
-			}
-		}
 		failedUpdatesList.append(info);
 	}	
 
 	onFinished: {
 		for(var i = 0; i < queuedUpdatesList.count; ++i) {
-			if(!queuedUpdatesList[i]) {
-				break;
-			}
-			if(queuedUpdatesList[i]["Hash"] == info["Hash"]) {
-				queuedUpdatesList.remove(i);
-				break;
+			var obj = queuedUpdatesList.get(i);
+			if(obj) {
+				if(obj["Hash"] == info["Hash"]) {
+					queuedUpdatesList.remove(i);
+					break;
+				}
 			}
 		}	
-		info["WaitOpen"] = false;	
-		info["Seeding"] = false;
 		completedUpdatesList.append(info);
 	}
 
@@ -259,15 +261,21 @@ ApplicationWindow {
 		root.updating = false;
 	}
 	onCompletedCountChanged: {
-		setCompletedCount(n);
+		if(stackView.currentItem.title != "Completed Update(s)"){
+			setCompletedCount(n);
+		}
 	}
 
 	onFailedCountChanged: {
-		setFailedCount(n);	
+		if(stackView.currentItem.title != "Failed Update(s)") {
+			setFailedCount(n);	
+		}
 	}
 
 	onQueuedCountChanged: {		
-		setQueuedCount(n);
+		if(stackView.currentItem.title != "Queued Update(s)") {
+			setQueuedCount(n);
+		}
 	}
     }
     // ---

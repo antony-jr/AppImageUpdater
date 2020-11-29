@@ -1,3 +1,5 @@
+#include <QFileInfo>
+#include <QFile>
 #include <QProcess>
 #include <QTimer>
 #include <QDir>
@@ -190,6 +192,20 @@ void ExecuterPrivate::execNext() {
 		execNext();
 		return;
 	}
+
+
+	/// Make it executable if it's not.
+ 	QFileInfo info(m_CurrentExec.second);
+        if(!info.isExecutable()) {
+            {
+                QFile file(m_CurrentExec.second);
+                file.setPermissions(QFileDevice::ExeUser |
+                                    QFileDevice::ExeOther|
+                                    QFileDevice::ExeGroup|
+                                    info.permissions());
+            }
+        }
+
 	QProcess::startDetached(m_CurrentExec.second);
 	QTimer::singleShot(2000, this, &ExecuterPrivate::finishExec);
 }

@@ -138,6 +138,12 @@ Page {
                             text: qsTr("Retry")
                             Material.background: Material.Teal
                             Material.foreground: "#ffffff"
+			    onClicked: {
+				coreUpdater.retry({"AbsolutePath": AbsolutePath,
+						   "Hash": Hash,
+						   "ImageId": ImageId,	
+						   "Name": Name});
+			   }
                         }
 
                         }

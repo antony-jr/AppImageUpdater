@@ -42,6 +42,10 @@ Updater::Updater(QObject *parent)
 
 	connect(m_Private, &UpdaterPrivate::finished,
 		    this, &Updater::finished);
+	
+	connect(m_Private, &UpdaterPrivate::retrySent,
+		    this, &Updater::retrySent);
+
 
 	connect(m_Private, &UpdaterPrivate::finishedAll,
 		    this, &Updater::finishedAll);
@@ -56,6 +60,13 @@ Updater::~Updater() {
      m_Thread->quit();
      m_Thread->wait();
      m_Thread->deleteLater();
+}
+
+void Updater::retry(const QJsonObject &json) {
+	getMethod(m_Private, "retry(const QJsonObject&)")
+    	.invoke(m_Private,
+            	Qt::QueuedConnection,
+		Q_ARG(QJsonObject, json));	
 }
 
 void Updater::queue(const QString &path, const QString &name, QVariant icon) {
