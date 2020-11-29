@@ -36,6 +36,7 @@ endif()
 
 add_executable(AppImageUpdater main.cc
 			     global.hpp
+			     Version.hpp
 			     Updater_p.hpp
 			     Updater_p.cc
 			     Updater.hpp
@@ -48,6 +49,10 @@ add_executable(AppImageUpdater main.cc
 			     BuildConstants.cc
 			     SettingsManager.hpp
 			     SettingsManager.cc
+			     Executer_p.hpp
+			     Executer_p.cc
+			     Executer.hpp
+			     Executer.cc
 			     app_resources/resources.qrc
 			     qml/qml.qrc)
 target_link_libraries(AppImageUpdater PUBLIC 

@@ -1,6 +1,7 @@
 import Core.Updater 1.0
 import Core.BuildConstants 1.0
 import Core.SettingsManager 1.0
+import Core.Executer 1.0
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
@@ -79,7 +80,7 @@ ApplicationWindow {
     Timer {
         id: notificationTimer
 
-        interval: 1000
+        interval: 3000
         running: false
         repeat: false
         onTriggered: {
@@ -116,7 +117,7 @@ ApplicationWindow {
                 Layout.preferredHeight: parent.height
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
-                font.pixelSize: 8
+                ///font.pixelSize: 8
                 text: notificationPopup.notifyText
                 wrapMode: Text.WordWrap
                 textFormat: Text.RichText
@@ -195,6 +196,13 @@ ApplicationWindow {
         id: settings_manager
     }
 
+    Executer {
+	id: mainexecuter
+	onTerminalApp: {
+		notify("Terminal Application should be run from Terminal.");	
+	}
+    }
+
     Updater {
 	id: coreUpdater
 	onLoading: {
@@ -239,6 +247,7 @@ ApplicationWindow {
 				break;
 			}
 		}	
+		info["WaitOpen"] = false;	
 		info["Seeding"] = false;
 		completedUpdatesList.append(info);
 	}

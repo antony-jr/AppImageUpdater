@@ -41,7 +41,7 @@ Page {
 
                 delegate: Pane {
                 width: parent.width - 20
-                height: contentCol.implicitHeight + 40
+                height: contentCol.implicitHeight + 50
                 Material.elevation: 4
                 RowLayout {
                         //width: parent.width - 100

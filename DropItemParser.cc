@@ -37,7 +37,6 @@ static QPair<QString,QByteArray> getAppImageNameAndIcon(const QString &appimageP
 	
 	appimage::core::AppImage *appimage;
         appimage::utils::ResourcesExtractor *res;
-	(appimagePath.toStdString());
 	try {
 		appimage = new appimage::core::AppImage(appimagePath.toStdString());
 	}catch(...) {

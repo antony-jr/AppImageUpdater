@@ -41,7 +41,7 @@ Page {
 
 		delegate: Pane {
 		width: parent.width - 20
-		height: contentCol.implicitHeight + 40
+		height: contentCol.implicitHeight + 50
 		Material.elevation: 4	
 		RowLayout {
 			Image {
@@ -224,9 +224,13 @@ Page {
 			RowLayout {
 				width: UsedTorrent ? 200 : 80
 				Button {
-					text: qsTr("Open")
+					text: WaitOpen ? qsTr("Wait") : qsTr("Open")
+					enabled: !WaitOpen
 					Material.background: Material.Teal
 					Material.foreground: "#ffffff"
+					onClicked: { 
+						mainexecuter.exec(Hash, NewAbsPath);
+					}
 				}
 
 				Button {
@@ -245,7 +249,9 @@ Page {
 
 				Button {
 					text: qsTr("Open Directory")
-
+					onClicked: { 
+						mainexecuter.openDirectory(NewAbsPath);
+					}
 				}
 			}
 			}
