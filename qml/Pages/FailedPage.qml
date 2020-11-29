@@ -8,16 +8,6 @@ Page {
     visible: true
     title: qsTr("Failed Update(s)")
 
-    ColumnLayout {
-        Layout.preferredWidth: parent.width
-        Layout.preferredHeight: parent.height
-        anchors.fill: parent
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        spacing: 2
-    }
     Component.onCompleted: {
 	    setFailedCount(0);
     } 
@@ -50,7 +40,7 @@ Page {
 
                 delegate: Pane {
                 width: parent.width - 20
-                height: 150
+                height: contentCol.implicitHeight + 40
                 Material.elevation: 4
                 RowLayout {
                         Image {
@@ -63,9 +53,11 @@ Page {
                         }
 
                         ColumnLayout {
+                        id: contentCol
                         Label {
+                          Layout.preferredWidth: root.width - 250
                           font.pixelSize: (function() {
-                           var factor = 0.03;
+                           var factor = 0.023;
                            var calculatedHPxSize = root.height * factor;
                            var calculatedWPxSize = root.width * factor;
                            if (calculatedHPxSize > calculatedWPxSize)
@@ -76,12 +68,60 @@ Page {
                         text: qsTr("<h3>") + Name + qsTr("</h3><br/>")
                           wrapMode: Text.WordWrap
                           textFormat: Text.RichText
-                          onLinkActivated: Qt.openUrlExternally(link)
                         }
- 			
+ 			RowLayout {
+			id: pathRow
+			Rectangle {
+			id: absPathLblRec
+			Layout.preferredWidth: 30 + absPathLbl.implicitWidth	
+			Layout.preferredHeight: absPathRow.implicitHeight
+			color: "#00BCD4"
+			RowLayout {
+			Layout.preferredWidth: 30 + absPathLbl.implicitWidth
+			Layout.preferredHeight: absPathLbl.implicitHeight
+			id: absPathRow
+			Rectangle {
+			Layout.preferredWidth: 10;
+			Layout.preferredHeight: absPathLbl.implicitHeight
+			color: "#00BCD4"
+			}
 			Label {
+			id: absPathLbl
+			font.pixelSize: (function() {
+                    	   var factor = 0.03;
+                    	   var calculatedHPxSize = root.height * factor;
+                    	   var calculatedWPxSize = root.width * factor;
+                    	   if (calculatedHPxSize > calculatedWPxSize)
+                           	return calculatedWPxSize;
+                    	   else
+                        	return calculatedHPxSize;
+                	  })()
+                	  text: "Path"
+			  color: "white"
+                	  wrapMode: Text.WordWrap
+            		}
+			}
+			}
+
+			Label {
+                	Layout.preferredWidth: root.width - 250
+			font.pixelSize: (function() {
+                    	   var factor = 0.023;
+                    	   var calculatedHPxSize = root.height * factor;
+                    	   var calculatedWPxSize = root.width * factor;
+                    	   if (calculatedHPxSize > calculatedWPxSize)
+                           	return calculatedWPxSize;
+                    	   else
+                        	return calculatedHPxSize;
+                	  })()
+                	text: AbsolutePath
+                	  wrapMode: Text.WordWrap
+            		}
+			}
+			Label {
+                Layout.preferredWidth: root.width - 250
                           font.pixelSize: (function() {
-                           var factor = 0.03;
+                           var factor = 0.023;
                            var calculatedHPxSize = root.height * factor;
                            var calculatedWPxSize = root.width * factor;
                            if (calculatedHPxSize > calculatedWPxSize)
@@ -92,7 +132,6 @@ Page {
                           text: ErrorMsg
 			  wrapMode: Text.WordWrap
                           textFormat: Text.RichText
-                          onLinkActivated: Qt.openUrlExternally(link)
                         }
 
                     Button {

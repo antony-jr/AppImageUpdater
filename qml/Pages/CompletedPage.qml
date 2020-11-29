@@ -8,16 +8,6 @@ Page {
     visible: true
     title: qsTr("Completed Update(s)")
 
-    ColumnLayout {
-        Layout.preferredWidth: parent.width
-        Layout.preferredHeight: parent.height
-        anchors.fill: parent
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: parent.bottom
-        spacing: 2
-    }
     Component.onCompleted: {
 	    setCompletedCount(0);
     } 
@@ -66,7 +56,7 @@ Page {
 			ColumnLayout {
 			id: contentCol
 			Label {
-			  Layout.preferredWidth: root.width - 180
+			  Layout.preferredWidth: root.width - 250
                 	  font.pixelSize: (function() {
                     	   var factor = 0.03;
                     	   var calculatedHPxSize = root.height * factor;
@@ -82,16 +72,27 @@ Page {
                 	  onLinkActivated: Qt.openUrlExternally(link)
 
             		}
-
+			
 			RowLayout {
+			id: newAbsRow
+			visible: Updated
 			Rectangle {
 			id: absPathLblRec
-			Layout.preferredWidth: absPathLbl.implicitWidth
+			Layout.preferredWidth: 30 + absPathLbl.implicitWidth	
+			Layout.preferredHeight: absPathRow.implicitHeight
+			color: "#00BCD4"
+			RowLayout {
+			Layout.preferredWidth: 30 + absPathLbl.implicitWidth
+			Layout.preferredHeight: absPathLbl.implicitHeight
+			id: absPathRow
+			Rectangle {
+			Layout.preferredWidth: 10;
 			Layout.preferredHeight: absPathLbl.implicitHeight
 			color: "#00BCD4"
+			}
 			Label {
 			id: absPathLbl
-                	Layout.preferredWidth: root.width - 180 
+                	Layout.preferredWidth: root.width - 185
 			font.pixelSize: (function() {
                     	   var factor = 0.03;
                     	   var calculatedHPxSize = root.height * factor;
@@ -102,15 +103,16 @@ Page {
                         	return calculatedHPxSize;
                 	  })()
                 	  text: "New Version"
+			  color: "white"
                 	  wrapMode: Text.WordWrap
             		}
 			}
-			
+			}
 
 			Label {
-                	Layout.preferredWidth: root.width - (200 + absPathLbl.implicitWidth) 
+			Layout.preferredWidth: root.width - 300
 			font.pixelSize: (function() {
-                    	   var factor = 0.03;
+                    	   var factor = 0.023;
                     	   var calculatedHPxSize = root.height * factor;
                     	   var calculatedWPxSize = root.width * factor;
                     	   if (calculatedHPxSize > calculatedWPxSize)
@@ -122,13 +124,105 @@ Page {
                 	  wrapMode: Text.WordWrap
             		}
 			}
+			
+			RowLayout {
+			id: oldAbsRow
+			visible: Updated
+			Rectangle {
+			id: oldAbsPathLblRec
+			Layout.preferredWidth: 30 + absPathLbl.implicitWidth	
+			Layout.preferredHeight: oldAbsPathRow.implicitHeight
+			color: "#607D8B"
+			RowLayout {
+			Layout.preferredWidth: 30 + absPathLbl.implicitWidth
+			Layout.preferredHeight: oldAbsPathLbl.implicitHeight
+			id: oldAbsPathRow
+			Rectangle {
+			Layout.preferredWidth: 10;
+			Layout.preferredHeight: oldAbsPathLbl.implicitHeight
+			color: "#607D8B"
+			}
+			Label {
+			id: oldAbsPathLbl
+                	Layout.preferredWidth: root.width - 185
+			font.pixelSize: (function() {
+                    	   var factor = 0.03;
+                    	   var calculatedHPxSize = root.height * factor;
+                    	   var calculatedWPxSize = root.width * factor;
+                    	   if (calculatedHPxSize > calculatedWPxSize)
+                           	return calculatedWPxSize;
+                    	   else
+                        	return calculatedHPxSize;
+                	  })()
+                	  text: "Old Version"
+			  color: "white"
+                	  wrapMode: Text.WordWrap
+            		}
+			}
+			}
+            
+			
+            Label {
+		Layout.preferredWidth: root.width - 300	
+			font.pixelSize: (function() {
+                    	   var factor = 0.023;
+                    	   var calculatedHPxSize = root.height * factor;
+                    	   var calculatedWPxSize = root.width * factor;
+                    	   if (calculatedHPxSize > calculatedWPxSize)
+                           	return calculatedWPxSize;
+                    	   else
+                        	return calculatedHPxSize;
+                	  })()
+                	text: OldAbsPath
+                	  wrapMode: Text.WordWrap
+            		}
+            }
+
+		RowLayout {
+			id: alreadyNewRowTop
+			visible: !Updated
+			Rectangle {
+			id: alreadyNewLblRec
+			Layout.preferredWidth: 30 + alreadyNewLbl.implicitWidth	
+			Layout.preferredHeight: alreadyNewRow.implicitHeight
+			color: "#8BC34A"
+			RowLayout {
+			Layout.preferredWidth: 30 + absPathLbl.implicitWidth
+			Layout.preferredHeight: oldAbsPathLbl.implicitHeight
+			id: alreadyNewRow
+			Rectangle {
+			Layout.preferredWidth: 10;
+			Layout.preferredHeight: alreadyNewLbl.implicitHeight
+			color: "#8BC34A"
+			}
+			Label {
+			id: alreadyNewLbl
+                	Layout.preferredWidth: root.width - 185
+			font.pixelSize: (function() {
+                    	   var factor = 0.03;
+                    	   var calculatedHPxSize = root.height * factor;
+                    	   var calculatedWPxSize = root.width * factor;
+                    	   if (calculatedHPxSize > calculatedWPxSize)
+                           	return calculatedWPxSize;
+                    	   else
+                        	return calculatedHPxSize;
+                	  })()
+                	  text: "ALREADY LATEST VERSION"
+			  color: "white"
+                	  wrapMode: Text.WordWrap
+            		}
+			}
+			}
+		}
+            
+
 
 			Flow {
 			Layout.preferredWidth: root.width - 175 
 			spacing: 8
 
 			RowLayout {
-				width: 200
+				width: UsedTorrent ? 200 : 80
 				Button {
 					text: qsTr("Open")
 					Material.background: Material.Teal
@@ -138,6 +232,8 @@ Page {
 				Button {
 					property bool seeding: false;
 					id: thisBtn
+					visible: UsedTorrent
+					enabled: settings_manager.isDecentralizedUpdateEnabled 
 					text: !thisBtn.seeding ? qsTr("Seed AppImage")	: qsTr("Stop Seeding")
 					Material.background: !thisBtn.seeding ? Material.Green : Material.Red
 					Material.foreground: "#ffffff"

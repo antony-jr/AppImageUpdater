@@ -84,10 +84,33 @@ static QPair<QString,QByteArray> getAppImageNameAndIcon(const QString &appimageP
 			}
 		}
 		if(entry[0] == "Icon") {
+			//// Some crazy Application developers don't follow the 
+			//// Rox AppDir format so the icon can be in the top dir
+			//// itself. So we will check for that.
+
+			std::vector<char> _iconData;
+			QPixmap image;
+			QByteArray imageData;	
+			bool cannotFind = false;
+			try {
+				_iconData = res->extract(entry[1] + ".png");
+				imageData = QByteArray(_iconData.data(), _iconData.size());
+				image.loadFromData(imageData);
+			}catch(...) {
+				cannotFind = true;
+			}
+
+			//// libappimage does not provide anything to check if the given
+			//// data is a valid png image, We can do some Qt magic here.
+			if(!cannotFind && !image.isNull()) {
+				r.second = imageData;
+			}else {
+
 			auto paths = res->getIconFilePaths(entry[1]);
 			if(paths.size()) {
 				auto iconData = res->extract(paths[paths.size()-1]);
 				r.second = QByteArray(iconData.data(), iconData.size());
+			}
 			}
 			if(!r.first.isEmpty()) {
 				break;

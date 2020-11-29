@@ -117,11 +117,12 @@ void UpdaterPrivate::onFinishAction(QJsonObject info, short action) {
 		++n_Completed;
 		QJsonObject r {
 			{"Updated" , true},
-			{"NewAbsPath" , info["OldVersionPath"].toString() },
+			{"NewAbsPath" , info["NewVersionPath"].toString() },
 			{"OldAbsPath" , m_CurrentAppImage.path },
 			{"Hash", m_CurrentAppImage.image_id},
 			{"ImageId" , m_CurrentAppImage.image_id},
-			{"Name" , m_CurrentAppImage.name }
+			{"Name" , m_CurrentAppImage.name },
+			{"UsedTorrent", info["UsedTorrent"].toBool()}
 		};
 		emit finished(r);
 		emit completedCountChanged(n_Completed);
@@ -135,7 +136,8 @@ void UpdaterPrivate::onFinishAction(QJsonObject info, short action) {
 			{"OldAbsPath" , m_CurrentAppImage.path },
 			{"Hash", m_CurrentAppImage.image_id},
 			{"ImageId" , m_CurrentAppImage.image_id},
-			{"Name" , m_CurrentAppImage.name }
+			{"Name" , m_CurrentAppImage.name },
+			{"UsedTorrent", info["TorrentSupported"].toBool()}	
 			};
 	
 			emit finished(rt);
@@ -183,6 +185,9 @@ void UpdaterPrivate::onErrorAction(short code, short action) {
 
 	++n_Failed;
 	emit failed(r);
+
+
+	qDebug() << "Failed:: " << n_Failed;
 	emit failedCountChanged(n_Failed);
 
 	updateNextAppImage();
@@ -199,6 +204,8 @@ void UpdaterPrivate::updateNextAppImage() {
 	emit loading();
 	if(m_AppImages.isEmpty()) {
 		n_Queued = 0;
+		AppImage app;
+		m_CurrentAppImage = app;
 		emit queuedCountChanged(0);
 		emit finishedAll();
 		return;

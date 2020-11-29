@@ -284,7 +284,7 @@ ApplicationWindow {
 			property int count : 0;
 			id: completedCount
 			anchors.right: parent.right	
-			text: qsTr("1");
+			text: String(completedCount.count);
 			visible: completedCount.count > 0
 			flat: true;
 			Material.background: Material.Green;
@@ -304,7 +304,7 @@ ApplicationWindow {
 			property int count: 0;
 			id: queuedCount
 			anchors.right: parent.right	
-			text: qsTr("1");
+			text: String(queuedCount.count);
 			flat: true;
 			visible: queuedCount.count > 0
 			Material.background: Material.Blue;
@@ -325,7 +325,7 @@ ApplicationWindow {
 			property int count: 0;
 			id: failedCount
 			anchors.right: parent.right	
-			text: qsTr("1");
+			text: String(failedCount.count);
 			flat: true
 			visible: failedCount.count > 0
 			Material.background: Material.Red;
