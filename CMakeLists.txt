@@ -11,6 +11,7 @@ set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
+find_package(LibtorrentRasterbar)
 find_package(QAppImageUpdate)
 find_package(libappimage)
 find_package(Qt5Gui)
