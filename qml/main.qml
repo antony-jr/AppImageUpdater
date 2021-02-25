@@ -80,7 +80,7 @@ ApplicationWindow {
     Timer {
         id: notificationTimer
 
-        interval: 3000
+        interval: 800
         running: false
         repeat: false
         onTriggered: {
@@ -233,8 +233,8 @@ ApplicationWindow {
 	}
 
 	onQueued: {
-		queuedUpdatesList.append(info);		
-	
+		queuedUpdatesList.append(info);
+		notify("Queued Item");	
 	}
 	
 	onFailed: {
@@ -259,6 +259,7 @@ ApplicationWindow {
 		root.updateLoading = false;
 		root.showUpdateChoice = false;
 		root.updating = false;
+		notify("All Update(s) Finished");
 	}
 	onCompletedCountChanged: {
 		if(stackView.currentItem.title != "Completed Update(s)"){
@@ -426,8 +427,8 @@ ApplicationWindow {
     		layer.enabled: true
     		layer.samples: 4
     		ShapePath {
-			fillColor: "#f44336"
-			strokeColor: "#f44336"
+			fillColor: "#ef5350"
+			strokeColor: "#ef5350"
         		strokeWidth: 2
         		capStyle: ShapePath.FlatCap
 

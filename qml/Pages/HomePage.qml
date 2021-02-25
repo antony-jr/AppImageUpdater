@@ -4,10 +4,25 @@ import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
 import QtQuick.Controls.Styles 1.4
 import QtQuick.Layouts 1.12
+import QtQuick.Dialogs 1.3
 
 Page {
     visible: true
     title: qsTr("Drag and Drop AppImage(s) to Update!")
+
+    FileDialog {
+	id: browseFileDialog
+	title: qsTr("Browse AppImage")
+	folder: shortcuts.home
+	selectFolder: false
+	onAccepted: {
+		dropParser.clearBuffer();
+		for(var i = 0; i < browseFileDialog.fileUrls.length; ++i) {
+			dropParser.appendToBuffer(browseFileDialog.fileUrls[i]);
+		}
+		dropParser.start();
+	}
+    }
 
     DropItemParser {
 	id: dropParser
@@ -63,8 +78,8 @@ Page {
         anchors.bottom: parent.bottom
         spacing: 2
         visible: false
-
-        Image {
+        
+	Image {
             cache: true
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVTop
             Layout.preferredHeight: (parent.Layout.preferredHeight)
@@ -72,7 +87,6 @@ Page {
             fillMode: Image.PreserveAspectFit
             source: "qrc:/drop_image.png"
         }
-
     }
 
     ColumnLayout {
@@ -97,6 +111,19 @@ Page {
             fillMode: Image.PreserveAspectFit
             source: "qrc:/dotted_square.png"
     	}
+	
+	Button {
+		visible: !root.updating && !defaultLayout.fetching && !root.updateLoading
+		Layout.alignment: Qt.AlignHCenter | Qt.AlignVTop
+		Layout.preferredWidth: (parent.Layout.preferredWidth) * 0.30
+		text: qsTr("Browse");
+		Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light;
+		highlighted: true
+		Material.background: Material.Green;
+		onClicked: {
+			browseFileDialog.open()		
+		}
+	}
 
 	ProgressBar {
 	    visible: defaultLayout.fetching || root.updateLoading
