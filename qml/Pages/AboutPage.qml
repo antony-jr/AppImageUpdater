@@ -22,9 +22,9 @@ Page {
         r += qsTr("Report issues at <a href='https://github.com/antony-jr/AppImageUpdater'>Project Page</a> <br>");
         r += qsTr("<br>Uses QAppImageUpdate <b>v");
         r += bconstants.getQAppImageUpdateVersion();
-        r += qsTr("</b> and Torrent Rasterbar <b>v");
+        r += qsTr("</b>, Torrent Rasterbar <b>v");
         r += bconstants.getTorrentVersion();
-        r += qsTr("</b>.<br>");
+        r += qsTr("</b> and libappimage.<br>");
         return r;
     }
 
@@ -47,7 +47,7 @@ Page {
             Layout.preferredHeight: parent.Layout.preferredHeight * 0.6
             Layout.preferredWidth: parent.Layout.preferredWidth * 0.6
             fillMode: Image.PreserveAspectFit
-            source: "qrc:/ajr_logo.png"
+            source: "qrc:/logo.png"
         }
 
         Label {

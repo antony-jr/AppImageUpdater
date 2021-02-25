@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 
     QApplication app(argc, argv);
     QApplication::setOrganizationName("antony-jr");
-    QApplication::setApplicationName("AppImageUpdater");
+    QApplication::setApplicationName("AppImage Updater");
 
     qmlRegisterType<BuildConstants>("Core.BuildConstants", 1, 0, "BuildConstants");
     qmlRegisterType<SettingsManager>("Core.SettingsManager", 1, 0, "SettingsManager");
