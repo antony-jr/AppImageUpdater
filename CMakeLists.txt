@@ -6,6 +6,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
+set(QAPPLICATION_CLASS QApplication CACHE STRING "Inheritance class for SingleApplication")
 
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
@@ -19,8 +20,11 @@ find_package(Qt5Concurrent)
 find_package(Qt5Qml)
 find_package(Qt5QuickControls2)
 
+add_subdirectory(third-party/SingleApplication)
+
 # Include Directories.
 include_directories(${CMAKE_BINARY_DIR})
+include_directories(third-party/SingleApplication)
 
 if(APPIMAGE_UPDATER_VERSION)
 	add_definitions(-DAPPIMAGE_UPDATER_VERSION="${APPIMAGE_UPDATER_VERSION}")
@@ -64,3 +68,4 @@ target_link_libraries(AppImageUpdater PUBLIC
 				      util)
 target_link_libraries(AppImageUpdater PRIVATE QAppImageUpdate)
 target_link_libraries(AppImageUpdater PRIVATE libappimage)
+target_link_libraries(AppImageUpdater PRIVATE SingleApplication::SingleApplication)

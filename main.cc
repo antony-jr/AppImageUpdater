@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <SingleApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include <QIcon>
@@ -22,9 +23,9 @@ int main(int argc, char **argv)
 	    return app.exec();
     }
 
-    QApplication app(argc, argv);
-    QApplication::setOrganizationName("antony-jr");
-    QApplication::setApplicationName("AppImage Updater");
+    SingleApplication app(argc, argv);
+    SingleApplication::setOrganizationName("antony-jr");
+    SingleApplication::setApplicationName("AppImage Updater");
 
     qmlRegisterType<BuildConstants>("Core.BuildConstants", 1, 0, "BuildConstants");
     qmlRegisterType<SettingsManager>("Core.SettingsManager", 1, 0, "SettingsManager");
