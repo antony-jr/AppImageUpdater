@@ -1,6 +1,7 @@
 import Core.Updater 1.0
 import Core.BuildConstants 1.0
 import Core.SettingsManager 1.0
+import Core.SystemTray 1.0
 import Core.Executer 1.0
 import QtQuick 2.12
 import QtQuick.Controls 2.12
@@ -194,6 +195,33 @@ ApplicationWindow {
 
     SettingsManager {
         id: settings_manager
+    }
+
+    onClosing: {
+	system_tray.isHidden = true;
+    }
+
+    SystemTray {
+	id: system_tray
+	onHide: {
+		system_tray.isHidden = true;
+		root.visible = false;
+	}
+
+	onShow: { 
+		system_tray.isHidden = false;
+		root.visible = true;
+		root.setX(Screen.width / 2 - width / 2);
+		root.setY(Screen.height / 2 - height / 2);
+	}
+
+	onQuit: {
+		Qt.quit();
+	}
+
+	onRaiseApp: {
+		root.visible = true;			
+	}
     }
 
     Executer {

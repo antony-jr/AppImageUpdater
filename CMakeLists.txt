@@ -54,6 +54,8 @@ add_executable(AppImageUpdater main.cc
 			     BuildConstants.cc
 			     SettingsManager.hpp
 			     SettingsManager.cc
+			     SystemTray.hpp
+			     SystemTray.cc
 			     Executer_p.hpp
 			     Executer_p.cc
 			     Executer.hpp
