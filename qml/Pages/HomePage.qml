@@ -3,42 +3,45 @@ import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
 import QtQuick.Controls.Styles 1.4
-import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.3
+import QtQuick.Layouts 1.12
 
 Page {
     visible: true
     title: qsTr("Drag and Drop AppImage(s) to Update!")
 
     FileDialog {
-	id: browseFileDialog
-	title: qsTr("Browse AppImage")
-	folder: shortcuts.home
-	selectFolder: false
-	onAccepted: {
-		dropParser.clearBuffer();
-		for(var i = 0; i < browseFileDialog.fileUrls.length; ++i) {
-			dropParser.appendToBuffer(browseFileDialog.fileUrls[i]);
-		}
-		dropParser.start();
-	}
+        id: browseFileDialog
+
+        title: qsTr("Browse AppImage")
+        folder: shortcuts.home
+        selectFolder: false
+        onAccepted: {
+            dropParser.clearBuffer();
+            for (var i = 0; i < browseFileDialog.fileUrls.length; ++i) {
+                dropParser.appendToBuffer(browseFileDialog.fileUrls[i]);
+            }
+            dropParser.start();
+        }
     }
 
     DropItemParser {
-	id: dropParser
-	onLoading: {
-	     defaultLayout.fetching = true;
+        ///notify("<h1>Queued Item to Updater</h1>");
+
+        id: dropParser
+
+        onLoading: {
+            defaultLayout.fetching = true;
         }
-	onFailed: {
-	    defaultLayout.fetching = false; 
+        onFailed: {
+            defaultLayout.fetching = false;
         }
-	onEnqueue: {
-	    coreUpdater.queue(absolutePath, appName, icon);
-	}
-	onFinished:  {
-	    defaultLayout.fetching = false;	
-	    ///notify("<h1>Queued Item to Updater</h1>");
-    	}
+        onEnqueue: {
+            coreUpdater.queue(absolutePath, appName, icon);
+        }
+        onFinished: {
+            defaultLayout.fetching = false;
+        }
     }
 
     DropArea {
@@ -46,24 +49,24 @@ Page {
 
         anchors.fill: parent
         onEntered: {
-	    defaultLayout.visible = false;
+            defaultLayout.visible = false;
             dropLayout.visible = true;
         }
         onExited: {
             dropLayout.visible = false;
             defaultLayout.visible = true;
         }
-	onDropped: {
-	    dropLayout.visible = false; 
-       	    defaultLayout.visible = true; 
-	    if(drop.hasUrls) {
-		    dropParser.clearBuffer();
-		    for(var i = 0; i < drop.urls.length; ++i) {
-			    dropParser.appendToBuffer(drop.urls[i]);
-		    }
-		    dropParser.start();
-	    }
-	}
+        onDropped: {
+            dropLayout.visible = false;
+            defaultLayout.visible = true;
+            if (drop.hasUrls) {
+                dropParser.clearBuffer();
+                for (var i = 0; i < drop.urls.length; ++i) {
+                    dropParser.appendToBuffer(drop.urls[i]);
+                }
+                dropParser.start();
+            }
+        }
     }
 
     ColumnLayout {
@@ -78,8 +81,8 @@ Page {
         anchors.bottom: parent.bottom
         spacing: 2
         visible: false
-        
-	Image {
+
+        Image {
             cache: true
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVTop
             Layout.preferredHeight: (parent.Layout.preferredHeight)
@@ -87,11 +90,13 @@ Page {
             fillMode: Image.PreserveAspectFit
             source: "qrc:/drop_image.png"
         }
+
     }
 
     ColumnLayout {
-	property bool fetching: false;
-	id: defaultLayout
+        id: defaultLayout
+
+        property bool fetching: false
 
         Layout.preferredWidth: parent.width
         Layout.preferredHeight: parent.height
@@ -102,131 +107,159 @@ Page {
         anchors.bottom: parent.bottom
         spacing: 2
 
-	Image {
-	    visible: !root.updating && !defaultLayout.fetching && !root.updateLoading
+        Image {
+            visible: !root.updating && !defaultLayout.fetching && !root.updateLoading
             cache: true
             Layout.alignment: Qt.AlignHCenter | Qt.AlignVTop
             Layout.preferredHeight: (parent.Layout.preferredHeight) * 0.85
             Layout.preferredWidth: (parent.Layout.preferredWidth) * 0.85
             fillMode: Image.PreserveAspectFit
             source: "qrc:/dotted_square.png"
-    	}
-	
-	Button {
-		visible: !root.updating && !defaultLayout.fetching && !root.updateLoading
-		Layout.alignment: Qt.AlignHCenter | Qt.AlignVTop
-		Layout.preferredWidth: (parent.Layout.preferredWidth) * 0.30
-		text: qsTr("Browse");
-		Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light;
-		highlighted: true
-		Material.background: Material.Green;
-		onClicked: {
-			browseFileDialog.open()		
-		}
-	}
-
-	ProgressBar {
-	    visible: defaultLayout.fetching || root.updateLoading
-	    indeterminate: true
- 	    Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
         }
 
-	Image {
-	    visible: root.updating
-	    cache: true
-   	    Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-            Layout.preferredHeight: 125
-	    Layout.preferredWidth: 125
-	    fillMode: Image.PreserveAspectFit
-	    source: root.currentAppImageIconSrc
+        Button {
+            visible: !root.updating && !defaultLayout.fetching && !root.updateLoading
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVTop
+            Layout.preferredWidth: (parent.Layout.preferredWidth) * 0.3
+            text: qsTr("Browse")
+            Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light
+            highlighted: true
+            Material.background: Material.Green
+            onClicked: {
+                browseFileDialog.open();
+            }
         }
-	
-	Label {
-		visible: root.updating
+
+        ProgressBar {
+            visible: defaultLayout.fetching || root.updateLoading
+            indeterminate: true
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+        }
+
+        ScrollView {
+            id: mainPageScrollView
+
+            visible: root.updating
+            contentWidth: root.width - 10
+            Layout.preferredWidth: parent.Layout.preferredWidth - 10
+            Layout.preferredHeight: parent.Layout.preferredHeight - 10
+            Layout.alignment: Qt.AlignCenter
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            clip: true
+            ScrollBar.horizontal.interactive: false
+
+            ColumnLayout {
+                // Close ScrollView
+
+                id: mainColumnLayout
+
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
-		Layout.preferredWidth: parent.Layout.preferredWidth - 10
-		horizontalAlignment: Qt.AlignHCenter;
-                font.pixelSize: (function() {
-                    var factor = 0.04;
-                    var calculatedHPxSize = parent.Layout.preferredHeight * factor;
-                    var calculatedWPxSize = parent.Layout.preferredWidth * factor;
-                    if (calculatedHPxSize > calculatedWPxSize)
-                        return calculatedWPxSize;
-                    else
-                        return calculatedHPxSize;
-		})()
-		text: "<h1>" + root.currentAppImageName + "</h1>"
-                wrapMode: Text.WordWrap
-                textFormat: Text.RichText
-                onLinkActivated: Qt.openUrlExternally(link)
-	}
+                Layout.preferredWidth: root.width - 5
+                Layout.preferredHeight: root.height - 80
+                spacing: 2
 
-	ScrollView {
-		id: releaseScrollView
-		visible: root.updating && root.currentAppImageReleaseNotes.length > 0
-		contentWidth: root.width - 50
-		Layout.preferredWidth: parent.Layout.preferredWidth - 50 
-		Layout.preferredHeight: parent.Layout.preferredHeight - 250
-		Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-		ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-		ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-		clip: true
+                Image {
+                    visible: root.updating
+                    cache: true
+                    Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                    Layout.preferredHeight: 125
+                    Layout.preferredWidth: 125
+                    fillMode: Image.PreserveAspectFit
+                    source: root.currentAppImageIconSrc
+                }
 
-		 ScrollBar.horizontal.interactive: false;
+                Label {
+                    visible: root.updating
+                    Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                    Layout.preferredWidth: parent.Layout.preferredWidth - 10
+                    horizontalAlignment: Qt.AlignHCenter
+                    font.pixelSize: (function() {
+                        var factor = 0.04;
+                        var calculatedHPxSize = parent.Layout.preferredHeight * factor;
+                        var calculatedWPxSize = parent.Layout.preferredWidth * factor;
+                        if (calculatedHPxSize > calculatedWPxSize)
+                            return calculatedWPxSize;
+                        else
+                            return calculatedHPxSize;
+                    })()
+                    text: "<h1>" + root.currentAppImageName + "</h1>"
+                    wrapMode: Text.WordWrap
+                    textFormat: Text.RichText
+                    onLinkActivated: Qt.openUrlExternally(link)
+                }
 
-		TextEdit {
-		 width: root.width - 80	 
-		 height: parent.height - 10
-		 visible: root.updating && root.currentAppImageReleaseNotes.length > 0	
-		readOnly: true;
-		text: root.currentAppImageReleaseNotes;
-		wrapMode: Text.WordWrap
-		color: settings_manager.isDarkMode ? "#fff" : "#212121";
-		textFormat: Text.RichText
-                onLinkActivated: Qt.openUrlExternally(link)
-      	      }
+                ScrollView {
+                    id: releaseScrollView
 
-	      background: Rectangle {
-		      width: releaseScrollView.implicitWidth;
-		      height: releaseScrollView.implicitHeight;
-		      color: settings_manager.isDarkMode ? "#212121" : "#fff"; 
-	      }
-      
-      } // Close ScrollView
+                    visible: root.updating && root.currentAppImageReleaseNotes.length > 0
+                    contentWidth: root.width - 50
+                    Layout.preferredWidth: parent.Layout.preferredWidth - 50
+                    Layout.preferredHeight: parent.Layout.preferredHeight - 250
+                    Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+                    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+                    ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+                    clip: true
+                    ScrollBar.horizontal.interactive: false
 
-      RowLayout {
-	      Layout.alignment: Qt.AlignCenter
-	      visible: root.showUpdateChoice
-	      Button {
-		      text: qsTr("Accept Update");
-		      Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light;
-		      highlighted: true
-		      Material.background: Material.Green;
-		      onClicked: {
-			      coreUpdater.continueCurrentUpdate();
-		      }
-	      }
+                    TextEdit {
+                        width: root.width - 80
+                        height: parent.height - 10
+                        visible: root.updating && root.currentAppImageReleaseNotes.length > 0
+                        readOnly: true
+                        text: root.currentAppImageReleaseNotes
+                        wrapMode: Text.WordWrap
+                        color: settings_manager.isDarkMode ? "#fff" : "#212121"
+                        textFormat: Text.RichText
+                        onLinkActivated: Qt.openUrlExternally(link)
+                    }
 
-	      Button {
-		      text: qsTr("Skip Update");
-		       Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light;
-		      highlighted: true
-		      Material.background: Material.Red;
-		      onClicked: {
-			      coreUpdater.cancelCurrentUpdate();
-		      }
-	      }
+                    background: Rectangle {
+                        width: releaseScrollView.implicitWidth
+                        height: releaseScrollView.implicitHeight
+                        color: settings_manager.isDarkMode ? "#212121" : "#fff"
+                    }
 
-	      Button {
-		      text: qsTr("Accept All");
-		      Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light;
-		      highlighted: true
-		      Material.background: Material.Teal;
-		      onClicked: {
-			      coreUpdater.toggleNoConfirm();
-			      coreUpdater.continueCurrentUpdate();
-		      }
-	      }
-      }
+                }
+
+                RowLayout {
+                    Layout.alignment: Qt.AlignCenter
+                    visible: root.showUpdateChoice
+
+                    Button {
+                        text: qsTr("Accept Update")
+                        Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light
+                        highlighted: true
+                        Material.background: Material.Green
+                        onClicked: {
+                            coreUpdater.continueCurrentUpdate();
+                        }
+                    }
+
+                    Button {
+                        text: qsTr("Skip Update")
+                        Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light
+                        highlighted: true
+                        Material.background: Material.Red
+                        onClicked: {
+                            coreUpdater.cancelCurrentUpdate();
+                        }
+                    }
+
+                    Button {
+                        text: qsTr("Accept All")
+                        Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light
+                        highlighted: true
+                        Material.background: Material.Teal
+                        onClicked: {
+                            coreUpdater.toggleNoConfirm();
+                            coreUpdater.continueCurrentUpdate();
+                        }
+                    }
+
+                } // column layout
+            } // main scroll view
+        }
+
     }
+
 }
