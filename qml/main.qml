@@ -14,9 +14,13 @@ import QtQuick.Shapes 1.15
 
 ApplicationWindow {	
     id: root
+    property bool actualProgress: false;
     property bool updating: false;
     property bool updateLoading: false;
     property bool showUpdateChoice: false;
+    property bool loadingProgress: false;
+    property int progressBarValue: 0;
+    property string progressText: qsTr("");
     property string currentAppImageIconSrc: qsTr("");
     property string currentAppImageName: qsTr("");
     property string currentAppImageReleaseNotes: qsTr("");
@@ -239,6 +243,11 @@ ApplicationWindow {
     Updater {
 	id: coreUpdater
 	onLoading: {
+		root.loadingProgress = false;
+		root.progressBarValue = 0;
+		root.actualProgress = false;
+		root.progressText = "";
+	
 		root.updating = false;
 		root.showUpdateChoice = false;
 		root.updateLoading = true;
@@ -279,7 +288,20 @@ ApplicationWindow {
 	
 	onFailed: {
 		failedUpdatesList.append(info);
-	}	
+	}
+	onStarted: {
+		root.updateLoading = false;
+		root.showUpdateChoice = false;
+
+		root.loadingProgress = true;
+	}
+
+	onProgressText: { 
+		root.loadingProgress = false;
+		root.progressBarValue = progressValue;
+		root.actualProgress = true;
+		root.progressText = progressTextString;
+	}
 
 	onFinished: {
 		for(var i = 0; i < queuedUpdatesList.count; ++i) {

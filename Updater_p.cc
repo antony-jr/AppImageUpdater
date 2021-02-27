@@ -16,6 +16,10 @@ UpdaterPrivate::UpdaterPrivate(QObject *parent)
 {
 	m_Updater = new QAppImageUpdate(/*single threaded=*/false, /*parent=*/this);
 
+	connect(m_Updater, &QAppImageUpdate::progress, 
+		 this, &UpdaterPrivate::onProgress,
+		 Qt::QueuedConnection);
+
 	connect(m_Updater, &QAppImageUpdate::finished, 
 		 this, &UpdaterPrivate::onFinishAction,
 		 Qt::QueuedConnection);
@@ -100,6 +104,7 @@ void UpdaterPrivate::queue(const QString &path, const QString &name, QVariant ic
 
 void UpdaterPrivate::toggleNoConfirm() {
 	b_NoConfirm = !b_NoConfirm;
+	emit noConfirmState(b_NoConfirm);
 }
 
 void UpdaterPrivate::continueCurrentUpdate() {
@@ -137,6 +142,22 @@ void UpdaterPrivate::cancelAll() {
 }
 
 //// Private Qt Slots.
+void UpdaterPrivate::onProgress(
+		int percentage , qint64 bytesReceived , qint64 bytesTotal , 
+		double speed , QString speedUnits, short action) {
+	
+	if(action != QAppImageUpdate::Action::UpdateWithTorrent &&
+	   action != QAppImageUpdate::Action::Update) {
+		return;
+	}
+
+	auto megaBytesRec = bytesReceived / 1048576;
+	auto totalMegaBytes = bytesTotal / 1048576;
+
+	QString progressStr = "Revising %1 of %2 MiB at %3 %4";
+
+	emit progressText(progressStr.arg(megaBytesRec).arg(totalMegaBytes).arg(speed).arg(speedUnits), percentage);
+}
 void UpdaterPrivate::onFinishAction(QJsonObject info, short action) {
 	b_Running = false;
 	qDebug() << "Finished Action";
@@ -197,7 +218,10 @@ void UpdaterPrivate::onFinishAction(QJsonObject info, short action) {
 }
 
 void UpdaterPrivate::onStartAction(short action) {
-	Q_UNUSED(action);
+	if(action == QAppImageUpdate::Action::UpdateWithTorrent ||
+	   action == QAppImageUpdate::Action::Update) {
+		emit started();
+	}
 }
 
 void UpdaterPrivate::onErrorAction(short code, short action) {

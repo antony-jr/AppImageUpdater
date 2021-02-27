@@ -12,7 +12,8 @@ static QMetaMethod getMethod(QObject *object, const char *function) {
 
 
 Updater::Updater(QObject *parent) 
-	: QObject(parent) { 
+	: QObject(parent) {
+	b_NoConfirm = false;	
 	m_Private = new UpdaterPrivate;
 	m_Thread = new QThread;
 	m_Thread->start();
@@ -28,6 +29,9 @@ Updater::Updater(QObject *parent)
 	connect(m_Private, &UpdaterPrivate::completedCountChanged,
 		   this, &Updater::completedCountChanged);
 
+	connect(m_Private, &UpdaterPrivate::progressText,
+		    this, &Updater::progressText);
+
 	connect(m_Private, &UpdaterPrivate::loading,
 		    this, &Updater::loading);
 
@@ -40,6 +44,9 @@ Updater::Updater(QObject *parent)
 	connect(m_Private, &UpdaterPrivate::failed,
 		    this, &Updater::failed);
 
+	connect(m_Private, &UpdaterPrivate::started,
+		    this, &Updater::started);
+
 	connect(m_Private, &UpdaterPrivate::finished,
 		    this, &Updater::finished);
 	
@@ -50,6 +57,8 @@ Updater::Updater(QObject *parent)
 	connect(m_Private, &UpdaterPrivate::finishedAll,
 		    this, &Updater::finishedAll);
 
+	connect(m_Private, &UpdaterPrivate::noConfirmState,
+		    this,  &Updater::handleNoConfirmState); 
 }
 
 Updater::~Updater() {
@@ -60,6 +69,15 @@ Updater::~Updater() {
      m_Thread->quit();
      m_Thread->wait();
      m_Thread->deleteLater();
+}
+
+bool Updater::isNoConfirm() const {
+	return b_NoConfirm;
+}
+
+void Updater::handleNoConfirmState(bool value) {
+	b_NoConfirm = value;
+	emit isNoConfirmEnabledChanged();
 }
 
 void Updater::retry(const QJsonObject &json) {

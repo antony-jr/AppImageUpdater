@@ -35,6 +35,7 @@ public Q_SLOTS:
 	void cancelCurrentUpdate();
 	void cancelAll();
 private Q_SLOTS:
+	void onProgress(int, qint64, qint64, double, QString, short);
 	void onFinishAction(QJsonObject, short);
 	void onStartAction(short);
 	void onCancelAction(short);
@@ -42,14 +43,17 @@ private Q_SLOTS:
 private:
 	void updateNextAppImage();
 Q_SIGNALS:
+	void noConfirmState(bool);
 	void queuedCountChanged(int);
         void failedCountChanged(int);
 	void completedCountChanged(int);
 
+	void progressText(QString, int);
 	void loading();
 	void metaInfo(QJsonObject);
 	void queued(QJsonObject);
 	void failed(QJsonObject);
+	void started();
 	void finished(QJsonObject);
 	void retrySent(QString hash);
 	void finishedAll();

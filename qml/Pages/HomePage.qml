@@ -191,7 +191,7 @@ Page {
                 ScrollView {
                     id: releaseScrollView
 
-                    visible: root.updating && root.currentAppImageReleaseNotes.length > 0
+                    visible: !root.actualProgress && !root.loadingProgress && root.updating && root.currentAppImageReleaseNotes.length > 0
                     contentWidth: root.width - 50
                     Layout.preferredWidth: parent.Layout.preferredWidth - 50
                     Layout.preferredHeight: parent.Layout.preferredHeight - 250
@@ -204,7 +204,7 @@ Page {
                     TextEdit {
                         width: root.width - 80
                         height: parent.height - 10
-                        visible: root.updating && root.currentAppImageReleaseNotes.length > 0
+                        visible: !root.loadingProgress && root.updating && root.currentAppImageReleaseNotes.length > 0
                         readOnly: true
                         text: root.currentAppImageReleaseNotes
                         wrapMode: Text.WordWrap
@@ -214,7 +214,7 @@ Page {
                     }
 
                     background: Rectangle {
-                        width: releaseScrollView.implicitWidth
+			width: releaseScrollView.implicitWidth
                         height: releaseScrollView.implicitHeight
                         color: settings_manager.isDarkMode ? "#212121" : "#fff"
                     }
@@ -223,7 +223,7 @@ Page {
 
                 RowLayout {
                     Layout.alignment: Qt.AlignCenter
-                    visible: root.showUpdateChoice
+                    visible: !root.loadingProgress && root.showUpdateChoice
 
                     Button {
                         text: qsTr("Accept Update")
@@ -256,8 +256,90 @@ Page {
                         }
                     }
 
-                } // column layout
-            } // main scroll view
+                }
+		Rectangle {
+			visible: root.loadingProgress || root.actualProgress
+			width: 100
+                        height: root.height * 0.25
+                        color: "transparent"
+                }
+
+            	ProgressBar {
+            		visible: root.loadingProgress
+			indeterminate: true
+            		Layout.preferredWidth: root.width - 100
+			Layout.preferredHeight: 50
+			Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+		}
+
+	        ProgressBar {
+            		visible: root.actualProgress
+			indeterminate: false
+            		Layout.preferredWidth: root.width - 100
+			Layout.preferredHeight: 50
+			Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+			value: root.progressBarValue
+		}
+
+		
+                Label {
+                    visible: root.actualProgress
+                    Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                    Layout.preferredWidth: parent.Layout.preferredWidth - 10
+                    horizontalAlignment: Qt.AlignHCenter
+                    font.pixelSize: (function() {
+                        var factor = 0.04;
+                        var calculatedHPxSize = parent.Layout.preferredHeight * factor;
+                        var calculatedWPxSize = parent.Layout.preferredWidth * factor;
+                        if (calculatedHPxSize > calculatedWPxSize)
+                            return calculatedWPxSize;
+                        else
+                            return calculatedHPxSize;
+                    })()
+                    text: root.progressText
+                    wrapMode: Text.WordWrap
+                    textFormat: Text.RichText
+                }
+
+		Flow {
+                    Layout.alignment: Qt.AlignHCenter | Qt.AlignVBottom
+                    Layout.preferredWidth: root.width - 100
+		    visible: root.actualProgress
+		    spacing: 8 
+                    Button {
+			Layout.alignment: Qt.AlignCenter
+                        text: qsTr("Cancel Update")
+                        Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light
+                        highlighted: true
+                        Material.background: Material.Red
+                        onClicked: {
+                            coreUpdater.cancelCurrentUpdate();
+                        }
+                    }
+
+		    Button {
+			Layout.alignment: Qt.AlignCenter
+                        text: qsTr("Cancel All")
+                        Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light
+                        highlighted: true
+                        Material.background: Material.Teal
+                        onClicked: {
+                            coreUpdater.cancelAll();
+                        }
+                    }
+
+        	    Switch {
+			Layout.alignment: Qt.AlignCenter
+            		checked: coreUpdater.isNoConfirmEnabled
+            		text: qsTr("Accept All Updates")
+            		onClicked: {
+			     coreUpdater.toggleNoConfirm();	
+			}
+        	    }
+                }
+
+
+	   } // main scroll view
         }
 
     }
