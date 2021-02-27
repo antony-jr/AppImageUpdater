@@ -144,6 +144,8 @@ Page {
 	Label {
 		visible: root.updating
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+		Layout.preferredWidth: parent.Layout.preferredWidth - 10
+		horizontalAlignment: Qt.AlignHCenter;
                 font.pixelSize: (function() {
                     var factor = 0.04;
                     var calculatedHPxSize = parent.Layout.preferredHeight * factor;
@@ -197,7 +199,7 @@ Page {
 	      visible: root.showUpdateChoice
 	      Button {
 		      text: qsTr("Accept Update");
-		       Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light;
+		      Material.theme: settings_manager.isDarkMode ? Material.Dark : Material.Light;
 		      highlighted: true
 		      Material.background: Material.Green;
 		      onClicked: {
