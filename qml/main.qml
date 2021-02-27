@@ -199,6 +199,10 @@ ApplicationWindow {
 
     onClosing: {
 	system_tray.isHidden = true;
+    	if(settings_manager.isAllowSystemTrayNotification) {
+		system_tray.notify("Program Minimized to System Tray.");
+	}
+	
     }
 
     SystemTray {
@@ -210,6 +214,7 @@ ApplicationWindow {
 
 	onShow: { 
 		system_tray.isHidden = false;
+		system_tray.changeTrayIconDefault();
 		root.visible = true;
 		root.setX(Screen.width / 2 - width / 2);
 		root.setY(Screen.height / 2 - height / 2);
@@ -246,6 +251,13 @@ ApplicationWindow {
 		root.updateLoading = false;
 		root.updating = true;
 		root.showUpdateChoice = true;
+
+		if(system_tray.isHidden) {
+			if(settings_manager.isAllowSystemTrayNotification) {
+				system_tray.notify("Please select a option to continue update.");
+			}	
+			system_tray.changeTrayIconToRed();
+		}
 	}
 
 	onRetrySent: {
@@ -262,7 +274,7 @@ ApplicationWindow {
 
 	onQueued: {
 		queuedUpdatesList.append(info);
-		notify("Queued Item");	
+		notify("Item Queued");	
 	}
 	
 	onFailed: {
@@ -288,6 +300,15 @@ ApplicationWindow {
 		root.showUpdateChoice = false;
 		root.updating = false;
 		notify("All Update(s) Finished");
+		
+		if(settings_manager.isAllowSystemTrayNotification) {
+			system_tray.notify("Finished All Updates.");
+		}
+	
+		if(system_tray.isHidden) {
+			system_tray.changeTrayIconToBlue();
+		}
+
 	}
 	onCompletedCountChanged: {
 		if(stackView.currentItem.title != "Completed Update(s)"){

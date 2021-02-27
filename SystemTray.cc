@@ -12,8 +12,6 @@ SystemTray::SystemTray(QObject *parent)
     
     connect(m_TIcon, &QSystemTrayIcon::activated, this, &SystemTray::raise);
     m_TIcon->show();
-
- 
 }
 
 SystemTray::~SystemTray()
