@@ -20,6 +20,12 @@ Updater::Updater(QObject *parent)
 
         m_Private->moveToThread(m_Thread); 
 
+	connect(m_Private, &UpdaterPrivate::clearLog,
+		 this, &Updater::clearLog);
+
+	connect(m_Private, &UpdaterPrivate::appendLog,
+		 this, &Updater::appendLog);
+
 	connect(m_Private, &UpdaterPrivate::queuedCountChanged,
 		 this, &Updater::queuedCountChanged);
 

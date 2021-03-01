@@ -19,11 +19,12 @@ ApplicationWindow {
     property bool updateLoading: false;
     property bool showUpdateChoice: false;
     property bool loadingProgress: false;
-    property int progressBarValue: 0;
+    property real progressBarValue: 0.0;
     property string progressText: qsTr("");
     property string currentAppImageIconSrc: qsTr("");
     property string currentAppImageName: qsTr("");
     property string currentAppImageReleaseNotes: qsTr("");
+    property string currentLogMessages: qsTr("");
 
     /// All Lists    
     ListModel { 
@@ -252,6 +253,15 @@ ApplicationWindow {
 		root.showUpdateChoice = false;
 		root.updateLoading = true;
 	}
+
+	onClearLog: {
+		root.currentLogMessages = "";
+	}
+
+	onAppendLog: {
+		root.currentLogMessages += content;
+	}
+
 	onMetaInfo: {
 		console.log("Got Meta Data");
 		root.currentAppImageIconSrc = "image://AIImage/" + info["ImageId"];
@@ -298,7 +308,7 @@ ApplicationWindow {
 
 	onProgressText: { 
 		root.loadingProgress = false;
-		root.progressBarValue = progressValue;
+		root.progressBarValue = progressValue * 0.01;
 		root.actualProgress = true;
 		root.progressText = progressTextString;
 	}

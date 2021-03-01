@@ -1,10 +1,38 @@
 #include <QNetworkProxy>
+#include <QSysInfo> 
+#include <libtorrent/version.hpp>
 
 #include "Updater_p.hpp"
 #include "global.hpp"
 #include "AppImageImageProvider.hpp"
 
 #include <QCryptographicHash>
+
+#ifndef APPIMAGE_UPDATER_COMMIT
+#define APPIMAGE_UPDATER_COMMIT "none"
+#endif
+#ifndef APPIMAGE_UPDATER_BUILD_NO
+#define APPIMAGE_UPDATER_BUILD_NO "1"
+#endif
+ 
+static QString getSystemInformation() {
+	QString r = "<b>OS</b>: %1 (%2)<br/>";
+	r += "<b>CPU Architecture</b>: %3<br/>";
+	r += "<b>Kernel Version</b>: %4<br/>";
+	r += "<b>QAppImageUpdate Version</b>: %5<br/>";
+	r += "<b>LibTorrent Rasterbar Version</b>: %6<br/>";
+	r += "<b>AppImage Updater Commit</b>: %7<br/>";
+        r += "<b>AppImage Updater Build Number</b>: %8<br/>";
+
+	return r.arg(QSysInfo::prettyProductName())
+		.arg(QSysInfo::productVersion())
+		.arg(QSysInfo::buildCpuArchitecture())
+		.arg(QSysInfo::kernelVersion())
+		.arg(QAppImageUpdate::versionString())
+		.arg(QString::fromUtf8(LIBTORRENT_VERSION))
+		.arg(APPIMAGE_UPDATER_COMMIT)
+		.arg(APPIMAGE_UPDATER_BUILD_NO);
+}
 
 UpdaterPrivate::UpdaterPrivate(QObject *parent)
 	: QObject(parent),
@@ -15,9 +43,13 @@ UpdaterPrivate::UpdaterPrivate(QObject *parent)
 	  b_Running(false)
 {
 	m_Updater = new QAppImageUpdate(/*single threaded=*/false, /*parent=*/this);
-
+	
 	connect(m_Updater, &QAppImageUpdate::progress, 
 		 this, &UpdaterPrivate::onProgress,
+		 Qt::DirectConnection);
+
+	connect(m_Updater, &QAppImageUpdate::logger,
+		 this, &UpdaterPrivate::onLog,
 		 Qt::QueuedConnection);
 
 	connect(m_Updater, &QAppImageUpdate::finished, 
@@ -142,6 +174,12 @@ void UpdaterPrivate::cancelAll() {
 }
 
 //// Private Qt Slots.
+void UpdaterPrivate::onLog(QString message, QString AppImagePath) {
+	Q_UNUSED(AppImagePath);
+
+	emit appendLog(message + "<br/>");
+}
+
 void UpdaterPrivate::onProgress(
 		int percentage , qint64 bytesReceived , qint64 bytesTotal , 
 		double speed , QString speedUnits, short action) {
@@ -254,6 +292,8 @@ void UpdaterPrivate::onCancelAction(short action) {
 //// Private Methods
 void UpdaterPrivate::updateNextAppImage() {
 	emit loading();
+	emit clearLog();
+	emit appendLog(getSystemInformation());
 	if(m_AppImages.isEmpty()) {
 		n_Queued = 0;
 		AppImage app;
