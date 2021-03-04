@@ -1,3 +1,4 @@
+#include <QDateTime>
 #include <QNetworkProxy>
 #include <QSysInfo> 
 #include <libtorrent/version.hpp>
@@ -73,6 +74,7 @@ UpdaterPrivate::~UpdaterPrivate() {
 void UpdaterPrivate::retry(const QJsonObject &json) {
 	emit retrySent(json["Hash"].toString());
 	AppImage app;
+	app.hash = json["Hash"].toString();
 	app.path = json["AbsolutePath"].toString();
 	app.name = json["Name"].toString();
 	app.image_id = json["ImageId"].toString();
@@ -85,7 +87,7 @@ void UpdaterPrivate::retry(const QJsonObject &json) {
 	emit failedCountChanged(n_Failed);
 
 	QJsonObject r {
-	   {"Hash", app.image_id },
+	   {"Hash", app.hash },
 	   {"AbsolutePath" , app.path},
 	   {"Name", app.name},
 	   {"ImageId", app.image_id}
@@ -96,6 +98,19 @@ void UpdaterPrivate::retry(const QJsonObject &json) {
 		updateNextAppImage();
 	}
 
+}
+
+void UpdaterPrivate::removeFromQueue(const QString &hash) {
+	for(auto i = 0; i < m_AppImages.size(); ++i) {
+		auto app = m_AppImages.at(i);
+		if(app.hash == hash) {
+			m_AppImages.removeAt(i);
+			--n_Queued;
+			emit removedFromQueue(hash);
+			emit queuedCountChanged(n_Queued);
+			break;
+		}
+	}
 }
 
 void UpdaterPrivate::queue(const QString &path, const QString &name, QVariant icon) {
@@ -110,8 +125,12 @@ void UpdaterPrivate::queue(const QString &path, const QString &name, QVariant ic
 	/// This is global variable, should be little careful with this.
 	if(g_AppImageImageProvider) {
 		QByteArray *array = new QByteArray(icon.toByteArray());	
-		auto hash = QCryptographicHash::hash(path.toUtf8(), QCryptographicHash::Md4).toHex();
-		app.image_id = QString::fromUtf8(hash);
+		auto unique_time_str = QDateTime::currentDateTime().toString(Qt::ISODate);
+		auto to_hash = path + unique_time_str;
+		auto hash = QCryptographicHash::hash(to_hash.toUtf8(), QCryptographicHash::Md4).toHex();
+		auto image_hash = QCryptographicHash::hash(path.toUtf8(), QCryptographicHash::Md4).toHex();
+		app.hash = QString::fromUtf8(hash);
+		app.image_id = QString::fromUtf8(image_hash);
 		g_AppImageImageProvider->addImage(app.image_id, 
 						  array); /// Will be using md4 hash of path as the id.	
 	}
@@ -122,7 +141,7 @@ void UpdaterPrivate::queue(const QString &path, const QString &name, QVariant ic
 	emit queuedCountChanged(n_Queued);
 
 	QJsonObject r {
-	   {"Hash", app.image_id },
+	   {"Hash", app.hash },
 	   {"AbsolutePath" , app.path},
 	   {"Name", app.name},
 	   {"ImageId", app.image_id}
@@ -158,6 +177,7 @@ void UpdaterPrivate::cancelCurrentUpdate() {
 	if(b_Running) {
 		m_Updater->cancel();
 	}else {
+		emit removedFromQueue(m_CurrentAppImage.hash);	
 		updateNextAppImage();
 	}
 }
@@ -206,7 +226,7 @@ void UpdaterPrivate::onFinishAction(QJsonObject info, short action) {
 			{"Updated" , true},
 			{"NewAbsPath" , info["NewVersionPath"].toString() },
 			{"OldAbsPath" , m_CurrentAppImage.path },
-			{"Hash", m_CurrentAppImage.image_id},
+			{"Hash", m_CurrentAppImage.hash},
 			{"ImageId" , m_CurrentAppImage.image_id},
 			{"Name" , m_CurrentAppImage.name },
 			{"UsedTorrent", info["UsedTorrent"].toBool()}
@@ -221,7 +241,7 @@ void UpdaterPrivate::onFinishAction(QJsonObject info, short action) {
 			{"Updated" , false},
 			{"NewAbsPath" , m_CurrentAppImage.path },
 			{"OldAbsPath" , m_CurrentAppImage.path },
-			{"Hash", m_CurrentAppImage.image_id},
+			{"Hash", m_CurrentAppImage.hash},
 			{"ImageId" , m_CurrentAppImage.image_id},
 			{"Name" , m_CurrentAppImage.name },
 			{"UsedTorrent", info["TorrentSupported"].toBool()}	
@@ -235,7 +255,7 @@ void UpdaterPrivate::onFinishAction(QJsonObject info, short action) {
 		QJsonObject r {
 			{"AbsolutePath", m_CurrentAppImage.path },
 			{"ReleaseNotes", info["ReleaseNotes"].toString() },
-			{"Hash", m_CurrentAppImage.image_id},
+			{"Hash", m_CurrentAppImage.hash},
 			{"ImageId" , m_CurrentAppImage.image_id},
 			{"Name", m_CurrentAppImage.name }
 		};
@@ -268,7 +288,7 @@ void UpdaterPrivate::onErrorAction(short code, short action) {
 	QJsonObject r {
 		{ "ErrorMsg" , QAppImageUpdate::errorCodeToDescriptionString(code) },
 		{ "AbsolutePath" , m_CurrentAppImage.path} ,
-		{ "Hash", m_CurrentAppImage.image_id}, 
+		{ "Hash", m_CurrentAppImage.hash}, 
 		{ "ImageId" , m_CurrentAppImage.image_id},	
 		{ "Name" , m_CurrentAppImage.name},
 	};
@@ -285,7 +305,11 @@ void UpdaterPrivate::onErrorAction(short code, short action) {
 
 void UpdaterPrivate::onCancelAction(short action) {
 	b_Running = false;
-	Q_UNUSED(action);
+
+	if(action == QAppImageUpdate::Action::Update ||
+	   action == QAppImageUpdate::Action::UpdateWithTorrent) {
+		emit canceled(m_CurrentAppImage.hash);
+	}	
 	updateNextAppImage();
 }
 

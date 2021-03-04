@@ -295,10 +295,44 @@ ApplicationWindow {
 		queuedUpdatesList.append(info);
 		notify("Item Queued");	
 	}
+
+	onRemovedFromQueue: {
+		for(var i = 0; i < queuedUpdatesList.count; ++i) {
+			var obj = queuedUpdatesList.get(i);
+			if(obj) {
+				if(obj["Hash"] == hash) {
+					queuedUpdatesList.remove(i);
+					break;
+				}
+			}
+		}	
+	}
+
+	onCanceled: {
+		for(var i = 0; i < queuedUpdatesList.count; ++i) {
+			var obj = queuedUpdatesList.get(i);
+			if(obj) {
+				if(obj["Hash"] == info["Hash"]) {
+					queuedUpdatesList.remove(i);
+					break;
+				}
+			}
+		}	
+	}
 	
 	onFailed: {
+		for(var i = 0; i < queuedUpdatesList.count; ++i) {
+			var obj = queuedUpdatesList.get(i);
+			if(obj) {
+				if(obj["Hash"] == info["Hash"]) {
+					queuedUpdatesList.remove(i);
+					break;
+				}
+			}
+		}		
 		failedUpdatesList.append(info);
 	}
+
 	onStarted: {
 		root.updateLoading = false;
 		root.showUpdateChoice = false;

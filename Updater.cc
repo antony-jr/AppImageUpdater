@@ -26,6 +26,9 @@ Updater::Updater(QObject *parent)
 	connect(m_Private, &UpdaterPrivate::appendLog,
 		 this, &Updater::appendLog);
 
+	connect(m_Private, &UpdaterPrivate::removedFromQueue,
+		    this, &Updater::removedFromQueue);
+
 	connect(m_Private, &UpdaterPrivate::queuedCountChanged,
 		 this, &Updater::queuedCountChanged);
 
@@ -56,6 +59,10 @@ Updater::Updater(QObject *parent)
 	connect(m_Private, &UpdaterPrivate::finished,
 		    this, &Updater::finished);
 	
+	connect(m_Private, &UpdaterPrivate::canceled,
+		    this, &Updater::canceled);
+	
+
 	connect(m_Private, &UpdaterPrivate::retrySent,
 		    this, &Updater::retrySent);
 
@@ -91,6 +98,13 @@ void Updater::retry(const QJsonObject &json) {
     	.invoke(m_Private,
             	Qt::QueuedConnection,
 		Q_ARG(QJsonObject, json));	
+}
+
+void Updater::removeFromQueue(const QString &hash) {
+	getMethod(m_Private, "removeFromQueue(const QString&)")
+    	.invoke(m_Private,
+            	Qt::QueuedConnection,
+		Q_ARG(QString, hash));
 }
 
 void Updater::queue(const QString &path, const QString &name, QVariant icon) {

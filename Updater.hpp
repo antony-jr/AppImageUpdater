@@ -22,6 +22,7 @@ public:
 private Q_SLOTS:
 	void handleNoConfirmState(bool);
 public Q_SLOTS:
+	void removeFromQueue(const QString&);
 	void queue(const QString&, const QString&, QVariant icon);
 	void retry(const QJsonObject&);
 	void toggleNoConfirm();
@@ -30,6 +31,7 @@ public Q_SLOTS:
 	void cancelAll();
 Q_SIGNALS:
 	void isNoConfirmEnabledChanged();
+	void removedFromQueue(QString hash);
 	void queuedCountChanged(int n);
         void failedCountChanged(int n);
 	void completedCountChanged(int n);
@@ -43,6 +45,7 @@ Q_SIGNALS:
 	void failed(QJsonObject info);
 	void started();
 	void finished(QJsonObject info);
+	void canceled(QString hash);
 	void retrySent(QString hash);
 	void finishedAll();
 };

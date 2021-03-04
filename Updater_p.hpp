@@ -13,6 +13,7 @@ class UpdaterPrivate : public QObject {
 	bool b_NoConfirm;
 	bool b_Running;
 	struct AppImage {
+		QString hash;
 		QString name;
 		QString path;
 		QString image_id;
@@ -29,6 +30,7 @@ public:
 	~UpdaterPrivate();
 public Q_SLOTS:
 	void retry(const QJsonObject&);
+	void removeFromQueue(const QString&);
 	void queue(const QString&, const QString&, QVariant);
 	void toggleNoConfirm();
 	void continueCurrentUpdate();
@@ -45,6 +47,7 @@ private:
 	void updateNextAppImage();
 Q_SIGNALS:
 	void noConfirmState(bool);
+	void removedFromQueue(const QString&);
 	void queuedCountChanged(int);
         void failedCountChanged(int);
 	void completedCountChanged(int);
@@ -58,6 +61,7 @@ Q_SIGNALS:
 	void failed(QJsonObject);
 	void started();
 	void finished(QJsonObject);
+	void canceled(QString);
 	void retrySent(QString hash);
 	void finishedAll();
 };

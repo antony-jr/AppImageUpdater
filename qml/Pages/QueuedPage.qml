@@ -123,6 +123,9 @@ Page {
 
                           Button {
                              text: qsTr("Remove")
+			     onClicked: {
+				coreUpdater.removeFromQueue(Hash);
+			     }
                           }
                         }
                  }
