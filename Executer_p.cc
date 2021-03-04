@@ -34,62 +34,6 @@ static std::vector<std::string> split_string(const std::string& str,
     return strings;
 }
 
-
-static QString toNativePath(const QString &path)
-{
-    return QDir::toNativeSeparators(path);
-}
-
-static QString toUniformPath(const QString &path)
-{
-    return QDir::fromNativeSeparators(path);
-}
-
-
-static void openFolderSelect(const QString &absolutePath)
-{
-    QString path {toUniformPath(absolutePath)};
-    const QFileInfo pathInfo {path};
-    if (!pathInfo.exists(path))
-    {
-        return;
-    }
-
-    QProcess proc;
-    proc.start("xdg-mime", {"query", "default", "inode/directory"});
-    proc.waitForFinished();
-    const QString output = proc.readLine().simplified();
-    if ((output == "dolphin.desktop") || (output == "org.kde.dolphin.desktop"))
-    {
-        proc.startDetached("dolphin", {"--select", toNativePath(path)});
-    }
-    else if ((output == "nautilus.desktop") || (output == "org.gnome.Nautilus.desktop")
-                 || (output == "nautilus-folder-handler.desktop"))
-                 {
-        if (pathInfo.isDir())
-            path = path.left(path.lastIndexOf('/'));
-        proc.start("nautilus", {"--version"});
-        proc.waitForFinished();
-        const QString nautilusVerStr = QString(proc.readLine()).remove(QRegularExpression("[^0-9.]"));
-        using NautilusVersion = Utils::Version<int, 3>;
-        if (NautilusVersion::tryParse(nautilusVerStr, {1, 0, 0}) > NautilusVersion {3, 28})
-            proc.startDetached("nautilus", {toNativePath(path)});
-        else
-            proc.startDetached("nautilus", {"--no-desktop", toNativePath(path)});
-    }
-    else if (output == "nemo.desktop")
-    {
-        if (pathInfo.isDir())
-            path = path.left(path.lastIndexOf('/'));
-        proc.startDetached("nemo", {"--no-desktop", toNativePath(path)});
-    }
-    else if ((output == "konqueror.desktop") || (output == "kfmclient_dir.desktop"))
-    {
-        proc.startDetached("konqueror", {"--select", toNativePath(path)});
-    }
-    return;
-}
-
 static bool isTerminalApplication(const QString &appimagePath) {
 	appimage::core::AppImage *appimage;
         appimage::utils::ResourcesExtractor *res;
@@ -166,10 +110,6 @@ void ExecuterPrivate::exec(const QString &hash, const QString &path) {
 	if(m_CurrentExec.first.isEmpty()) {
 		execNext();
 	}
-}
-
-void ExecuterPrivate::openDirectory(const QString &path) {
-	openFolderSelect(path);
 }
 
 void ExecuterPrivate::finishExec() {

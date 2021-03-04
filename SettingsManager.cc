@@ -1,3 +1,7 @@
+#include <QFile>
+#include <QDir>
+#include <QCoreApplication>
+
 #include <SettingsManager.hpp>
 
 static bool getBool(const QSettings &settings, const QString &key) {
@@ -21,6 +25,18 @@ SettingsManager::SettingsManager(QObject *parent)
 	m_ProxyType = m_Settings.value("V2.ProxyType").toString();
 	m_ProxyUser = m_Settings.value("V2.ProxyUser").toString();
 	m_ProxyPass = m_Settings.value("V2.ProxyPass").toString();
+
+	/// Setup Desktop Entry for Startup
+  	auto arguments = QCoreApplication::arguments();
+	m_DesktopEntry = QString::fromUtf8("[Desktop Entry]\n");
+	m_DesktopEntry += QString::fromUtf8("Name=AppImageUpdater\n");
+	m_DesktopEntry += QString::fromUtf8("Type=Application\n");
+	m_DesktopEntry += QString::fromUtf8("Exec=%1 --minimized\n");
+	m_DesktopEntry += QString::fromUtf8("Terminal=false\n");
+	m_DesktopEntry = m_DesktopEntry.arg(
+			 	QFileInfo(arguments.at(0)).absolutePath() +
+                         	QString::fromUtf8("/") +
+                            	QFileInfo(arguments.at(0)).fileName());
 }
 
 SettingsManager::~SettingsManager()
@@ -50,7 +66,23 @@ bool SettingsManager::isASN() const {
 
 void SettingsManager::setStartup(bool value) {
 	b_RunOnStartup = value;
-	m_Settings.setValue("V2.isRunOnStartup", b_RunOnStartup);	
+	m_Settings.setValue("V2.isRunOnStartup", b_RunOnStartup);
+	if(b_RunOnStartup) {
+		QFile entryFile(
+			QDir::homePath() + 
+			QString::fromUtf8("/.config/autostart/AppImageUpdater.desktop"));
+        		if(!entryFile.open(QIODevice::WriteOnly)) {
+				b_RunOnStartup = false;
+				m_Settings.setValue("V2.isRunOnStartup", false);
+				return;
+        		}
+        		entryFile.write(m_DesktopEntry.toLatin1());
+        		entryFile.close();
+	} else {
+		QFile::remove(
+			QDir::homePath() +
+			QString::fromUtf8("/.config/autostart/AppImageUpdater.desktop"));
+	}	
 	emit startupChanged(); 
 }
 

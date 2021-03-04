@@ -14,7 +14,6 @@ public:
 	~ExecuterPrivate();
 public Q_SLOTS:
 	void exec(const QString&, const QString&);
-	void openDirectory(const QString&);
 private Q_SLOTS:
 	void finishExec();
 private:

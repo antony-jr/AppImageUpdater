@@ -55,6 +55,8 @@ Page {
 
 			ColumnLayout {
 			id: contentCol
+
+			RowLayout {
 			Label {
 			  Layout.preferredWidth: root.width - 250
                 	  font.pixelSize: (function() {
@@ -72,7 +74,9 @@ Page {
                 	  onLinkActivated: Qt.openUrlExternally(link)
 
             		}
-			
+			}
+
+/*			
 			RowLayout {
 			id: newAbsRow
 			visible: Updated
@@ -177,7 +181,7 @@ Page {
                 	  wrapMode: Text.WordWrap
             		}
             }
-
+*/
 		RowLayout {
 			id: alreadyNewRowTop
 			visible: !Updated
@@ -187,8 +191,8 @@ Page {
 			Layout.preferredHeight: alreadyNewRow.implicitHeight
 			color: "#8BC34A"
 			RowLayout {
-			Layout.preferredWidth: 30 + absPathLbl.implicitWidth
-			Layout.preferredHeight: oldAbsPathLbl.implicitHeight
+			/// Layout.preferredWidth: 30 + absPathLbl.implicitWidth
+			/// Layout.preferredHeight: oldAbsPathLbl.implicitHeight
 			id: alreadyNewRow
 			Rectangle {
 			Layout.preferredWidth: 10;
@@ -214,7 +218,45 @@ Page {
 			}
 			}
 		}
+        		RowLayout {
+			id: updatedRowTop
+			visible: Updated
+			Rectangle {
+			id: updatedLblRec
+			Layout.preferredWidth: 30 + updatedLbl.implicitWidth	
+			Layout.preferredHeight: updatedRow.implicitHeight
+			color: "#2196F3"
+			RowLayout {
+			/// Layout.preferredWidth: 30 + absPathLbl.implicitWidth
+			/// Layout.preferredHeight: oldAbsPathLbl.implicitHeight
+			id: updatedRow
+			Rectangle {
+			Layout.preferredWidth: 10;
+			Layout.preferredHeight: updatedLbl.implicitHeight
+			color: "#2196F3"
+			}
+			Label {
+			id: updatedLbl
+                	Layout.preferredWidth: root.width - 185
+			font.pixelSize: (function() {
+                    	   var factor = 0.03;
+                    	   var calculatedHPxSize = root.height * factor;
+                    	   var calculatedWPxSize = root.width * factor;
+                    	   if (calculatedHPxSize > calculatedWPxSize)
+                           	return calculatedWPxSize;
+                    	   else
+                        	return calculatedHPxSize;
+                	  })()
+                	  text: "SYNCED TO LATEST VERSION"
+			  color: "white"
+                	  wrapMode: Text.WordWrap
+            		}
+			}
+			}
+		}
             
+
+    
 
 
 			Flow {
@@ -222,7 +264,7 @@ Page {
 			spacing: 8
 
 			RowLayout {
-				width: UsedTorrent ? 200 : 80
+				width: (UsedTorrent ? 200 : 75) 
 				Button {
 					text: qsTr("Open")
 					Material.background: Material.Teal
@@ -244,12 +286,22 @@ Page {
 						thisBtn.seeding = !thisBtn.seeding;
 					}
 				}
+				
 			}
+		
 
 				Button {
-					text: qsTr("Open Directory")
-					onClicked: { 
-						mainexecuter.openDirectory(NewAbsPath);
+					id: infoBtn
+					text: qsTr("Info");
+				}
+	
+				Button {
+					text: qsTr("Remove Old AppImage")
+					Material.background: Material.Red
+					Material.foreground: "#ffffff"
+					visible: NewAbsPath != OldAbsPath
+					onClicked: {
+
 					}
 				}
 			}

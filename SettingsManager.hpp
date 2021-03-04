@@ -16,6 +16,8 @@ class SettingsManager : public QObject
     Q_PROPERTY(QString ProxyType READ getProxyType WRITE setProxyType NOTIFY proxyTypeChanged)
     Q_PROPERTY(QString ProxyUser READ getProxyUser WRITE setProxyUser NOTIFY proxyUserChanged)
     Q_PROPERTY(QString ProxyPass READ getProxyPass WRITE setProxyPass NOTIFY proxyPassChanged) 
+
+    QString m_DesktopEntry;
 public:
     explicit SettingsManager(QObject *parent = nullptr);
     ~SettingsManager() override;

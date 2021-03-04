@@ -60,6 +60,8 @@ add_executable(AppImageUpdater main.cc
 			     Executer_p.cc
 			     Executer.hpp
 			     Executer.cc
+			     Helpers.hpp
+			     Helpers.cc
 			     app_resources/resources.qrc
 			     qml/qml.qrc)
 target_link_libraries(AppImageUpdater PUBLIC 

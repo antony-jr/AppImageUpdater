@@ -3,6 +3,7 @@ import Core.BuildConstants 1.0
 import Core.SettingsManager 1.0
 import Core.SystemTray 1.0
 import Core.Executer 1.0
+import Core.Helpers 1.0
 import QtQuick 2.12
 import QtQuick.Controls 2.12
 import QtQuick.Controls.Material 2.12
@@ -72,7 +73,7 @@ ApplicationWindow {
     height: 500
     minimumWidth: 400
     minimumHeight: 500
-    visible: true
+    visible: helpers.isMinimized() ? false : true
     Material.theme: Material.Light // Use google material design
     Component.onCompleted: {
         setX(Screen.width / 2 - width / 2);
@@ -194,6 +195,10 @@ ApplicationWindow {
     }
 
     // Backend Core
+    Helpers {
+	id: helpers
+    }
+
     BuildConstants {
         id: bconstants
     }

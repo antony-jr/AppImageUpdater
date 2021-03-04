@@ -1,9 +1,17 @@
+#include <QCoreApplication>
+
 #include <SystemTray.hpp>
 
 SystemTray::SystemTray(QObject *parent)
     : QObject(parent)
 
 {
+    auto arguments = QCoreApplication::arguments();
+    if(arguments.size() != 1 && 
+        arguments.at(1).toLower() == QString::fromUtf8("--minimized")) {
+	    b_Hidden = true;
+    }
+
     m_TIcon = new QSystemTrayIcon;
     m_TIcon->setIcon(QIcon(QPixmap(QString::fromUtf8(":/logo.png"))));
     
@@ -24,11 +32,11 @@ SystemTray::~SystemTray()
 QMenu *SystemTray::buildMenu() {
     QMenu *menu = new QMenu;
     if(b_Hidden) {
-    	menu->addAction(QString::fromUtf8("Show"),
+    	menu->addAction(QString::fromUtf8("Show AppImage Updater"),
 		 	this,
 			&SystemTray::show);
     } else {
-	menu->addAction(QString::fromUtf8("Hide"),
+	menu->addAction(QString::fromUtf8("Hide AppImage Updater"),
 		 	this,
 			&SystemTray::hide); 
     }
