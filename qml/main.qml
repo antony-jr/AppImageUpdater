@@ -312,7 +312,7 @@ ApplicationWindow {
 		for(var i = 0; i < queuedUpdatesList.count; ++i) {
 			var obj = queuedUpdatesList.get(i);
 			if(obj) {
-				if(obj["Hash"] == info["Hash"]) {
+				if(obj["Hash"] == hash) {
 					queuedUpdatesList.remove(i);
 					break;
 				}
