@@ -75,46 +75,8 @@ Page {
 
             		}
 			}
-
-/*			
-			RowLayout {
-			id: newAbsRow
-			visible: Updated
-			Rectangle {
-			id: absPathLblRec
-			Layout.preferredWidth: 30 + absPathLbl.implicitWidth	
-			Layout.preferredHeight: absPathRow.implicitHeight
-			color: "#00BCD4"
-			RowLayout {
-			Layout.preferredWidth: 30 + absPathLbl.implicitWidth
-			Layout.preferredHeight: absPathLbl.implicitHeight
-			id: absPathRow
-			Rectangle {
-			Layout.preferredWidth: 10;
-			Layout.preferredHeight: absPathLbl.implicitHeight
-			color: "#00BCD4"
-			}
-			Label {
-			id: absPathLbl
-                	Layout.preferredWidth: root.width - 185
-			font.pixelSize: (function() {
-                    	   var factor = 0.03;
-                    	   var calculatedHPxSize = root.height * factor;
-                    	   var calculatedWPxSize = root.width * factor;
-                    	   if (calculatedHPxSize > calculatedWPxSize)
-                           	return calculatedWPxSize;
-                    	   else
-                        	return calculatedHPxSize;
-                	  })()
-                	  text: "New Version"
-			  color: "white"
-                	  wrapMode: Text.WordWrap
-            		}
-			}
-			}
-
-			Label {
-			Layout.preferredWidth: root.width - 300
+	Label {
+                	Layout.preferredWidth: root.width - 250
 			font.pixelSize: (function() {
                     	   var factor = 0.023;
                     	   var calculatedHPxSize = root.height * factor;
@@ -124,64 +86,12 @@ Page {
                     	   else
                         	return calculatedHPxSize;
                 	  })()
-                	text: NewAbsPath
+                	  text: helpers.fileNameFromPath(NewAbsPath)
                 	  wrapMode: Text.WordWrap
             		}
-			}
-			
-			RowLayout {
-			id: oldAbsRow
-			visible: Updated
-			Rectangle {
-			id: oldAbsPathLblRec
-			Layout.preferredWidth: 30 + absPathLbl.implicitWidth	
-			Layout.preferredHeight: oldAbsPathRow.implicitHeight
-			color: "#607D8B"
-			RowLayout {
-			Layout.preferredWidth: 30 + absPathLbl.implicitWidth
-			Layout.preferredHeight: oldAbsPathLbl.implicitHeight
-			id: oldAbsPathRow
-			Rectangle {
-			Layout.preferredWidth: 10;
-			Layout.preferredHeight: oldAbsPathLbl.implicitHeight
-			color: "#607D8B"
-			}
-			Label {
-			id: oldAbsPathLbl
-                	Layout.preferredWidth: root.width - 185
-			font.pixelSize: (function() {
-                    	   var factor = 0.03;
-                    	   var calculatedHPxSize = root.height * factor;
-                    	   var calculatedWPxSize = root.width * factor;
-                    	   if (calculatedHPxSize > calculatedWPxSize)
-                           	return calculatedWPxSize;
-                    	   else
-                        	return calculatedHPxSize;
-                	  })()
-                	  text: "Old Version"
-			  color: "white"
-                	  wrapMode: Text.WordWrap
-            		}
-			}
-			}
-            
-			
-            Label {
-		Layout.preferredWidth: root.width - 300	
-			font.pixelSize: (function() {
-                    	   var factor = 0.023;
-                    	   var calculatedHPxSize = root.height * factor;
-                    	   var calculatedWPxSize = root.width * factor;
-                    	   if (calculatedHPxSize > calculatedWPxSize)
-                           	return calculatedWPxSize;
-                    	   else
-                        	return calculatedHPxSize;
-                	  })()
-                	text: OldAbsPath
-                	  wrapMode: Text.WordWrap
-            		}
-            }
-*/
+
+
+
 		RowLayout {
 			id: alreadyNewRowTop
 			visible: !Updated
@@ -288,13 +198,14 @@ Page {
 				}
 				
 			}
-		
 
 				Button {
-					id: infoBtn
-					text: qsTr("Info");
+					text: qsTr("Open Directory");
+					onClicked: {
+						mainexecuter.openDirectory(NewAbsPath);
+					}
 				}
-	
+		
 				Button {
 					text: qsTr("Remove Old AppImage")
 					Material.background: Material.Red

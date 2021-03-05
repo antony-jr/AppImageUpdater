@@ -75,7 +75,7 @@ Page {
 			id: pathRow
 
 			Label {
-                	Layout.preferredWidth: root.width - 80
+                	Layout.preferredWidth: root.width - 250
 			font.pixelSize: (function() {
                     	   var factor = 0.023;
                     	   var calculatedHPxSize = root.height * factor;

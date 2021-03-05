@@ -14,6 +14,7 @@ public:
 	~Executer();
 public Q_SLOTS:
 	void exec(const QString&, const QString&);
+	void openDirectory(const QString&);
 Q_SIGNALS:
 	void loading(QString hash);
 	void terminalApp(QString hash);

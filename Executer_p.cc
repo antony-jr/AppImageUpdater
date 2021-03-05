@@ -6,6 +6,8 @@
 #include <QCoreApplication>
 #include <QRegExp>
 #include <QRegularExpression>
+#include <QDesktopServices> 
+#include <QUrl>
 
 #include "Executer_p.hpp"
 #include "Version.hpp"
@@ -102,6 +104,11 @@ ExecuterPrivate::ExecuterPrivate(QObject *parent)
 
 ExecuterPrivate::~ExecuterPrivate() {
 
+}
+
+void ExecuterPrivate::openDirectory(const QString &path) {
+	auto toOpen = QFileInfo(path).path();
+	QDesktopServices::openUrl(QUrl(toOpen));
 }
 
 void ExecuterPrivate::exec(const QString &hash, const QString &path) {

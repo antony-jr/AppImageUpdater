@@ -47,3 +47,10 @@ void Executer::exec(const QString &hash, const QString &path) {
 		Q_ARG(QString, path));
 
 }
+
+void Executer::openDirectory(const QString &path) {
+	getMethod(m_Private, "openDirectory(const QString&)")
+    	.invoke(m_Private,
+            	Qt::QueuedConnection,
+		Q_ARG(QString, path));
+}

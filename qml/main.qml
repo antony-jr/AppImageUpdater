@@ -40,6 +40,13 @@ ApplicationWindow {
 	id: queuedUpdatesList
     }
 
+    /// Info popup
+    function info(newPath, oldPath) {
+	infoPopup.newAbsPath = newPath;
+	infoPopup.oldAbsPath = oldPath;
+	infoPopup.open();
+    }
+
     /// Notify routine
     function notify(str) {
         notificationPopup.notifyText = str;
