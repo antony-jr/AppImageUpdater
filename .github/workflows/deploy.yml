@@ -7,13 +7,44 @@ on:
       - mk2
 
 jobs:
-  Deploy:
+  Check:
     runs-on: ubuntu-18.04
+    outputs:
+      deploy: ${{ steps.check.outputs.check }}
     steps:
       - uses: actions/checkout@v2
       - uses: lukka/get-cmake@latest
 
-      - name: Check Commit Message
+      - name: Install Python3
         run: |
-          message=$(git log -1 --pretty=%B)
-          echo $message
+          sudo apt install -y python3
+
+      - id: check
+        name: Check Commit Message
+        run: |
+          git clone https://github.com/antony-jr/AppImageUpdater
+          cd AppImageUpdater
+          git tag > /tmp/tags.txt
+          cd ..
+          rm -rf AppImageUpdater
+          cat /tmp/tags.txt
+          result=$(python3 scripts/check.py "$(git log -1 --pretty=%B)" "/tmp/tags.txt")
+          echo "::set-output name=check::$result"
+
+  Deploy:
+    runs-on: ubuntu-18.04
+    needs: Check
+    if: needs.Check.outputs.deploy != 'false'
+    steps:
+      - uses: actions/checkout@v2
+      - uses: lukka/get-cmake@latest
+      
+      - name: Install Python3
+        run: |
+          sudo apt install -y python3
+
+      - name: Make Release
+        run: |
+          echo ${{ needs.Check.outputs.deploy }}
+          python3 scripts/release_notes.py "$(git log -1 --pretty=%B)" release_notes.md
+          cat release_notes.md
