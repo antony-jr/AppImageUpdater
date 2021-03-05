@@ -1,0 +1,18 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  Deploy:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: lukka/get-cmake@latest
+
+      - name: Check Commit Message
+        run: |
+          message=$(git log -1 --pretty=%B)
+          echo $message
