@@ -1,3 +1,4 @@
+#include <iostream>
 #include <QApplication>
 #include <SingleApplication>
 #include <QQmlApplicationEngine>
@@ -16,6 +17,14 @@
 #include "global.hpp"
 #include "AppImageImageProvider.hpp"
 
+#ifndef APPIMAGE_UPDATER_VERSION
+#define APPIMAGE_UPDATER_VERSION "2"
+#endif
+#ifndef APPIMAGE_UPDATER_COMMIT
+#define APPIMAGE_UPDATER_COMMIT "none"
+#endif
+
+
 AppImageImageProvider *g_AppImageImageProvider = nullptr;
 
 int main(int argc, char **argv)
@@ -24,6 +33,10 @@ int main(int argc, char **argv)
 	    QCoreApplication app(argc, argv);
 	    return app.exec();
     }
+
+    std::cout << "AppImage Updater v" << APPIMAGE_UPDATER_VERSION << "(" << APPIMAGE_UPDATER_COMMIT << "), "
+	      << "AppImage Delta Updater for Humans.\n"
+	      << "Copyright (C) Antony Jr.\n\n"; 
 
     SingleApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);

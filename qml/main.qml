@@ -25,7 +25,6 @@ ApplicationWindow {
     property string currentAppImageIconSrc: qsTr("");
     property string currentAppImageName: qsTr("");
     property string currentAppImageReleaseNotes: qsTr("");
-    property string currentLogMessages: qsTr("");
 
     /// All Lists    
     ListModel { 
@@ -264,14 +263,6 @@ ApplicationWindow {
 		root.updating = false;
 		root.showUpdateChoice = false;
 		root.updateLoading = true;
-	}
-
-	onClearLog: {
-		root.currentLogMessages = "";
-	}
-
-	onAppendLog: {
-		root.currentLogMessages += content;
 	}
 
 	onMetaInfo: {

@@ -1,6 +1,7 @@
 #include <QDateTime>
 #include <QNetworkProxy>
 #include <QSysInfo> 
+#include <QDebug>
 #include <libtorrent/version.hpp>
 
 #include "Updater_p.hpp"
@@ -17,13 +18,13 @@
 #endif
  
 static QString getSystemInformation() {
-	QString r = "<b>OS</b>: %1 (%2)<br/>";
-	r += "<b>CPU Architecture</b>: %3<br/>";
-	r += "<b>Kernel Version</b>: %4<br/>";
-	r += "<b>QAppImageUpdate Version</b>: %5<br/>";
-	r += "<b>LibTorrent Rasterbar Version</b>: %6<br/>";
-	r += "<b>AppImage Updater Commit</b>: %7<br/>";
-        r += "<b>AppImage Updater Build Number</b>: %8<br/>";
+	QString r = "OS: %1 (%2)\n";
+	r += "CPU Architecture: %3\n";
+	r += "Kernel Version: %4\n";
+	r += "QAppImageUpdate Version: %5\n";
+	r += "LibTorrent Rasterbar Version: %6\n";
+	r += "AppImage Updater Commit: %7\n";
+        r += "AppImage Updater Build Number: %8\n\n";
 
 	return r.arg(QSysInfo::prettyProductName())
 		.arg(QSysInfo::productVersion())
@@ -65,6 +66,8 @@ UpdaterPrivate::UpdaterPrivate(QObject *parent)
 	connect(m_Updater, &QAppImageUpdate::canceled, 
 		 this, &UpdaterPrivate::onCancelAction,
 		 Qt::QueuedConnection);
+
+	qInfo().noquote() << getSystemInformation(); 
 }
 
 UpdaterPrivate::~UpdaterPrivate() {
@@ -194,10 +197,10 @@ void UpdaterPrivate::cancelAll() {
 }
 
 //// Private Qt Slots.
-void UpdaterPrivate::onLog(QString message, QString AppImagePath) {
+void UpdaterPrivate::onLog(const QString &message,const QString &AppImagePath) {
 	Q_UNUSED(AppImagePath);
 
-	emit appendLog(message + "<br/>");
+	qInfo().noquote() << message;
 }
 
 void UpdaterPrivate::onProgress(
@@ -316,8 +319,6 @@ void UpdaterPrivate::onCancelAction(short action) {
 //// Private Methods
 void UpdaterPrivate::updateNextAppImage() {
 	emit loading();
-	emit clearLog();
-	emit appendLog(getSystemInformation());
 	if(m_AppImages.isEmpty()) {
 		n_Queued = 0;
 		AppImage app;

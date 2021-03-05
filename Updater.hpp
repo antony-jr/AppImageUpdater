@@ -36,8 +36,6 @@ Q_SIGNALS:
         void failedCountChanged(int n);
 	void completedCountChanged(int n);
 
-	void appendLog(QString content);
-	void clearLog();
 	void progressText(QString progressTextString, int progressValue);
 	void loading();
 	void metaInfo(QJsonObject info);

@@ -191,10 +191,10 @@ Page {
                 ScrollView {
                     id: releaseScrollView
 
-                    visible: !root.actualProgress && !root.loadingProgress && root.updating && root.currentAppImageReleaseNotes.length > 0
+                    visible: root.updating && root.currentAppImageReleaseNotes.length > 0
                     contentWidth: root.width - 50
                     Layout.preferredWidth: parent.Layout.preferredWidth - 50
-                    Layout.preferredHeight: parent.Layout.preferredHeight - 240
+                    Layout.preferredHeight: parent.Layout.preferredHeight - ((root.loadingProgress || root.actualProgress) ? 312 : 240)
                     Layout.alignment: Qt.AlignCenter
                     ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
                     ScrollBar.vertical.policy: ScrollBar.AlwaysOn
@@ -266,42 +266,6 @@ Page {
                         color: "transparent"
                 }*/
 
-		ScrollView {
-                    id: logScrollView
-		   visible: root.loadingProgress || root.actualProgress
-                    contentWidth: root.width - 50
-                    Layout.preferredWidth: parent.Layout.preferredWidth - 100
-                    Layout.preferredHeight: parent.Layout.preferredHeight - 300
-                    Layout.alignment: Qt.AlignCenter
-                    ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
-                    ScrollBar.vertical.policy: ScrollBar.AlwaysOn
-		    clip: true
-                    ScrollBar.horizontal.interactive: false
-
-                    TextEdit {
-                        id: logTextEdit
-			width: root.width - 80
-                        height: parent.height - 10
-                        visible: !root.loadingProgress && root.updating && root.currentAppImageReleaseNotes.length > 0
-                        readOnly: true
-                        text: root.currentLogMessages
-                        wrapMode: Text.WordWrap
-                        color: settings_manager.isDarkMode ? "#fff" : "#212121"
-                        textFormat: Text.RichText
-                        onLinkActivated: Qt.openUrlExternally(link)
-			selectByMouse: true
-			onTextChanged: {
-				logScrollView.ScrollBar.vertical.position = 0.88
-			}
-		    }
-
-                    background: Rectangle {
-			width: releaseScrollView.implicitWidth
-                        height: releaseScrollView.implicitHeight
-                        color: settings_manager.isDarkMode ? "#212121" : "#fff"
-                    }
-
-                }
 
             	ProgressBar {
             		visible: root.loadingProgress

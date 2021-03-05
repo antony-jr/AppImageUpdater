@@ -42,7 +42,7 @@ private Q_SLOTS:
 	void onStartAction(short);
 	void onCancelAction(short);
 	void onErrorAction(short, short);
-	void onLog(QString, QString);
+	void onLog(const QString&, const QString&);
 private:
 	void updateNextAppImage();
 Q_SIGNALS:
@@ -52,8 +52,6 @@ Q_SIGNALS:
         void failedCountChanged(int);
 	void completedCountChanged(int);
 
-	void appendLog(QString);
-	void clearLog();
 	void progressText(QString, int);
 	void loading();
 	void metaInfo(QJsonObject);
