@@ -69,40 +69,8 @@ Page {
                           wrapMode: Text.WordWrap
                           textFormat: Text.RichText
                         }
- 			RowLayout {
-			id: pathRow
-			Rectangle {
-			id: absPathLblRec
-			Layout.preferredWidth: 30 + absPathLbl.implicitWidth	
-			Layout.preferredHeight: absPathRow.implicitHeight
-			color: "#00BCD4"
-			RowLayout {
-			Layout.preferredWidth: 30 + absPathLbl.implicitWidth
-			Layout.preferredHeight: absPathLbl.implicitHeight
-			id: absPathRow
-			Rectangle {
-			Layout.preferredWidth: 10;
-			Layout.preferredHeight: absPathLbl.implicitHeight
-			color: "#00BCD4"
-			}
-			Label {
-			id: absPathLbl
-			font.pixelSize: (function() {
-                    	   var factor = 0.03;
-                    	   var calculatedHPxSize = root.height * factor;
-                    	   var calculatedWPxSize = root.width * factor;
-                    	   if (calculatedHPxSize > calculatedWPxSize)
-                           	return calculatedWPxSize;
-                    	   else
-                        	return calculatedHPxSize;
-                	  })()
-                	  text: "Path"
-			  color: "white"
-                	  wrapMode: Text.WordWrap
-            		}
-			}
-			}
-
+			
+			
 			Label {
                 	Layout.preferredWidth: root.width - 250
 			font.pixelSize: (function() {
@@ -114,12 +82,13 @@ Page {
                     	   else
                         	return calculatedHPxSize;
                 	  })()
-                	text: AbsolutePath
+                	  text: helpers.fileNameFromPath(AbsolutePath)
                 	  wrapMode: Text.WordWrap
             		}
-			}
+
+
 			Label {
-                Layout.preferredWidth: root.width - 250
+                	Layout.preferredWidth: root.width - 250
                           font.pixelSize: (function() {
                            var factor = 0.023;
                            var calculatedHPxSize = root.height * factor;
