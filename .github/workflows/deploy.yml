@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - mk2
 
 jobs:
   Deploy:
