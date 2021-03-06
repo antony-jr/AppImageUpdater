@@ -11,7 +11,7 @@ import QtQuick.Controls.Styles 1.4
 import QtQuick.Dialogs 1.3
 import QtQuick.Layouts 1.12
 import QtQuick.Window 2.0
-import QtQuick.Shapes 1.15
+import QtQuick.Shapes 1.11
 
 ApplicationWindow {	
     id: root

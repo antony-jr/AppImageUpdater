@@ -72,4 +72,5 @@ target_link_libraries(AppImageUpdater PUBLIC
 				      util)
 target_link_libraries(AppImageUpdater PRIVATE QAppImageUpdate)
 target_link_libraries(AppImageUpdater PRIVATE libappimage)
+target_link_libraries(AppImageUpdater PRIVATE LibtorrentRasterbar::torrent-rasterbar)
 target_link_libraries(AppImageUpdater PRIVATE SingleApplication::SingleApplication)
