@@ -214,7 +214,7 @@ ApplicationWindow {
     }
 
     onClosing: {
-	system_tray.isHidden = true;
+	root.hide();
     	if(settings_manager.isAllowSystemTrayNotification) {
 		system_tray.notify("Program Minimized to System Tray.");
 	}
@@ -223,25 +223,24 @@ ApplicationWindow {
 
     SystemTray {
 	id: system_tray
-	onHide: {
-		system_tray.isHidden = true;
-		root.visible = false;
-	}
-
-	onShow: { 
-		system_tray.isHidden = false;
-		system_tray.changeTrayIconDefault();
-		root.visible = true;
-		root.setX(Screen.width / 2 - width / 2);
-		root.setY(Screen.height / 2 - height / 2);
+	onShowOrHide: {
+		if(root.visible) {
+			root.hide();
+		} else {
+			root.show();
+		}
 	}
 
 	onQuit: {
 		Qt.quit();
 	}
 
+	onForceHide: {
+		root.hide();
+	}
+
 	onRaiseApp: {
-		root.visible = true;			
+		root.show();
 	}
     }
 

@@ -9,14 +9,18 @@ SystemTray::SystemTray(QObject *parent)
     auto arguments = QCoreApplication::arguments();
     if(arguments.size() != 1 && 
         arguments.at(1).toLower() == QString::fromUtf8("--minimized")) {
-	    b_Hidden = true;
+	    emit forceHide();
     }
 
     m_TIcon = new QSystemTrayIcon;
     m_TIcon->setIcon(QIcon(QPixmap(QString::fromUtf8(":/logo.png"))));
     
-    m_CurrentContextMenu = buildMenu();
-    m_TIcon->setContextMenu(m_CurrentContextMenu);
+    auto menu = new QMenu; 
+    menu->addAction(QString::fromUtf8("Show / Hide"), this, &SystemTray::showOrHide); 
+    menu->addAction(QString::fromUtf8("Quit"), this, &SystemTray::quit);
+    m_CurrentContextMenu = menu;
+
+    m_TIcon->setContextMenu(menu);
     
     connect(m_TIcon, &QSystemTrayIcon::activated, this, &SystemTray::raise);
     m_TIcon->show();
@@ -25,37 +29,11 @@ SystemTray::SystemTray(QObject *parent)
 SystemTray::~SystemTray()
 {
 	m_TIcon->deleteLater();
-	if(m_CurrentContextMenu)
-		delete m_CurrentContextMenu;
-}
-
-QMenu *SystemTray::buildMenu() {
-    QMenu *menu = new QMenu;
-    if(b_Hidden) {
-    	menu->addAction(QString::fromUtf8("Show AppImage Updater"),
-		 	this,
-			&SystemTray::show);
-    } else {
-	menu->addAction(QString::fromUtf8("Hide AppImage Updater"),
-		 	this,
-			&SystemTray::hide); 
-    }
-
-    menu->addAction(QString::fromUtf8("Quit"),
-		    this,
-		    &SystemTray::quit);
-    return menu;
+	m_CurrentContextMenu->deleteLater();
 }
 
 void SystemTray::raise() {
-	if(b_Hidden) {
-		b_Hidden = false;
-		emit isHiddenChanged();
-		emit show();
-	} else {
-		emit raiseApp();
-	}
-
+	emit raiseApp();
 }
 
 void SystemTray::notify(const QString &message) {
@@ -73,16 +51,3 @@ void SystemTray::changeTrayIconToRed() {
 void SystemTray::changeTrayIconDefault() {
 	m_TIcon->setIcon(QIcon(QPixmap(QString::fromUtf8(":/logo.png"))));
 }
-
-void SystemTray::setIsHidden(bool value) { 
-	b_Hidden = value;
-	delete m_CurrentContextMenu;
-	m_CurrentContextMenu = buildMenu();
-	m_TIcon->setContextMenu(m_CurrentContextMenu);
-	emit isHiddenChanged();
-	return;
-}
-
-bool SystemTray::isHidden() const {
-	return b_Hidden;
-}	
