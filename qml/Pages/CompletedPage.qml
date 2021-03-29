@@ -185,15 +185,20 @@ Page {
 				}
 
 				Button {
-					property bool seeding: false;
-					id: thisBtn
 					visible: UsedTorrent
 					enabled: settings_manager.isDecentralizedUpdateEnabled 
-					text: !thisBtn.seeding ? qsTr("Seed AppImage")	: qsTr("Stop Seeding")
-					Material.background: !thisBtn.seeding ? Material.Green : Material.Red
+					text: QueuedSeeding ? qsTr("Queued") : (Seeding ? qsTr("Stop Seeding") : (RemovingSeeding ? qsTr("Removing") : qsTr("Start Seeding")))
+					Material.background: (QueuedSeeding || Seeding || RemovingSeeding) ? Material.Red : Material.Green
 					Material.foreground: "#ffffff"
-					onClicked: { 
-						thisBtn.seeding = !thisBtn.seeding;
+					onClicked: {
+						if(Seeding && !QueuedSeeding && !RemovingSeeding) {
+							seeder.stopSeeding(Hash);
+							return;
+						}
+
+						if(!Seeding && !QueuedSeeding && !RemovingSeeding) {
+							seeder.startSeeding(Hash, NewAbsPath, TorrentFileUrl);
+						} 	
 					}
 				}
 				

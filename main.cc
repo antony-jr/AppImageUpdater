@@ -11,6 +11,7 @@
 #include "SystemTray.hpp"
 #include "DropItemParser.hpp"
 #include "Updater.hpp"
+#include "Seeder.hpp"
 #include "Executer.hpp"
 #include "Helpers.hpp"
 
@@ -48,6 +49,7 @@ int main(int argc, char **argv)
     qmlRegisterType<SystemTray>("Core.SystemTray", 1, 0, "SystemTray");
     qmlRegisterType<DropItemParser>("Core.DropItemParser", 1, 0, "DropItemParser");
     qmlRegisterType<Updater>("Core.Updater", 1, 0, "Updater");
+    qmlRegisterType<Seeder>("Core.Seeder", 1, 0, "Seeder");
     qmlRegisterType<Executer>("Core.Executer", 1, 0, "Executer");
     qmlRegisterType<Helpers>("Core.Helpers", 1, 0, "Helpers");
 

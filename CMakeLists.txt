@@ -46,6 +46,10 @@ add_executable(AppImageUpdater main.cc
 			     Updater_p.cc
 			     Updater.hpp
 			     Updater.cc
+			     Seeder_p.hpp
+			     Seeder_p.cc
+			     Seeder.hpp
+			     Seeder.cc
 			     AppImageImageProvider.hpp
 			     AppImageImageProvider.cc
 			     DropItemParser.hpp

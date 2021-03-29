@@ -2,6 +2,7 @@ import Core.Updater 1.0
 import Core.BuildConstants 1.0
 import Core.SettingsManager 1.0
 import Core.SystemTray 1.0
+import Core.Seeder 1.0
 import Core.Executer 1.0
 import Core.Helpers 1.0
 import QtQuick 2.12
@@ -26,8 +27,8 @@ ApplicationWindow {
     property string currentAppImageName: qsTr("");
     property string currentAppImageReleaseNotes: qsTr("");
 
-    /// All Lists    
-    ListModel { 
+    /// All Lists
+    ListModel {
 	id: completedUpdatesList
     }
 
@@ -216,7 +217,7 @@ ApplicationWindow {
     onClosing: {
 	root.hide();
     	if(settings_manager.isAllowSystemTrayNotification) {
-		system_tray.notify("Program Minimized to System Tray.");
+		system_tray.notify("AppImage Updater is minimized to system tray.");
 	}
 	
     }
@@ -248,6 +249,96 @@ ApplicationWindow {
 	id: mainexecuter
 	onTerminalApp: {
 		notify("Terminal Application should be run from Terminal.");	
+	}
+    }
+
+    Seeder {
+	id: seeder
+
+	onErrorSeeding: {
+		for(var i = 0; i < completedUpdatesList.count; ++i) {
+			var obj = completedUpdatesList.get(i);
+			if(obj) {
+				if(obj["Hash"] == hash) {
+					obj["Seeding"] = obj["QueuedSeeding"] = false;
+					obj["RemovingSeeding"] = false;	
+					break;
+				}
+			}
+		}
+	}
+
+	onQueuedSeeding: { 
+		for(var i = 0; i < completedUpdatesList.count; ++i) {
+			var obj = completedUpdatesList.get(i);
+			if(obj) {
+				if(obj["Hash"] == hash) {
+					obj["Seeding"] = false;
+					obj["QueuedSeeding"] = true;
+					obj["RemovingSeeding"] = false;	
+					break;
+				}
+			}
+		}
+
+	}
+
+	onStartedSeeding: {
+		for(var i = 0; i < completedUpdatesList.count; ++i) {
+			var obj = completedUpdatesList.get(i);
+			if(obj) {
+				if(obj["Hash"] == hash) {
+					obj["Seeding"] = true;
+					obj["QueuedSeeding"] = false;
+					obj["RemovingSeeding"] = false;	
+					break;
+				}
+			}
+		}
+
+	}
+
+	onRemovingSeeding: {
+		for(var i = 0; i < completedUpdatesList.count; ++i) {
+			var obj = completedUpdatesList.get(i);
+			if(obj) {
+				if(obj["Hash"] == hash) {
+					obj["Seeding"] = false;
+					obj["QueuedSeeding"] = false;
+					obj["RemovingSeeding"] = true;
+					break;
+				}
+			}
+		}
+	}
+
+	onStoppedSeeding: {
+		for(var i = 0; i < completedUpdatesList.count; ++i) {
+			var obj = completedUpdatesList.get(i);
+			if(obj) {
+				if(obj["Hash"] == hash) {
+					obj["Seeding"] = obj["QueuedSeeding"] = false;
+					obj["RemovingSeeding"] = false;	
+					break;
+				}
+			}
+		}
+
+	}
+
+	onTorrentStatus: {
+		/// hash, num_seeds, num_peers
+		
+		for(var i = 0; i < completedUpdatesList.count; ++i) {
+			var obj = completedUpdatesList.get(i);
+			if(obj) {
+				if(obj["Hash"] == hash) {
+					obj["Seeders"] = num_seeds;
+					obj["Peers"] = num_peers;
+					break;
+				}
+			}
+		}
 	}
     }
 
@@ -358,7 +449,12 @@ ApplicationWindow {
 					break;
 				}
 			}
-		}	
+		}
+		info["RemovingSeeding"] = false;
+		info["QueuedSeeding"] = false;
+		info["Seeding"] = false;
+		info["Seeders"] = 0;
+		info["Peers"] = 0;
 		completedUpdatesList.append(info);
 	}
 
