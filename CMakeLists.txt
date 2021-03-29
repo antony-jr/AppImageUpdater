@@ -41,7 +41,6 @@ endif()
 
 add_executable(AppImageUpdater main.cc
 			     global.hpp
-			     Version.hpp
 			     Updater_p.hpp
 			     Updater_p.cc
 			     Updater.hpp

@@ -562,14 +562,6 @@ ApplicationWindow {
             }
 
             ItemDelegate {
-                text: qsTr("Check For Update")
-                width: parent.width
-                onClicked: {
-                    drawer.close();
-                }
-            }
-
-            ItemDelegate {
                 text: qsTr("Settings")
                 width: parent.width
                 onClicked: {

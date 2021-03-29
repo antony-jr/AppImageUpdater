@@ -1,3 +1,4 @@
+#include <QDebug>
 #include <QFileInfo>
 #include <QFile>
 #include <QProcess>
@@ -10,8 +11,6 @@
 #include <QUrl>
 
 #include "Executer_p.hpp"
-#include "Version.hpp"
-
 
 #include <appimage/core/AppImage.h>
 #include <appimage/utils/ResourcesExtractor.h>
