@@ -6,8 +6,6 @@
 #include <vector>
 #include <iostream>
 
-#include <QDebug>
-
 #include "Seeder_p.hpp"
 
 SeederPrivate::SeederPrivate()
@@ -55,7 +53,6 @@ void SeederPrivate::updateProxy() {
     /// Check if proxy provided
     if(!phost.isEmpty() && pport != 0) {
 
-    qDebug() << "Phost:: " << phost << " , pport = " << pport << "\n";
     //// Set proxy for QNetworkAccessManager.
     QNetworkProxy proxy;
     proxy.setHostName(phost);
@@ -115,8 +112,6 @@ void SeederPrivate::startSeeding(QString hash, QString path, QUrl torrentFile) {
 
     m_QueuedTorrents.enqueue(info);
     emit queuedSeeding(info.hash);
-
-    qDebug() << "startSeeding(" << hash << "," << path << "," << torrentFile << ").\n";
 
     if(m_CurrentTorrent.empty) {
 	    getNextTorrentMeta();
@@ -207,7 +202,6 @@ void SeederPrivate::handleTorrentFileFinish() {
     /// We know that MakeAppImageTorrent only packs a single file that is the
     /// the Target AppImage. So We just need to check if it is bundled correctly.
     if(ti->num_files() != 1) {
-        qDebug() << "num files error";
 	emit errorSeeding(m_CurrentTorrent.hash);
 	getNextTorrentMeta();
         return;
@@ -221,7 +215,6 @@ void SeederPrivate::handleTorrentFileFinish() {
     params.ti = ti;
     auto handle = m_Session->add_torrent(params);
     if(!handle.is_valid()) {
-	 qDebug() << "not valid torrent.";
          emit errorSeeding(m_CurrentTorrent.hash);
 	 getNextTorrentMeta();
 	 return;
@@ -229,8 +222,6 @@ void SeederPrivate::handleTorrentFileFinish() {
     
     m_Torrents.insert(m_CurrentTorrent.hash, handle);
     emit startedSeeding(m_CurrentTorrent.hash);
-
-    qDebug() << "started seeding";
 
     getNextTorrentMeta();
     return;
@@ -246,11 +237,14 @@ void SeederPrivate::torrentLoop() {
     }
 
     QList<QString> toRemove;
+    QString torrentStatusTextFormat = QString::fromUtf8("Seeding at %1 KiB/s to %2 peer(s), uploaded %3 MiB in total.");
 
     for(auto key: m_Torrents.keys()) {
 	    auto handle = m_Torrents[key];
 	    auto status = handle.status();
-    	    emit torrentStatus(key, status.num_seeds, status.num_peers);
+
+	    emit torrentStatus(key,
+	    torrentStatusTextFormat.arg(status.upload_rate/1024).arg(status.num_peers).arg(status.all_time_upload/1048576));
 	    if(m_ReqTorrentForRemoval.contains(key)) {
 		m_Session->remove_torrent(handle);
 		toRemove.append(key);

@@ -47,7 +47,7 @@ class SeederPrivate : public QObject {
     void startedSeeding(QString);
     void removingSeeding(QString);
     void stoppedSeeding(QString);
-    void torrentStatus(QString, int,int);
+    void torrentStatus(QString, QString);
   private:
     struct AppImageSeedInfo {
 	    QString hash;

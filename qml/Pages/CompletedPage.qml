@@ -167,6 +167,15 @@ Page {
             
 
     
+		    Label {
+                	Layout.preferredWidth: root.width - 250
+			visible: Seeding
+                	text: SeedingStatusText
+                	wrapMode: Text.WordWrap
+            		}
+
+
+
 
 
 			Flow {

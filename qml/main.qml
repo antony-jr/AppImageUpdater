@@ -327,14 +327,12 @@ ApplicationWindow {
 	}
 
 	onTorrentStatus: {
-		/// hash, num_seeds, num_peers
-		
+		/// hash, statusText	
 		for(var i = 0; i < completedUpdatesList.count; ++i) {
 			var obj = completedUpdatesList.get(i);
 			if(obj) {
 				if(obj["Hash"] == hash) {
-					obj["Seeders"] = num_seeds;
-					obj["Peers"] = num_peers;
+					obj["SeedingStatusText"] = statusText;
 					break;
 				}
 			}
@@ -453,8 +451,7 @@ ApplicationWindow {
 		info["RemovingSeeding"] = false;
 		info["QueuedSeeding"] = false;
 		info["Seeding"] = false;
-		info["Seeders"] = 0;
-		info["Peers"] = 0;
+		info["SeedingStatusText"] = qsTr("");
 		completedUpdatesList.append(info);
 	}
 

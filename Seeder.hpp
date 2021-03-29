@@ -24,6 +24,6 @@ class Seeder : public QObject {
     void startedSeeding(QString hash);
     void removingSeeding(QString hash);
     void stoppedSeeding(QString hash);
-    void torrentStatus(QString hash, int num_seeds, int num_peers); 
+    void torrentStatus(QString hash, QString statusText);
 };
 #endif // SEEDER_HPP_INCLUDED
