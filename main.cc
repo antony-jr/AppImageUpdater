@@ -14,7 +14,7 @@
 #include "SystemTray.hpp"
 #include "DropItemParser.hpp"
 #include "Updater.hpp"
-#include "Seeder.hpp"
+#include "SeedManager.hpp"
 #include "Executer.hpp"
 #include "Helpers.hpp"
 
@@ -39,9 +39,12 @@ int main(int argc, char **argv)
 
     //// Check if we have standalone-update-dialog enabled, if so just use normal QApplication
     //// instead of a SingleApplication
+    qDebug() << "Default:: " << QAppImageUpdate::GuiFlag::Default;
+    qDebug() << "With no show on perm:: " << (QAppImageUpdate::GuiFlag::Default | QAppImageUpdate::GuiFlag::NoShowErrorDialogOnPermissionErrors);
     bool useNormalQApplication = false;
     int standaloneFlags =  (QAppImageUpdate::GuiFlag::Default | QAppImageUpdate::GuiFlag::NoShowErrorDialogOnPermissionErrors)  
-	    		   ^ QAppImageUpdate::GuiFlag::ShowBeforeProgress;
+	    		   // ^ QAppImageUpdate::GuiFlag::ShowBeforeProgress;
+			   ;
     for(auto i = 1; i < argc; ++i) {
 	    QString value = QString::fromUtf8(argv[i]);
 	    value = value.toLower();
@@ -122,7 +125,7 @@ int main(int argc, char **argv)
     qmlRegisterType<SystemTray>("Core.SystemTray", 1, 0, "SystemTray");
     qmlRegisterType<DropItemParser>("Core.DropItemParser", 1, 0, "DropItemParser");
     qmlRegisterType<Updater>("Core.Updater", 1, 0, "Updater");
-    qmlRegisterType<Seeder>("Core.Seeder", 1, 0, "Seeder");
+    qmlRegisterType<SeedManager>("Core.SeedManager", 1, 0, "SeedManager");
     qmlRegisterType<Executer>("Core.Executer", 1, 0, "Executer");
     qmlRegisterType<Helpers>("Core.Helpers", 1, 0, "Helpers");
 

@@ -1,18 +1,18 @@
-#ifndef SEEDER_HPP_INCLUDED
-#define SEEDER_HPP_INCLUDED
+#ifndef SEED_MANAGER_HPP_INCLUDED
+#define SEED_MANAGER_HPP_INCLUDED
 #include <QObject>
 #include <QJsonObject>
 #include <QSharedPointer>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
-class SeederPrivate;
+class SeedManagerPrivate;
 
-class Seeder : public QObject {
+class SeedManager : public QObject {
     Q_OBJECT
-    QSharedPointer<SeederPrivate> m_Private;
+    QSharedPointer<SeedManagerPrivate> m_Private;
   public:
-    Seeder(QObject *parent = nullptr);
+    SeedManager(QObject *parent = nullptr);
   public Q_SLOTS:
     void updateProxy();
 
@@ -26,4 +26,4 @@ class Seeder : public QObject {
     void stoppedSeeding(QString hash);
     void torrentStatus(QString hash, QString statusText);
 };
-#endif // SEEDER_HPP_INCLUDED
+#endif // SEED_MANAGER_HPP_INCLUDED

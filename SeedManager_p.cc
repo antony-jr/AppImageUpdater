@@ -6,9 +6,9 @@
 #include <vector>
 #include <iostream>
 
-#include "Seeder_p.hpp"
+#include "SeedManager_p.hpp"
 
-SeederPrivate::SeederPrivate()
+SeedManagerPrivate::SeedManagerPrivate()
     : QObject() {
 
     m_Manager.reset(new QNetworkAccessManager);
@@ -24,7 +24,7 @@ SeederPrivate::SeederPrivate()
     m_Timer.setSingleShot(false);
     m_Timer.setInterval(100); // 1ms?
     connect(&m_Timer, &QTimer::timeout,
-            this, &SeederPrivate::torrentLoop,
+            this, &SeedManagerPrivate::torrentLoop,
             Qt::QueuedConnection);
 
     updateProxy();
@@ -34,11 +34,11 @@ SeederPrivate::SeederPrivate()
     m_Timer.start();
 }
 
-SeederPrivate::~SeederPrivate() {
+SeedManagerPrivate::~SeedManagerPrivate() {
 	m_Session->abort();
 }
 
-void SeederPrivate::updateProxy() {
+void SeedManagerPrivate::updateProxy() {
     lt::settings_pack sp;
     QSettings settings;
     settings.sync();
@@ -99,7 +99,7 @@ void SeederPrivate::updateProxy() {
     }
 }
 
-void SeederPrivate::startSeeding(QString hash, QString path, QUrl torrentFile) {
+void SeedManagerPrivate::startSeeding(QString hash, QString path, QUrl torrentFile) {
     if(m_Torrents.contains(hash)) {
 	    return;
     }
@@ -119,7 +119,7 @@ void SeederPrivate::startSeeding(QString hash, QString path, QUrl torrentFile) {
     return;
 }
 
-void SeederPrivate::stopSeeding(QString hash) {
+void SeedManagerPrivate::stopSeeding(QString hash) {
     if(!m_Torrents.contains(hash)) {
 	    return;
     }
@@ -128,7 +128,7 @@ void SeederPrivate::stopSeeding(QString hash) {
     emit removingSeeding(hash);
 }
 
-void SeederPrivate::getNextTorrentMeta() {
+void SeedManagerPrivate::getNextTorrentMeta() {
     if(m_QueuedTorrents.isEmpty()) {
 	    AppImageSeedInfo empty;
 	    m_CurrentTorrent = empty; 
@@ -153,7 +153,7 @@ void SeederPrivate::getNextTorrentMeta() {
             this, SLOT(handleTorrentFileFinish()));
 }
 
-void SeederPrivate::handleTorrentFileError(QNetworkReply::NetworkError code) {
+void SeedManagerPrivate::handleTorrentFileError(QNetworkReply::NetworkError code) {
     QNetworkReply *reply = qobject_cast<QNetworkReply*>(QObject::sender());
     Q_UNUSED(code);
     if(!reply) {
@@ -168,7 +168,7 @@ void SeederPrivate::handleTorrentFileError(QNetworkReply::NetworkError code) {
     getNextTorrentMeta();
 }
 
-void SeederPrivate::handleTorrentFileData(qint64 br, qint64 bt) {
+void SeedManagerPrivate::handleTorrentFileData(qint64 br, qint64 bt) {
     Q_UNUSED(br);
     Q_UNUSED(bt);
 
@@ -186,7 +186,7 @@ void SeederPrivate::handleTorrentFileData(qint64 br, qint64 bt) {
     }
 }
 
-void SeederPrivate::handleTorrentFileFinish() {
+void SeedManagerPrivate::handleTorrentFileFinish() {
     auto reply = qobject_cast<QNetworkReply*>(QObject::sender());
     m_TorrentMeta->append(reply->readAll());
 
@@ -227,7 +227,7 @@ void SeederPrivate::handleTorrentFileFinish() {
     return;
 }
 
-void SeederPrivate::torrentLoop() {
+void SeedManagerPrivate::torrentLoop() {
     if(m_Session.isNull()) {
 	    return;
     }

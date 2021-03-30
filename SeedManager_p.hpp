@@ -1,5 +1,5 @@
-#ifndef SEEDER_PRIVATE_HPP_INCLUDED
-#define SEEDER_PRIVATE_HPP_INCLUDED
+#ifndef SEEDER_MANAGER_PRIVATE_HPP_INCLUDED
+#define SEEDER_MANAGER_PRIVATE_HPP_INCLUDED
 #include <QObject>
 #include <QQueue>
 #include <QSettings>
@@ -22,11 +22,11 @@
 #include <libtorrent/error_code.hpp>
 
 
-class SeederPrivate : public QObject {
+class SeedManagerPrivate : public QObject {
     Q_OBJECT
   public:
-    SeederPrivate();
-    ~SeederPrivate();
+    SeedManagerPrivate();
+    ~SeedManagerPrivate();
   public Q_SLOTS:
     void updateProxy();
 
@@ -65,4 +65,4 @@ class SeederPrivate : public QObject {
     QScopedPointer<QByteArray> m_TorrentMeta;
     QScopedPointer<lt::session> m_Session;
 };
-#endif // SEEDER_PRIVATE_HPP_INCLUDED
+#endif // SEED_MANAGER_PRIVATE_HPP_INCLUDED

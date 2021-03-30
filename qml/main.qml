@@ -2,7 +2,7 @@ import Core.Updater 1.0
 import Core.BuildConstants 1.0
 import Core.SettingsManager 1.0
 import Core.SystemTray 1.0
-import Core.Seeder 1.0
+import Core.SeedManager 1.0
 import Core.Executer 1.0
 import Core.Helpers 1.0
 import QtQuick 2.12
@@ -252,7 +252,7 @@ ApplicationWindow {
 	}
     }
 
-    Seeder {
+    SeedManager {
 	id: seeder
 
 	onErrorSeeding: {

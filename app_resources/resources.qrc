@@ -3,11 +3,11 @@
     <file>logo.png</file>
     <file>logo_blue.png</file>
     <file>logo_red.png</file>
-    <file>default_icon.png</file>
     <file>dotted_square.png</file>
     <file>dotted_square_drop.png</file>
     <file>ajr_logo.png</file>
     <file>alert-triangle.png</file>
     <file>drop_image.png</file>
+    <file>shield.png</file>
 </qresource>
 </RCC>
