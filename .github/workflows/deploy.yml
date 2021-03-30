@@ -152,7 +152,10 @@ jobs:
 
           wget -q "https://github.com/antony-jr/MakeAppImageTorrent/releases/download/Mk-2/MakeAppImageTorrent-609383f-x86_64.AppImage"
           chmod +x MakeAppImageTorrent-609383f-x86_64.AppImage
-         
+
+          mv AppImage_Updater-$VERSION-x86_64.AppImage AppImageUpdater-$VERSION-x86_64.AppImage
+          mv AppImage_Updater-$VERSION-x86_64.AppImage.zsync AppImage_Updater-$VERSION-x86_64.AppImage.zsync
+
           ./MakeAppImageTorrent-609383f-x86_64.AppImage AppImageUpdater-*-x86_64.AppImage 
 
           echo ::set-output name=appimagefile::AppImageUpdater-$VERSION-x86_64.AppImage
