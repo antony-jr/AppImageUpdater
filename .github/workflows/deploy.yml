@@ -120,7 +120,7 @@ jobs:
           source /opt/qt*/bin/qt*-env.sh || true
           cmake -DAPPIMAGE_UPDATER_VERSION=2.0.0 \
                 -DAPPIMAGE_UPDATER_COMMIT=$(git rev-parse --short HEAD) \
-                -DAPPIMAGE_UPDATER_BUILD_TIME=$(date +"%A, %B %d %Y %T") \
+                -DAPPIMAGE_UPDATER_BUILD_TIME="$(date +'%A, %B %d %Y %T')" \
                 -DAPPIMAGE_UPDATER_BUILD_NO=$GITHUB_RUN_NUMBER .
           make -j$(nproc)
           mkdir -p appdir/usr/lib 

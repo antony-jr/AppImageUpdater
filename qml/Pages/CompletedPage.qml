@@ -221,12 +221,27 @@ Page {
 				}
 		
 				Button {
-					text: qsTr("Remove Old AppImage")
+					text: OldVersionRemoved ? qsTr("Removed") : qsTr("Remove Old AppImage")
 					Material.background: Material.Red
 					Material.foreground: "#ffffff"
+					enabled: !OldVersionRemoved
 					visible: NewAbsPath != OldAbsPath
 					onClicked: {
-
+						if(NewAbsPath == OldAbsPath) {
+							return;
+						}
+						var removed = helpers.removeFile(OldAbsPath);
+						if(removed) {
+							for(var i = 0; i < completedUpdatesList.count; ++i) {
+								var obj = completedUpdatesList.get(i);
+								if(obj) {
+									if(obj["Hash"] == Hash) {
+										obj["OldVersionRemoved"] = true;	
+										break;
+									}
+								}
+							}
+						}
 					}
 				}
 			}

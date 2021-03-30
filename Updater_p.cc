@@ -232,7 +232,8 @@ void UpdaterPrivate::onFinishAction(QJsonObject info, short action) {
 			{"Hash", m_CurrentAppImage.hash},
 			{"ImageId" , m_CurrentAppImage.image_id},
 			{"Name" , m_CurrentAppImage.name },
-			{"UsedTorrent", info["UsedTorrent"].toBool()}
+			{"UsedTorrent", info["UsedTorrent"].toBool()},
+			{"TorrentFileUrl", info["TorrentFileUrl"].toString()}
 		};
 		emit finished(r);
 		emit completedCountChanged(n_Completed);

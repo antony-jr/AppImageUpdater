@@ -1,4 +1,5 @@
 #include <QCoreApplication>
+#include <QFile>
 
 #include "Helpers.hpp"
 
@@ -13,4 +14,8 @@ bool Helpers::isMinimized() const {
 		return true;
 	}
 	return false;
+}
+
+bool Helpers::removeFile(const QString &filePath) const {
+	return QFile::remove(filePath);
 }

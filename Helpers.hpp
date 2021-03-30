@@ -9,5 +9,6 @@ class Helpers : public QObject
 public:
   Q_INVOKABLE QString fileNameFromPath(const QString &filePath) const; 
   Q_INVOKABLE bool isMinimized() const;
+  Q_INVOKABLE bool removeFile(const QString &filePath) const;
 };
 #endif /// HELPERS_HPP_INCLUDED

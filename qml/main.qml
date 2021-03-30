@@ -452,6 +452,7 @@ ApplicationWindow {
 		info["QueuedSeeding"] = false;
 		info["Seeding"] = false;
 		info["SeedingStatusText"] = qsTr("");
+		info["OldVersionRemoved"] = false;
 		completedUpdatesList.append(info);
 	}
 
