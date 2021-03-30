@@ -14,7 +14,7 @@
 #include <appimage/utils/ResourcesExtractor.h>
 #include <sstream>
 
-std::vector<std::string> split_string(const std::string& str,
+static std::vector<std::string> split_string(const std::string& str,
                                       const std::string& delimiter)
 {
     std::vector<std::string> strings;

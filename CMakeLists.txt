@@ -41,6 +41,10 @@ endif()
 
 add_executable(AppImageUpdater main.cc
 			     global.hpp
+			     AppImageUpdaterStandalone.hpp
+			     AppImageUpdaterStandalone.cc
+			     AuthorizationDialog.hpp
+			     AuthorizationDialog.cc
 			     Updater_p.hpp
 			     Updater_p.cc
 			     Updater.hpp

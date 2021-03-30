@@ -13,17 +13,16 @@ class AppImageUpdaterStandalone : public QObject
     int flags;
     QString m_AppImagePath;
     QAppImageUpdate *m_Updater;
-    AuthorizationDialog _pAuthorizationDialog;
+    AuthorizationDialog m_AuthorizationDialog;
 public:
     AppImageUpdaterStandalone(QString, int, QObject *parent = nullptr);
     ~AppImageUpdaterStandalone();
     
     void init();
 private Q_SLOTS:
-    void handleError(short);
+    void handleError(short, short);
     void handleFinished(QJsonObject, short);
     void handleCanceled(short);
-    void handleAppImageInformation(QJsonObject, short);
 Q_SIGNALS:
     void quit();
 };

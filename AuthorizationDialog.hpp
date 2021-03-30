@@ -17,10 +17,10 @@ public:
     AuthorizationDialog(QWidget *parent = nullptr);
     ~AuthorizationDialog();
 public Q_SLOTS:
-    void handleAuthorization(QString, short, QString);
+    void handleAuthorization(QString, QString);
 private Q_SLOTS:
     void showError(QString);
-    void doAuthorize(QString, short, QString);
+    void doAuthorize(QString, QString);
 Q_SIGNALS:
     void started(void);
     void finished(QJsonObject);

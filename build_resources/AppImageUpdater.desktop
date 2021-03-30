@@ -1,8 +1,8 @@
 [Desktop Entry]
-Name=AppImageUpdater
+Name=AppImage Updater
 Type=Application
 Exec=AppImageUpdater
 Icon=AppImageUpdater
 Terminal=false
 Categories=System;
-Comment=Update your AppImages Like a Pro.
+Comment=AppImage Updater for Humans.

@@ -38,10 +38,10 @@ AuthorizationDialog::~AuthorizationDialog()
 {
 }
 
-void AuthorizationDialog::handleAuthorization(QString errorString, short errorCode, QString appimagePath)
+void AuthorizationDialog::handleAuthorization(QString errorString, QString appimagePath)
 {
-    QFuture<void> future = QtConcurrent::run([this, errorString, errorCode, appimagePath]() {
-        doAuthorize(errorString, errorCode, appimagePath);
+    QFuture<void> future = QtConcurrent::run([this, errorString, appimagePath]() {
+        doAuthorize(errorString, appimagePath);
         return;
     });
     return;
@@ -57,9 +57,8 @@ void AuthorizationDialog::showError(QString eStr)
     return;
 }
 
-void AuthorizationDialog::doAuthorize(QString errorString, short errorCode, QString appimagePath)
+void AuthorizationDialog::doAuthorize(QString errorString, QString appimagePath)
 {
-    Q_UNUSED(errorCode);
     emit started();
     arguments.clear();
 

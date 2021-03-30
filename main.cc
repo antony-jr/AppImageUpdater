@@ -5,6 +5,9 @@
 #include <QQuickStyle>
 #include <QIcon>
 #include <QCommandLineParser>
+#include <QScopedPointer>
+
+#include "AppImageUpdaterStandalone.hpp"
 
 #include "BuildConstants.hpp"
 #include "SettingsManager.hpp"
@@ -30,19 +33,89 @@ AppImageImageProvider *g_AppImageImageProvider = nullptr;
 
 int main(int argc, char **argv)
 {
-    if(argc != 1 && !strcmp(argv[1], "--private")) {
-	    QCoreApplication app(argc, argv);
-	    return app.exec();
-    }
-
     std::cout << "AppImage Updater v" << APPIMAGE_UPDATER_VERSION << "(" << APPIMAGE_UPDATER_COMMIT << "), "
 	      << "AppImage Delta Updater for Humans.\n"
 	      << "Copyright (C) Antony Jr.\n\n"; 
+
+    //// Check if we have standalone-update-dialog enabled, if so just use normal QApplication
+    //// instead of a SingleApplication
+    bool useNormalQApplication = false;
+    int standaloneFlags =  (QAppImageUpdate::GuiFlag::Default | QAppImageUpdate::GuiFlag::NoShowErrorDialogOnPermissionErrors)  
+	    		   ^ QAppImageUpdate::GuiFlag::ShowBeforeProgress;
+    for(auto i = 1; i < argc; ++i) {
+	    QString value = QString::fromUtf8(argv[i]);
+	    value = value.toLower();
+
+	    if(value == "--standalone-update-dialog" ||
+	       value == "-d") {
+		    useNormalQApplication = true;
+		    break;
+	    }
+    }
+
+    QScopedPointer<QApplication> normalApp;
+    if(useNormalQApplication) {
+	    normalApp.reset(new QApplication(argc, argv));
+    }
+
+    QCommandLineParser parser;
+    parser.setApplicationDescription(QString::fromUtf8("AppImage Updater for Humans."));
+    parser.addHelpOption();
+    parser.addVersionOption();
+    QCommandLineOption minimized(QString::fromUtf8("minimized"), QString::fromUtf8("Start the Application minimized."));
+    parser.addOption(minimized);
+    
+    QCommandLineOption noconfirm(QStringList() << "noconfirm" << "n" ,
+		                   QString::fromUtf8("Automatically accept all confirmations in standalone mode."));
+    parser.addOption(noconfirm);
+
+    QCommandLineOption silent(QStringList() << "silent" << "s", QString::fromUtf8("Show minimum number of dialogs in standalone mode."));
+    parser.addOption(silent);
+
+
+    QCommandLineOption beforeProgress(QStringList() << "show-checking-for-update-dialog" << "c", QString::fromUtf8("Show Checking for update dialog in standalone mode."));
+    parser.addOption(beforeProgress);
+
+
+
+    QCommandLineOption standalone(QStringList() << "standalone-update-dialog" << "d",
+                                  QString::fromUtf8("Update a <AppImage> with nothing but a AppImageUpdater update dialog."),
+                                  QString::fromUtf8("AppImage"));
+    parser.addOption(standalone);
+
+    if(useNormalQApplication) {
+    	parser.process(*(normalApp.data()));
+    }
+
+    if(useNormalQApplication) {
+    if(!parser.value(standalone).isEmpty()){ 
+	    if(parser.isSet(noconfirm)){
+		    standaloneFlags ^= QAppImageUpdate::GuiFlag::ShowUpdateConfirmationDialog;
+	    }
+
+	    if(parser.isSet(beforeProgress)){
+		    standaloneFlags |= QAppImageUpdate::GuiFlag::ShowBeforeProgress;
+	    }
+
+	    if(parser.isSet(silent)){
+		    standaloneFlags ^= QAppImageUpdate::GuiFlag::ShowProgressDialog;
+	    }
+
+	    AppImageUpdaterStandalone standaloneDialogHandle(parser.value(standalone), standaloneFlags);
+	    QObject::connect(&standaloneDialogHandle, &AppImageUpdaterStandalone::quit,
+                     normalApp.data(), &QApplication::quit, Qt::QueuedConnection);
+	    standaloneDialogHandle.init();
+	    return normalApp->exec();
+    }
+    return 0;
+    }
 
     SingleApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
     SingleApplication::setOrganizationName("antony-jr");
     SingleApplication::setApplicationName("AppImage Updater");
+
+    parser.process(app);
 
     qmlRegisterType<BuildConstants>("Core.BuildConstants", 1, 0, "BuildConstants");
     qmlRegisterType<SettingsManager>("Core.SettingsManager", 1, 0, "SettingsManager");
