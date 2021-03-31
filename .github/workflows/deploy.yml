@@ -154,7 +154,8 @@ jobs:
           chmod +x MakeAppImageTorrent-609383f-x86_64.AppImage
 
           mv AppImage_Updater-$VERSION-x86_64.AppImage AppImageUpdater-$VERSION-x86_64.AppImage
-          mv AppImage_Updater-$VERSION-x86_64.AppImage.zsync AppImageUpdater-$VERSION-x86_64.AppImage.zsync
+          rm -rf AppImage_Updater-$VERSION-x86_64.AppImage.zsync
+          zsyncmake AppImageUpdater-$VERSION-x86_64.AppImage
 
           ./MakeAppImageTorrent-609383f-x86_64.AppImage AppImageUpdater-*-x86_64.AppImage 
 
