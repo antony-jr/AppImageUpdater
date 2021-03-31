@@ -39,12 +39,9 @@ int main(int argc, char **argv)
 
     //// Check if we have standalone-update-dialog enabled, if so just use normal QApplication
     //// instead of a SingleApplication
-    qDebug() << "Default:: " << QAppImageUpdate::GuiFlag::Default;
-    qDebug() << "With no show on perm:: " << (QAppImageUpdate::GuiFlag::Default | QAppImageUpdate::GuiFlag::NoShowErrorDialogOnPermissionErrors);
     bool useNormalQApplication = false;
     int standaloneFlags =  (QAppImageUpdate::GuiFlag::Default | QAppImageUpdate::GuiFlag::NoShowErrorDialogOnPermissionErrors)  
-	    		   // ^ QAppImageUpdate::GuiFlag::ShowBeforeProgress;
-			   ;
+	    		   ^ QAppImageUpdate::GuiFlag::ShowBeforeProgress;
     for(auto i = 1; i < argc; ++i) {
 	    QString value = QString::fromUtf8(argv[i]);
 	    value = value.toLower();

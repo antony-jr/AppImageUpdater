@@ -1,10 +1,7 @@
 #ifndef AUTHORIZATION_DIALOG_HPP_INCLUDED
 #define AUTHORIZATION_DIALOG_HPP_INCLUDED
-#include <QtConcurrentRun>
-#include <QFuture>
-#include <QFutureWatcher>
 #include <QMessageBox>
-#include <QJsonObject>
+#include <QDialog>
 #include <ui_AuthorizationDialog.h>
 
 class AuthorizationDialog : public QDialog
@@ -20,9 +17,7 @@ public Q_SLOTS:
     void handleAuthorization(QString, QString);
 private Q_SLOTS:
     void showError(QString);
-    void doAuthorize(QString, QString);
 Q_SIGNALS:
-    void started(void);
-    void finished(QJsonObject);
+    void finished();
 };
 #endif // AUTHORIZATION_DIALOG_HPP_INCLUDED

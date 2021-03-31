@@ -1,10 +1,8 @@
 #include <AuthorizationDialog.hpp>
-#include <QtCore/QFile>
-#include <QtCore/QFileInfo>
+#include <QFile>
+#include <QFileInfo>
 #include <QDebug>
-#include <QEventLoop>
-#include <QMetaObject>
-#include <QMetaMethod>
+#include <QProcess>
 
 #include <QApplication>
 #include <QInputDialog>
@@ -23,6 +21,7 @@
 #include <sys/wait.h>
 
 #define SU_COMMAND "/usr/bin/sudo"
+#define XDG_SU_COMMAND "/usr/bin/xdg-su"
 
 AuthorizationDialog::AuthorizationDialog(QWidget *parent)
     : QDialog(parent, Qt::WindowStaysOnTopHint)
@@ -38,15 +37,6 @@ AuthorizationDialog::~AuthorizationDialog()
 {
 }
 
-void AuthorizationDialog::handleAuthorization(QString errorString, QString appimagePath)
-{
-    QFuture<void> future = QtConcurrent::run([this, errorString, appimagePath]() {
-        doAuthorize(errorString, appimagePath);
-        return;
-    });
-    return;
-}
-
 void AuthorizationDialog::showError(QString eStr)
 {
     QMessageBox box(this);
@@ -57,9 +47,8 @@ void AuthorizationDialog::showError(QString eStr)
     return;
 }
 
-void AuthorizationDialog::doAuthorize(QString errorString, QString appimagePath)
+void AuthorizationDialog::handleAuthorization(QString errorString, QString appimagePath)
 {
-    emit started();
     arguments.clear();
 
     // Also append all the program arguments to this
@@ -80,7 +69,20 @@ void AuthorizationDialog::doAuthorize(QString errorString, QString appimagePath)
               << appimagePath 
 	      << QString::fromUtf8("--noconfirm");
 
-    qDebug() << "Will be invoking updater as root with args: " << arguments;
+    /// Check if xdg-su command is available then just use it.
+    if(QFile::exists(XDG_SU_COMMAND)) {
+	    QString commandString = program + " ";
+	    for(const QString &arg : arguments) {
+		    commandString += arg + " ";
+	    }
+
+	    QStringList commandArgs;
+	    commandArgs << "-c";
+	    commandArgs << commandString;
+	    QProcess::startDetached(XDG_SU_COMMAND, commandArgs);
+	    emit finished();
+	    return;
+    }
 
     const QString fallback = program + QLatin1String(" ") + arguments.join(QLatin1String(" "));
     (_pUi.reasonLbl)->setText(QString::fromUtf8("Authorization is required for %1 because %2").arg(appimagePath, errorString));
@@ -92,24 +94,16 @@ void AuthorizationDialog::doAuthorize(QString errorString, QString appimagePath)
     int masterFD = -1;
     int slaveFD = -1;
     char ptsn[ PATH_MAX ];
-    auto metaObject = this->metaObject();
-    QEventLoop loop;
-
+                  
     if (::openpty(&masterFD, &slaveFD, ptsn, 0, 0)) {
-        metaObject->method(metaObject->indexOfMethod(QMetaObject::normalizedSignature("showError(QString)")))
-        .invoke(this, Q_ARG(QString, QString::fromUtf8("we cannot setup a pseudo-terminal(Internal error).")));
-
-        emit finished(QJsonObject());
-        return;
+        emit finished();
+	return;
     }
 
     masterFD = ::posix_openpt(O_RDWR | O_NOCTTY);
     if (masterFD < 0) {
-        metaObject->method(metaObject->indexOfMethod(QMetaObject::normalizedSignature("showError(QString)")))
-        .invoke(this, Q_ARG(QString, QString::fromUtf8("we cannot setup a pseudo-terminal(Internal error).")));
-
-
-        emit finished(QJsonObject());
+        showError(QString::fromUtf8("we cannot setup a pseudo-terminal(Internal error)."));
+        emit finished();
         return;
     }
 
@@ -117,11 +111,8 @@ void AuthorizationDialog::doAuthorize(QString errorString, QString appimagePath)
 
     if (::grantpt(masterFD)) {
         ::close(masterFD);
-        metaObject->method(metaObject->indexOfMethod(QMetaObject::normalizedSignature("showError(QString)")))
-        .invoke(this, Q_ARG(QString, QString::fromUtf8("we cannot setup a pseudo-terminal(Internal error).")));
-
-
-        emit finished(QJsonObject());
+        showError(QString::fromUtf8("we cannot setup a pseudo-terminal(Internal error)."));
+        emit finished();
         return;
     }
 
@@ -130,11 +121,8 @@ void AuthorizationDialog::doAuthorize(QString errorString, QString appimagePath)
     slaveFD = ::open(ttyName, O_RDWR | O_NOCTTY);
     if (slaveFD < 0) {
         ::close(masterFD);
-        metaObject->method(metaObject->indexOfMethod(QMetaObject::normalizedSignature("showError(QString)")))
-        .invoke(this, Q_ARG(QString, QString::fromUtf8("we cannot setup a pseudo-terminal(Internal error).")));
-
-
-        emit finished(QJsonObject());
+        showError(QString::fromUtf8("we cannot setup a pseudo-terminal(Internal error)."));
+        emit finished();
         return;
     }
 
@@ -142,11 +130,8 @@ void AuthorizationDialog::doAuthorize(QString errorString, QString appimagePath)
     ::fcntl(slaveFD, F_SETFD, FD_CLOEXEC);
     int pipedData[2];
     if (pipe(pipedData) != 0) {
-        metaObject->method(metaObject->indexOfMethod(QMetaObject::normalizedSignature("showError(QString)")))
-        .invoke(this, Q_ARG(QString, QString::fromUtf8("we cannot setup a pseudo-terminal(Internal error).")));
-
-
-        emit finished(QJsonObject());
+        showError(QString::fromUtf8("we cannot setup a pseudo-terminal(Internal error)."));
+        emit finished();
         return;
     }
 
@@ -161,11 +146,8 @@ void AuthorizationDialog::doAuthorize(QString errorString, QString appimagePath)
         ::close(slaveFD);
         ::close(pipedData[0]);
         ::close(pipedData[1]);
-        metaObject->method(metaObject->indexOfMethod(QMetaObject::normalizedSignature("showError(QString)")))
-        .invoke(this, Q_ARG(QString, QString::fromUtf8("we cannot fork a child process(Internal error).")));
-
-
-        emit finished(QJsonObject());
+        showError(QString::fromUtf8("we cannot fork a child process(Internal error)."));
+        emit finished();
         return;
     }
 
@@ -187,14 +169,10 @@ void AuthorizationDialog::doAuthorize(QString errorString, QString appimagePath)
             bytes = ::read(masterFD, buf, 1023);
             if (bytes > 0) {
                 const QString line = QString::fromLatin1(buf, bytes);
-                if (re.indexIn(line) != -1) {
-                    connect(this, &QDialog::accepted, &loop, &QEventLoop::quit);
-                    connect(this, &QDialog::rejected, &loop, &QEventLoop::quit);
-                    metaObject->method(metaObject->indexOfMethod(QMetaObject::normalizedSignature("exec(void)")))
-                    .invoke(this);
-                    loop.exec();
+		if (re.indexIn(line) != -1) {
+                    this->exec();
 
-                    const QString password = (_pUi.passwordTxt)->text();
+		    const QString password = (_pUi.passwordTxt)->text();
                     if (this->result() != QDialog::Accepted) {
 			    /* Note: 
 			     *  Do not break here , if we do break here then on the end of this
@@ -202,28 +180,25 @@ void AuthorizationDialog::doAuthorize(QString errorString, QString appimagePath)
 			     *  So we simply close and exit.
 			    */  
 			    ::close(pipedData[1]);
-			    emit finished(QJsonObject());
+			    emit finished();
 			    return;
 		    }
-                    QByteArray pwd = password.toLatin1();
+                    QByteArray pwd = password.toUtf8();
                     ::write(masterFD, pwd.data(), pwd.length());
                     ::write(masterFD, "\n", 1);
                     ::read(masterFD, buf, pwd.length() + 1);
-                }
+		}
             }
             if (bytes == 0)
                 ::usleep(100000);
         }
-        int status;
+        int status = 0;
         child = ::wait(&status);
         ::close(pipedData[1]);
         if (status) {
-            metaObject->method(metaObject->indexOfMethod(QMetaObject::normalizedSignature("showError(QString)")))
-            .invoke(this, Q_ARG(QString,
-                                QString::fromUtf8("the password you gave has been rejected.")));
-
+             showError(QString::fromUtf8("the password you gave has been rejected."));
         }
-	emit finished(QJsonObject());
+	emit finished();
         return;
     }
 
@@ -245,7 +220,7 @@ void AuthorizationDialog::doAuthorize(QString errorString, QString appimagePath)
         ::dup2(slaveFD, 1);
         ::dup2(pipedData[1], 2);
 
-        // close all file descriptors
+	// close all file descriptors
         struct rlimit rlp;
         getrlimit(RLIMIT_NOFILE, &rlp);
         for (int i = 3; i < static_cast<int>(rlp.rlim_cur); ++i)
@@ -269,7 +244,7 @@ void AuthorizationDialog::doAuthorize(QString errorString, QString appimagePath)
 
         ::execv(SU_COMMAND, argp);
         _exit(0);
-        emit finished(QJsonObject());
+        emit finished();
         return;
     }
 

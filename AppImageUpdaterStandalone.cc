@@ -191,6 +191,7 @@ void AppImageUpdaterStandalone::handleError(short errorCode, short action)
     if(errorCode == QAppImageUpdate::Error::NoReadPermission ||
             errorCode == QAppImageUpdate::Error::NoPermissionToReadSourceFile ||
             errorCode == QAppImageUpdate::Error::NoPermissionToReadWriteTargetFile) {
+	    
 	    m_AuthorizationDialog.handleAuthorization(QAppImageUpdate::errorCodeToDescriptionString(errorCode),m_AppImagePath);
 	    return;
     }
