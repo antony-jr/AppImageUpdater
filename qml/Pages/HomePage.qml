@@ -258,14 +258,6 @@ Page {
                     }
 
                 }
-		/*
-		Rectangle {
-			visible: root.loadingProgress || root.actualProgress
-			width: 100
-                        height: root.height * 0.25
-                        color: "transparent"
-                }*/
-
 
             	ProgressBar {
             		visible: root.loadingProgress
@@ -284,13 +276,53 @@ Page {
 			value: root.progressBarValue
 		}
 	
+		RowLayout {
+			id: alreadyNewRowTop
+			Layout.preferredWidth: root.width - 100
+			Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+			visible: root.actualProgress && root.usingTorrent 
+			Rectangle {
+			id: alreadyNewLblRec
+			Layout.preferredWidth: 30 + alreadyNewLbl.implicitWidth	
+			Layout.preferredHeight: alreadyNewRow.implicitHeight
+			color: "#8BC34A"
+			RowLayout {
+			/// Layout.preferredWidth: 30 + absPathLbl.implicitWidth
+			/// Layout.preferredHeight: oldAbsPathLbl.implicitHeight
+			id: alreadyNewRow
+			Rectangle {
+			Layout.preferredWidth: 10;
+			Layout.preferredHeight: alreadyNewLbl.implicitHeight
+			color: "#8BC34A"
+			}
+			Label {
+			id: alreadyNewLbl
+                	//Layout.preferredWidth: root.width - 185
+			font.pixelSize: (function() {
+                    	   var factor = 0.03;
+                    	   var calculatedHPxSize = root.height * factor;
+                    	   var calculatedWPxSize = root.width * factor;
+                    	   if (calculatedHPxSize > calculatedWPxSize)
+                           	return calculatedWPxSize;
+                    	   else
+                        	return calculatedHPxSize;
+                	  })()
+                	  text: "USING TORRENT"
+			  color: "white"
+                	  wrapMode: Text.WordWrap
+            		}
+			}
+			}
+		}
+
+
                 Label {
                     visible: root.actualProgress
                     Layout.alignment: Qt.AlignCenter
                     Layout.preferredWidth: root.width - 100
                     Layout.preferredHeight: 30
                     horizontalAlignment: Qt.AlignLeft | Qt.AlignVTop
-                    text: root.progressText
+                    text: root.progressText + root.torrentText
                     wrapMode: Text.WordWrap
                     textFormat: Text.RichText
                 }

@@ -54,6 +54,10 @@ UpdaterPrivate::UpdaterPrivate(QObject *parent)
 		 this, &UpdaterPrivate::onLog,
 		 Qt::QueuedConnection);
 
+	connect(m_Updater, &QAppImageUpdate::torrentStatus,
+		 this, &UpdaterPrivate::torrentStatus,
+		 Qt::DirectConnection);
+
 	connect(m_Updater, &QAppImageUpdate::finished, 
 		 this, &UpdaterPrivate::onFinishAction,
 		 Qt::QueuedConnection);

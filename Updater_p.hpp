@@ -53,6 +53,7 @@ Q_SIGNALS:
 	void completedCountChanged(int);
 
 	void progressText(QString, int);
+	void torrentStatus(int, int);
 	void loading();
 	void metaInfo(QJsonObject);
 	void queued(QJsonObject);

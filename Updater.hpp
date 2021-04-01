@@ -37,6 +37,7 @@ Q_SIGNALS:
 	void completedCountChanged(int n);
 
 	void progressText(QString progressTextString, int progressValue);
+	void torrentStatus(int seeders, int peers);
 	void loading();
 	void metaInfo(QJsonObject info);
 	void queued(QJsonObject info);

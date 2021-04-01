@@ -35,6 +35,9 @@ Updater::Updater(QObject *parent)
 	connect(m_Private, &UpdaterPrivate::progressText,
 		    this, &Updater::progressText);
 
+	connect(m_Private, &UpdaterPrivate::torrentStatus,
+		 this, &Updater::torrentStatus);
+
 	connect(m_Private, &UpdaterPrivate::loading,
 		    this, &Updater::loading);
 

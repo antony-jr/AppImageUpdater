@@ -21,8 +21,10 @@ ApplicationWindow {
     property bool updateLoading: false;
     property bool showUpdateChoice: false;
     property bool loadingProgress: false;
+    property bool usingTorrent: false;
     property real progressBarValue: 0.0;
     property string progressText: qsTr("");
+    property string torrentText: qsTr("");
     property string currentAppImageIconSrc: qsTr("");
     property string currentAppImageName: qsTr("");
     property string currentAppImageReleaseNotes: qsTr("");
@@ -342,12 +344,20 @@ ApplicationWindow {
 
     Updater {
 	id: coreUpdater
+	onTorrentStatus: {
+		/// seeders, peers
+		root.usingTorrent = true;
+		root.torrentText = "Connected to " + seeders + " Seeders of " + peers + " Peers."
+	}
+
 	onLoading: {
 		root.loadingProgress = false;
 		root.progressBarValue = 0;
+		root.usingTorrent = false;
 		root.actualProgress = false;
 		root.progressText = "";
-	
+		root.torrentText = "";
+
 		root.updating = false;
 		root.showUpdateChoice = false;
 		root.updateLoading = true;
@@ -435,7 +445,7 @@ ApplicationWindow {
 		root.loadingProgress = false;
 		root.progressBarValue = progressValue * 0.01;
 		root.actualProgress = true;
-		root.progressText = progressTextString;
+		root.progressText = progressTextString + ".";
 	}
 
 	onFinished: {
