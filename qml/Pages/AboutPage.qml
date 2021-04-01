@@ -24,7 +24,7 @@ Page {
         r += bconstants.getQAppImageUpdateVersion();
         r += qsTr("</b>, Torrent Rasterbar <b>v");
         r += bconstants.getTorrentVersion();
-        r += qsTr("</b> and libappimage.<br>");
+        r += qsTr("</b> and LibAppImage <b>commit 5e8f9d7</b>.<br>");
         return r;
     }
 

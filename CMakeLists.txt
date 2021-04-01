@@ -20,11 +20,8 @@ find_package(Qt5Concurrent)
 find_package(Qt5Qml)
 find_package(Qt5QuickControls2)
 
-add_subdirectory(third-party/SingleApplication)
-
 # Include Directories.
 include_directories(${CMAKE_BINARY_DIR})
-include_directories(third-party/SingleApplication)
 
 if(APPIMAGE_UPDATER_VERSION)
 	add_definitions(-DAPPIMAGE_UPDATER_VERSION="${APPIMAGE_UPDATER_VERSION}")
@@ -80,4 +77,3 @@ target_link_libraries(AppImageUpdater PUBLIC
 target_link_libraries(AppImageUpdater PRIVATE QAppImageUpdate)
 target_link_libraries(AppImageUpdater PRIVATE libappimage)
 target_link_libraries(AppImageUpdater PRIVATE LibtorrentRasterbar::torrent-rasterbar)
-target_link_libraries(AppImageUpdater PRIVATE SingleApplication::SingleApplication)

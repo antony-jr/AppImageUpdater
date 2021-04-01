@@ -1,6 +1,5 @@
 #include <iostream>
 #include <QApplication>
-#include <SingleApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include <QIcon>
@@ -37,28 +36,14 @@ int main(int argc, char **argv)
 	      << "AppImage Delta Updater for Humans.\n"
 	      << "Copyright (C) Antony Jr.\n\n"; 
 
-    //// Check if we have standalone-update-dialog enabled, if so just use normal QApplication
-    //// instead of a SingleApplication
-    bool useNormalQApplication = false;
+    QApplication app(argc, argv);
+    QApplication::setOrganizationName("antony-jr");
+    QApplication::setApplicationName("AppImage Updater");
+    
     int standaloneFlags =  (QAppImageUpdate::GuiFlag::Default | QAppImageUpdate::GuiFlag::NoShowErrorDialogOnPermissionErrors)  
 	    		   ^ QAppImageUpdate::GuiFlag::ShowBeforeProgress;
-    for(auto i = 1; i < argc; ++i) {
-	    QString value = QString::fromUtf8(argv[i]);
-	    value = value.toLower();
-
-	    if(value == "--standalone-update-dialog" ||
-	       value == "-d") {
-		    useNormalQApplication = true;
-		    break;
-	    }
-    }
-
-    QScopedPointer<QApplication> normalApp;
-    if(useNormalQApplication) {
-	    normalApp.reset(new QApplication(argc, argv));
-    }
-
     QCommandLineParser parser;
+    
     parser.setApplicationDescription(QString::fromUtf8("AppImage Updater for Humans."));
     parser.addHelpOption();
     parser.addVersionOption();
@@ -82,12 +67,8 @@ int main(int argc, char **argv)
                                   QString::fromUtf8("Update a <AppImage> with nothing but a AppImageUpdater update dialog."),
                                   QString::fromUtf8("AppImage"));
     parser.addOption(standalone);
+    parser.process(app);
 
-    if(useNormalQApplication) {
-    	parser.process(*(normalApp.data()));
-    }
-
-    if(useNormalQApplication) {
     if(!parser.value(standalone).isEmpty()){ 
 	    if(parser.isSet(noconfirm)){
 		    standaloneFlags ^= QAppImageUpdate::GuiFlag::ShowUpdateConfirmationDialog;
@@ -103,19 +84,12 @@ int main(int argc, char **argv)
 
 	    AppImageUpdaterStandalone standaloneDialogHandle(parser.value(standalone), standaloneFlags);
 	    QObject::connect(&standaloneDialogHandle, &AppImageUpdaterStandalone::quit,
-                     normalApp.data(), &QApplication::quit, Qt::QueuedConnection);
+                     &app, &QApplication::quit, Qt::QueuedConnection);
 	    standaloneDialogHandle.init();
-	    return normalApp->exec();
-    }
-    return 0;
+	    return app.exec();
     }
 
-    SingleApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
-    SingleApplication::setOrganizationName("antony-jr");
-    SingleApplication::setApplicationName("AppImage Updater");
-
-    parser.process(app);
 
     qmlRegisterType<BuildConstants>("Core.BuildConstants", 1, 0, "BuildConstants");
     qmlRegisterType<SettingsManager>("Core.SettingsManager", 1, 0, "SettingsManager");
