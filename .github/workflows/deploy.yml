@@ -186,6 +186,15 @@ jobs:
           echo ::set-output name=zsyncfilecli::appimageupdater-$VERSION-x86_64.AppImage.zsync
           echo ::set-output name=torrentfile::AppImageUpdater-$VERSION-x86_64.AppImage.torrent
           echo ::set-output name=torrentfilecli::appimageupdater-$VERSION-x86_64.AppImage.torrent
+          
+          # Remove development appimages.
+          rm -rf MakeAppImageTorrent*
+          rm -rf appimagetool*
+          rm -rf linuxdeployqt*
+          
+          ls
+
+          
 
       - name: Delete Old Development Builds
         if: needs.Check.outputs.deploy == 'false'
@@ -193,7 +202,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: development
-          assets: AppImageUpdater-*-x86_64.AppImage*
+          assets: *x86_64.AppImage*
           fail-if-no-assets: false
           fail-if-no-release: false
 
