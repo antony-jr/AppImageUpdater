@@ -364,6 +364,9 @@ void UpdaterPrivate::updateNextAppImage() {
 			proxy.setUser(username);
 			proxy.setPassword(passwd);
 		}
+		m_Updater->setProxy(proxy);
+	}else {
+		m_Updater->setProxy(QNetworkProxy());
 	}
 	b_Running = true;
 	m_Updater->start(QAppImageUpdate::Action::CheckForUpdate);

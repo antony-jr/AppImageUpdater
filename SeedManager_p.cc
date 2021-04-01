@@ -39,22 +39,34 @@ SeedManagerPrivate::~SeedManagerPrivate() {
 }
 
 void SeedManagerPrivate::updateProxy() {
+    QNetworkProxy proxy;
     lt::settings_pack sp;
     QSettings settings;
     settings.sync();
 
     /// Get Proxy Settings
+    auto useProxy = settings.value("V2.isProxyEnabled").toBool();
     auto phost = settings.value("V2.ProxyHost").toString();
     auto pport = settings.value("V2.ProxyPort").toInt();
     auto ptype = settings.value("V2.ProxyType").toString();
     auto puser = settings.value("V2.ProxyUser").toString();
     auto ppass = settings.value("V2.ProxyPass").toString();
 
+    if(!useProxy) {
+    if(!m_Manager.isNull()) {
+    	    m_Manager->setProxy(proxy);
+    }
+
+    if(!m_Session.isNull()) {
+	    m_Session->apply_settings(sp);
+    }
+	    return;
+    }
+
     /// Check if proxy provided
     if(!phost.isEmpty() && pport != 0) {
 
     //// Set proxy for QNetworkAccessManager.
-    QNetworkProxy proxy;
     proxy.setHostName(phost);
     proxy.setPort(pport);
  

@@ -113,15 +113,16 @@ Page {
                     placeholderText: qsTr("Proxy Port")
                     text: settings_manager.ProxyPort.toLocaleString()
                     enabled: settings_manager.isProxyEnabled
-                    inputMask: "999999"
+                    inputMask: "9999"
                     onEditingFinished: {
                         settings_manager.ProxyPort = Number(text);
                     }
 
-                    validator: IntValidator {
-                        bottom: 0
-                        top: 66666
-                    }
+		    validator: RegExpValidator{regExp: /^[0-9/]+$/}
+                    //validator: IntValidator {
+                    //    bottom: 0
+                    //    top: 66666
+                    //}
 
                 }
 
