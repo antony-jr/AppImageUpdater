@@ -16,7 +16,7 @@
   </tr>
   <tr>
     <td >
-    <a href="https://github.com/antony-jr/AppImageUpdater/releases/tag/latest">
+    <a href="https://github.com/antony-jr/AppImageUpdater/releases">
     <img src="https://img.shields.io/badge/Get%20the%20Latest%20AppImage-x86__64-brightgreen.svg?style=for-the-badge" alt="Download" / >
     </a>
     </td>
