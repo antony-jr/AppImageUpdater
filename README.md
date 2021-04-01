@@ -37,7 +37,7 @@ AppImage Updater updates AppImages using the infamous zsync algorithm. The zsync
 
 This Application is made with Google Material Design and it's easy on Humans. This project aims to create a AppImage Updater that is more user friendly and beautiful.
 
-Please see [AppImage Updater Bridge](https://github.com/antony-jr/QAppImageUpdate) for more information on the library used.
+Please see [QAppImageUpdate](https://github.com/antony-jr/QAppImageUpdate) for more information on the library used.
 
 # Support [![Twitter](https://img.shields.io/twitter/url/https/github.com/antony-jr/AIUpdateInformation.svg?style=social)](https://twitter.com/intent/tweet?text=Checkout%20the%20new%20AppImage%20Updater%20by%20%40antonyjr0%20%2C%20its%20really%20cool%20%2C%20Get%20it%20at%20https%3A%2F%2Fgithub.com%2Fantony-jr%2FAppImageUpdater)
 
@@ -51,4 +51,4 @@ Thank You! :smiley_cat:
 
 The GNU Lesser General Public License V3.
 
-Copyright (C) 2018 , Antony Jr.
+Copyright (C) 2018-2021, Antony Jr.
