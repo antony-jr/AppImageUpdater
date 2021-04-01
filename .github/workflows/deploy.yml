@@ -128,7 +128,9 @@ jobs:
                 -DAPPIMAGE_UPDATER_COMMIT=$(git rev-parse --short HEAD) \
                 -DAPPIMAGE_UPDATER_BUILD_TIME="$(date +'%A, %B %d %Y %T')" \
                 -DAPPIMAGE_UPDATER_BUILD_NO=$GITHUB_RUN_NUMBER .
+          make -j$(nproc)
           cp appimageupdater ..
+          cd ..
 
           mkdir -p appdir/usr/lib 
           mkdir -p appdir/usr/bin ; 
