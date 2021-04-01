@@ -204,12 +204,12 @@ jobs:
           fail-if-no-assets: false
           fail-if-no-release: false
 
-      - name: Upload Development Builds
+      - name: Upload Development GUI Build
         if: needs.Check.outputs.deploy == 'false'
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./AppImageUpdater-*-x86_64.AppImage* ./appimageupdater-*-x86_64.AppImage*
+          file: ./AppImageUpdater-*-x86_64.AppImage*
           tag: development
           overwrite: true
           file_glob: true
@@ -217,6 +217,18 @@ jobs:
           release_name: "AppImage Updater Development Builds"
           body: "The latest and greatest of AppImage Updater!"
 
+      - name: Upload Development CLI Build
+        if: needs.Check.outputs.deploy == 'false'
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./appimageupdater-*-x86_64.AppImage*
+          tag: development
+          overwrite: true
+          file_glob: true
+          prerelease: true
+          release_name: "AppImage Updater Development Builds"
+          body: "The latest and greatest of AppImage Updater!"
 
       - name: Make Release
         if: needs.Check.outputs.deploy != 'false'
