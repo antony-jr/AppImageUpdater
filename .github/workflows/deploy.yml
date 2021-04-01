@@ -202,7 +202,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: development
-          assets: "*x86_64.AppImage*"
+          assets: AppImageUpdater-*-x86_64.AppImage* appimageupdater-*-x86_64.AppImage*
           fail-if-no-assets: false
           fail-if-no-release: false
 
