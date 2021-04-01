@@ -16,7 +16,6 @@ find_package(LibtorrentRasterbar)
 find_package(QAppImageUpdate)
 find_package(libappimage)
 find_package(Qt5Gui)
-find_package(Qt5Concurrent)
 find_package(Qt5Qml)
 find_package(Qt5QuickControls2)
 
@@ -69,7 +68,6 @@ add_executable(AppImageUpdater main.cc
 			     app_resources/resources.qrc
 			     qml/qml.qrc)
 target_link_libraries(AppImageUpdater PUBLIC 
-				      Qt5::Concurrent 
 				      Qt5::Gui 
 				      Qt5::Qml 
 				      Qt5::QuickControls2

@@ -123,15 +123,31 @@ jobs:
                 -DAPPIMAGE_UPDATER_BUILD_TIME="$(date +'%A, %B %d %Y %T')" \
                 -DAPPIMAGE_UPDATER_BUILD_NO=$GITHUB_RUN_NUMBER .
           make -j$(nproc)
+          cd cli
+          cmake -DAPPIMAGE_UPDATER_VERSION=2.0.0 \
+                -DAPPIMAGE_UPDATER_COMMIT=$(git rev-parse --short HEAD) \
+                -DAPPIMAGE_UPDATER_BUILD_TIME="$(date +'%A, %B %d %Y %T')" \
+                -DAPPIMAGE_UPDATER_BUILD_NO=$GITHUB_RUN_NUMBER .
+          cp appimageupdater ..
+
           mkdir -p appdir/usr/lib 
-          mkdir -p appdir/usr/bin ; strip AppImageUpdater ; cp AppImageUpdater appdir/usr/bin/
-          mkdir -p appdir/usr/share/applications ; cp build_resources/AppImageUpdater.desktop appdir/usr/share/applications/
-          mkdir -p appdir/usr/share/icons/hicolor/256x256/apps/ ; cp build_resources/AppImageUpdater.png appdir/usr/share/icons/hicolor/256x256/apps/AppImageUpdater.png
+          mkdir -p appdir/usr/bin ; 
+          cp -r appdir appdir-cli
+          strip AppImageUpdater ; cp AppImageUpdater appdir/usr/bin/
+          mkdir -p appdir/usr/share/applications ; 
+          mkdir -p appdir-cli/usr/share/applications;
+          cp build_resources/AppImageUpdater.desktop appdir/usr/share/applications/
+          cp build_resources/appimageupdater.desktop appdir-cli/usr/share/applications/
+          mkdir -p appdir/usr/share/icons/hicolor/256x256/apps/ ; 
+          mkdir -p appdir-cli/usr/share/icons/hicolor/256x256/apps/ ;
+          cp build_resources/AppImageUpdater.png appdir/usr/share/icons/hicolor/256x256/apps/AppImageUpdater.png
+          cp build_resources/AppImageUpdater.png appdir-cli/usr/share/icons/hicolor/256x256/apps/AppImageUpdater.png
           wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
           chmod a+x linuxdeployqt-continuous-x86_64.AppImage
           unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
           export VERSION=$(git rev-parse --short HEAD)
           ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -qmldir=$(qmake -query QT_INSTALL_QML) -bundle-non-qt-libs 
+          ./linuxdeployqt-continuous-x86_64.AppImage appdir-cli/usr/share/applications/*.desktop -bundle-non-qt-libs
 
           # Copy QtQuickShapes stuff.
           cp -r $(qmake -query QT_INSTALL_QML)/QtQuick/Shapes appdir/usr/qml/QtQuick
@@ -149,6 +165,7 @@ jobs:
           fi
 
           ./appimagetool-x86_64.AppImage -u "gh-releases-zsync|antony-jr|AppImageUpdater|$tag|AppImageUpdater*-x86_64.AppImage.zsync" appdir
+          ./appimagetool-x86_64.AppImage -u "gh-releases-zsync|antony-jr|AppImageUpdater|$tag|appimageupdater*-x86_64.AppImage.zsync" appdir-cli
 
           wget -q "https://github.com/antony-jr/MakeAppImageTorrent/releases/download/Mk-2/MakeAppImageTorrent-609383f-x86_64.AppImage"
           chmod +x MakeAppImageTorrent-609383f-x86_64.AppImage
@@ -158,10 +175,14 @@ jobs:
           zsyncmake AppImageUpdater-$VERSION-x86_64.AppImage
 
           ./MakeAppImageTorrent-609383f-x86_64.AppImage AppImageUpdater-*-x86_64.AppImage 
+          ./MakeAppImageTorrent-609383f-x86_64.AppImage appimageupdater-*-x86_64.AppImage
 
           echo ::set-output name=appimagefile::AppImageUpdater-$VERSION-x86_64.AppImage
+          echo ::set-output name=appimagefilecli::appimageupdater-$VERSION-x86_64.AppImage
           echo ::set-output name=zsyncfile::AppImageUpdater-$VERSION-x86_64.AppImage.zsync
+          echo ::set-output name=zsyncfilecli::appimageupdater-$VERSION-x86_64.AppImage.zsync
           echo ::set-output name=torrentfile::AppImageUpdater-$VERSION-x86_64.AppImage.torrent
+          echo ::set-output name=torrentfilecli::appimageupdater-$VERSION-x86_64.AppImage.torrent
 
       - name: Delete Old Development Builds
         if: needs.Check.outputs.deploy == 'false'
@@ -178,7 +199,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ./AppImageUpdater-*-x86_64.AppImage*
+          file: ./AppImageUpdater-*-x86_64.AppImage* ./appimageupdater-*-x86_64.AppImage*
           tag: development
           overwrite: true
           file_glob: true
@@ -218,6 +239,17 @@ jobs:
           asset_name: ${{steps.appimage_build.outputs.appimagefile}}
           asset_content_type: application/octet-stream
 
+      - name: Upload AppImage CLI Release Asset
+        if: needs.Check.outputs.deploy != 'false'
+        uses: actions/upload-release-asset@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{steps.appimage_build.outputs.appimagefilecli}}
+          asset_name: ${{steps.appimage_build.outputs.appimagefilecli}}
+          asset_content_type: application/octet-stream
+
       - name: Upload AppImage Zsync File Release Asset
         if: needs.Check.outputs.deploy != 'false'
         uses: actions/upload-release-asset@latest
@@ -230,6 +262,17 @@ jobs:
           asset_content_type: application/octet-stream
 
 
+      - name: Upload AppImage Zsync File CLI Release Asset
+        if: needs.Check.outputs.deploy != 'false'
+        uses: actions/upload-release-asset@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{steps.appimage_build.outputs.zsyncfilecli}}
+          asset_name: ${{steps.appimage_build.outputs.zsyncfilecli}}
+          asset_content_type: application/octet-stream
+
       - name: Upload AppImage Torrent File Release Asset
         if: needs.Check.outputs.deploy != 'false'
         uses: actions/upload-release-asset@v1
@@ -239,4 +282,15 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./${{steps.appimage_build.outputs.torrentfile}}
           asset_name: ${{steps.appimage_build.outputs.torrentfile}}
+          asset_content_type: application/octet-stream
+            
+      - name: Upload AppImage Torrent File CLI Release Asset
+        if: needs.Check.outputs.deploy != 'false'
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./${{steps.appimage_build.outputs.torrentfilecli}}
+          asset_name: ${{steps.appimage_build.outputs.torrentfilecli}}
           asset_content_type: application/octet-stream
