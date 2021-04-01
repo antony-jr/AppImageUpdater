@@ -194,8 +194,6 @@ jobs:
           
           ls
 
-          
-
       - name: Delete Old Development Builds
         if: needs.Check.outputs.deploy == 'false'
         uses: mknejp/delete-release-assets@v1
@@ -211,7 +209,7 @@ jobs:
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: "*x86_64.AppImage*"
+          file: ./AppImageUpdater-*-x86_64.AppImage* ./appimageupdater-*-x86_64.AppImage*
           tag: development
           overwrite: true
           file_glob: true
