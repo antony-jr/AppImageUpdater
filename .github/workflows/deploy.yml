@@ -136,6 +136,7 @@ jobs:
           mkdir -p appdir/usr/bin ; 
           cp -r appdir appdir-cli
           strip AppImageUpdater ; cp AppImageUpdater appdir/usr/bin/
+          strip appimageupdater ; cp appimageupdater appdir-cli/usr/bin
           mkdir -p appdir/usr/share/applications ; 
           mkdir -p appdir-cli/usr/share/applications;
           cp build_resources/AppImageUpdater.desktop appdir/usr/share/applications/
