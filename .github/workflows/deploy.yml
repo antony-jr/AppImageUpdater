@@ -194,13 +194,23 @@ jobs:
           
           ls
 
-      - name: Delete Old Development Builds
+      - name: Delete Old Development GUI Builds
         if: needs.Check.outputs.deploy == 'false'
         uses: mknejp/delete-release-assets@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: development
-          assets: AppImageUpdater-*-x86_64.AppImage* appimageupdater-*-x86_64.AppImage*
+          assets: AppImageUpdater-*-x86_64.AppImage*
+          fail-if-no-assets: false
+          fail-if-no-release: false
+
+      - name: Delete Old Development CLI Builds
+        if: needs.Check.outputs.deploy == 'false'
+        uses: mknejp/delete-release-assets@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: development
+          assets: appimageupdater-*-x86_64.AppImage*
           fail-if-no-assets: false
           fail-if-no-release: false
 
