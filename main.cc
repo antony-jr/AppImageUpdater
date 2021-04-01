@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 	      << "AppImage Delta Updater for Humans.\n"
 	      << "Copyright (C) Antony Jr.\n\n"; 
 
-    QLockFile lockFile(QDir::homePath() + "/"  + "AppImageUpdater.lock");
+    QLockFile lockFile(QDir::homePath() + "/"  + ".AppImageUpdater.lock");
     QApplication app(argc, argv);
     QApplication::setOrganizationName("antony-jr");
     QApplication::setApplicationName("AppImage Updater");

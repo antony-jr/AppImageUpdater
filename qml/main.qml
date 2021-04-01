@@ -149,8 +149,8 @@ ApplicationWindow {
         x: (root.width / 2) - (btWarningPopup.width / 2)
         y: (root.height / 4) - (btWarningPopup.height / 4)
         width: root.width / 1.5
-        height: root.height - 250
-        modal: true
+        height: root.height / 1.5
+	modal: true
         focus: true
 
         ColumnLayout {
@@ -161,12 +161,14 @@ ApplicationWindow {
             anchors.bottom: parent.bottom
 
             Label {
+	        id: warningLbl
                 Layout.alignment: Qt.AlignHCenter | Qt.AlignVTop
                 Layout.preferredWidth: parent.width
-                Layout.preferredHeight: parent.height
+                Layout.preferredHeight: parent.height 
                 font.pixelSize: (function() {
-                    var factor = 0.032;
-                    var calculatedHPxSize = btWarningPopup.height * factor;
+                    ///var factor = 0.032;
+                    var factor = 0.038;
+		    var calculatedHPxSize = btWarningPopup.height * factor;
                     var calculatedWPxSize = btWarningPopup.width * factor;
                     if (calculatedHPxSize > calculatedWPxSize)
                         return calculatedWPxSize;
