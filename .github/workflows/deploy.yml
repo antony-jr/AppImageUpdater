@@ -147,7 +147,15 @@ jobs:
           wget -c -nv "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
           chmod a+x linuxdeployqt-continuous-x86_64.AppImage
           unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
-          export VERSION=$(git rev-parse --short HEAD)
+          deploy=${{ needs.Check.outputs.deploy }} 
+          if [ "$deploy" = "false" ]
+            then
+            export tag="development"
+            export VERSION=$(git rev-parse --short HEAD) 
+          else
+            export tag="latest"
+            export VERSION=$deploy
+          fi
           ./linuxdeployqt-continuous-x86_64.AppImage appdir/usr/share/applications/*.desktop -qmldir=$(qmake -query QT_INSTALL_QML) -bundle-non-qt-libs 
           ./linuxdeployqt-continuous-x86_64.AppImage appdir-cli/usr/share/applications/*.desktop -bundle-non-qt-libs
 
@@ -157,14 +165,6 @@ jobs:
 
           wget -c -nv "https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage" 
           chmod +x appimagetool-x86_64.AppImage
-
-          deploy=${{ needs.Check.outputs.deploy }} 
-          if [ "$deploy" = "false" ]
-            then
-            export tag="development"
-          else
-            export tag="latest"
-          fi
 
           ./appimagetool-x86_64.AppImage -u "gh-releases-zsync|antony-jr|AppImageUpdater|$tag|AppImageUpdater*-x86_64.AppImage.zsync" appdir
           ./appimagetool-x86_64.AppImage -u "gh-releases-zsync|antony-jr|AppImageUpdater|$tag|appimageupdatercli*-x86_64.AppImage.zsync" appdir-cli
