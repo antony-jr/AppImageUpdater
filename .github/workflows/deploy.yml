@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - mk2
 
 jobs:
   Check:
@@ -240,13 +239,6 @@ jobs:
           release_name: "AppImage Updater Development Builds"
           body: "The latest and greatest of AppImage Updater!"
 
-      - name: Make Release
-        if: needs.Check.outputs.deploy != 'false'
-        run: |
-          echo ${{ needs.Check.outputs.deploy }}
-          python3 scripts/release_notes.py "$(git log -1 --pretty=%B)" release_notes.md
-          cat release_notes.md
-      
       - name: Create Release
         if: needs.Check.outputs.deploy != 'false'
         id: create_release
@@ -256,7 +248,7 @@ jobs:
         with:
           tag_name: ${{ needs.Check.outputs.deploy }}
           release_name: Release ${{ needs.Check.outputs.deploy }}
-          body_path: ./release_notes.md
+          body_path: ./release_notes/${{ needs.Check.outputs.deploy }}.md
           draft: false
           prerelease: false
 
