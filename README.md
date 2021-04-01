@@ -5,8 +5,8 @@
     <img src="https://img.shields.io/github/stars/antony-jr/AppImageUpdater.svg?style=flat-square" alt="stars" / >
     <img src="https://img.shields.io/github/license/antony-jr/AppImageUpdater.svg?style=flat-square" alt="license" />
     <a class="badge-align" href="https://www.codacy.com/app/antony-jr/AppImageUpdater?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=antony-jr/AppImageUpdater&amp;utm_campaign=Badge_Grade"><img src="https://api.codacy.com/project/badge/Grade/a8b7aca6d0104becaebb7c9c9a4a4bb6"/></a>
-    [![Deploy](https://github.com/antony-jr/AppImageUpdater/actions/workflows/deploy.yml/badge.svg)](https://github.com/antony-jr/AppImageUpdater/actions/workflows/deploy.yml)
-</p>
+    <a class="badge-align" href="https://github.com/antony-jr/AppImageUpdater/actions/workflows/deploy.yml"><img src="https://github.com/antony-jr/AppImageUpdater/actions/workflows/deploy.yml/badge.svg"/></a>
+</p>    
 
 <p align="center">
 <table>
