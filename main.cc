@@ -1,4 +1,6 @@
 #include <iostream>
+#include <QLockFile>
+#include <QDir>
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
@@ -36,6 +38,7 @@ int main(int argc, char **argv)
 	      << "AppImage Delta Updater for Humans.\n"
 	      << "Copyright (C) Antony Jr.\n\n"; 
 
+    QLockFile lockFile(QDir::homePath() + "/"  + "AppImageUpdater.lock");
     QApplication app(argc, argv);
     QApplication::setOrganizationName("antony-jr");
     QApplication::setApplicationName("AppImage Updater");
@@ -89,6 +92,16 @@ int main(int argc, char **argv)
 	    return app.exec();
     }
 
+    if(!lockFile.tryLock()) {
+	    if(!lockFile.removeStaleLockFile()) {
+		    return 0;
+	    }
+
+	    if(!lockFile.tryLock()) {
+		    return 0;
+	    }
+    }
+ 
     app.setQuitOnLastWindowClosed(false);
 
     qmlRegisterType<BuildConstants>("Core.BuildConstants", 1, 0, "BuildConstants");
