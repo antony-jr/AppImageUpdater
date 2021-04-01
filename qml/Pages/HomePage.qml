@@ -42,6 +42,10 @@ Page {
         onFinished: {
             defaultLayout.fetching = false;
         }
+
+	onHideApp: {
+	    root.hide();
+	}
     }
 
     DropArea {

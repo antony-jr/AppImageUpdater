@@ -59,6 +59,9 @@ void AuthorizationDialog::handleAuthorization(QString errorString, QString appim
 		    skipNext = false;
 		    continue;
 	    }
+	    if(arg == "--show-checking-for-update-dialog" || arg == "-c") {
+		    continue;
+	    }
 	    if(arg == "--standalone-update-dialog" || arg == "-d"){
 		    skipNext = true;
 		    continue;

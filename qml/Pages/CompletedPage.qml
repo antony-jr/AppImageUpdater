@@ -190,6 +190,7 @@ Page {
 					Material.foreground: "#ffffff"
 					onClicked: { 
 						mainexecuter.exec(Hash, NewAbsPath);
+						root.hide();
 					}
 				}
 

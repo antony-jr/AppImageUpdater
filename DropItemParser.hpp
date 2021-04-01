@@ -21,6 +21,7 @@ Q_SIGNALS:
 	void loading();
 	void failed();
 	void finished();
+	void hideApp();
 };
 
 #endif // DROP_PARSER_HPP_INCLUDED

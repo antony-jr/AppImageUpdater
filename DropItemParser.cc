@@ -9,6 +9,7 @@
 #include <QBuffer>
 #include <QPixmap>
 #include <QDebug>
+#include <QProcess>
 
 #include <appimage/core/AppImage.h>
 #include <appimage/utils/ResourcesExtractor.h>
@@ -212,6 +213,24 @@ void DropItemParser::start() {
 			QCoreApplication::processEvents();
             	}
 		continue;
+	}
+
+	/// Posible permission error,
+	/// Just spawn a new standalone updater to handle this.
+	if(!info.isReadable() || !info.isWritable()) {
+		auto arguments = QCoreApplication::arguments();
+		auto program = QFileInfo(arguments.at(0)).absolutePath() +
+			       QString::fromUtf8("/") +
+			       QFileInfo(arguments.at(0)).fileName();
+
+		QStringList args;
+		args << "-c"
+		     << "-d"
+		     << info.absoluteFilePath();
+		emit hideApp();
+		QProcess::startDetached(program, args);
+		emit finished();
+		return;
 	}
 
 	/// It is a file then try loading it as AppImage.
