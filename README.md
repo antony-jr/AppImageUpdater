@@ -27,7 +27,7 @@
 
 
 <p align="center">
-  <img src=".img/poster.png" height="670px" width=auto alt="AppImage Updater">  <br>
+  <img src=".img/poster.png" height="570px" width=auto alt="AppImage Updater">  <br>
 </p>
 
 
