@@ -190,8 +190,14 @@ jobs:
           rm -rf MakeAppImageTorrent*
           rm -rf appimagetool*
           rm -rf linuxdeployqt*
-          
-          ls
+
+          # Check if all files needed are generated.
+          file AppImageUpdater-$VERSION-x86_64.AppImage
+          file appimageupdatercli-$VERSION-x86_64.AppImage
+          file AppImageUpdater-$VERSION-x86_64.AppImage.zsync
+          file appimageupdatercli-$VERSION-x86_64.AppImage.zsync
+          file AppImageUpdater-$VERSION-x86_64.AppImage.torrent
+          file appimageupdatercli-$VERSION-x86_64.AppImage.torrent 
 
       - name: Delete Old Development GUI Builds
         if: needs.Check.outputs.deploy == 'false'
