@@ -91,7 +91,7 @@ jobs:
           source /opt/qt*/bin/qt*-env.sh || true
           git clone https://github.com/antony-jr/QAppImageUpdate
           cd QAppImageUpdate
-          git checkout 70a7da40919b74a73541df069ad59fc18b537e5d
+          git checkout v2.0.2
           source /opt/qt*/bin/qt*-env.sh || true
           cmake -DDECENTRALIZED_UPDATE_ENABLED=ON .
           make -j$(nproc)
