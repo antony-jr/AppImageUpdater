@@ -1,24 +1,53 @@
+#include <iostream>
+#include <QLockFile>
+#include <QDir>
 #include <QApplication>
+#include <QQmlApplicationEngine>
+#include <QQuickStyle>
+#include <QIcon>
 #include <QCommandLineParser>
-#include <AppImageUpdater.hpp>
-#include <AppImageUpdaterStandalone.hpp>
-#include <AppImageUpdaterDialog>
+#include <QScopedPointer>
 
-using AppImageUpdaterBridge::AppImageUpdaterDialog;
+#include "AppImageUpdaterStandalone.hpp"
+
+#include "BuildConstants.hpp"
+#include "SettingsManager.hpp"
+#include "SystemTray.hpp"
+#include "DropItemParser.hpp"
+#include "Updater.hpp"
+#include "SeedManager.hpp"
+#include "Executer.hpp"
+#include "Helpers.hpp"
+
+#include "global.hpp"
+#include "AppImageImageProvider.hpp"
+
+#ifndef APPIMAGE_UPDATER_VERSION
+#define APPIMAGE_UPDATER_VERSION "2"
+#endif
+#ifndef APPIMAGE_UPDATER_COMMIT
+#define APPIMAGE_UPDATER_COMMIT "none"
+#endif
+
+
+AppImageImageProvider *g_AppImageImageProvider = nullptr;
 
 int main(int argc, char **argv)
 {
+    std::cout << "AppImage Updater v" << APPIMAGE_UPDATER_VERSION << "(" << APPIMAGE_UPDATER_COMMIT << "), "
+	      << "AppImage Delta Updater for Humans.\n"
+	      << "Copyright (C) Antony Jr.\n\n"; 
+
+    QLockFile lockFile(QDir::homePath() + "/"  + ".AppImageUpdater.lock");
     QApplication app(argc, argv);
-    int standaloneFlags = AppImageUpdaterDialog::Default ^ AppImageUpdaterDialog::ShowBeforeProgress; 
-	 
-    app.setQuitOnLastWindowClosed(false);
-    QApplication::setOrganizationName("AppImage");
-    QApplication::setApplicationName("AppImageUpdater");
-    QApplication::setApplicationVersion(APPIMAGE_UPDATER_VERSION);
-
-
+    QApplication::setOrganizationName("antony-jr");
+    QApplication::setApplicationName("AppImage Updater");
+    
+    int standaloneFlags =  (QAppImageUpdate::GuiFlag::Default | QAppImageUpdate::GuiFlag::NoShowErrorDialogOnPermissionErrors)  
+	    		   ^ QAppImageUpdate::GuiFlag::ShowBeforeProgress;
     QCommandLineParser parser;
-    parser.setApplicationDescription(QString::fromUtf8("A Simple Program to Update the AppImage format using Zsync Algorithm."));
+    
+    parser.setApplicationDescription(QString::fromUtf8("AppImage Updater for Humans."));
     parser.addHelpOption();
     parser.addVersionOption();
     QCommandLineOption minimized(QString::fromUtf8("minimized"), QString::fromUtf8("Start the Application minimized."));
@@ -45,15 +74,15 @@ int main(int argc, char **argv)
 
     if(!parser.value(standalone).isEmpty()){ 
 	    if(parser.isSet(noconfirm)){
-		    standaloneFlags ^= AppImageUpdaterDialog::ShowUpdateConfirmationDialog;
+		    standaloneFlags ^= QAppImageUpdate::GuiFlag::ShowUpdateConfirmationDialog;
 	    }
 
 	    if(parser.isSet(beforeProgress)){
-		    standaloneFlags |= AppImageUpdaterDialog::ShowBeforeProgress;
+		    standaloneFlags |= QAppImageUpdate::GuiFlag::ShowBeforeProgress;
 	    }
 
 	    if(parser.isSet(silent)){
-		    standaloneFlags ^= AppImageUpdaterDialog::ShowProgressDialog;
+		    standaloneFlags ^= QAppImageUpdate::GuiFlag::ShowProgressDialog;
 	    }
 
 	    AppImageUpdaterStandalone standaloneDialogHandle(parser.value(standalone), standaloneFlags);
@@ -63,7 +92,33 @@ int main(int argc, char **argv)
 	    return app.exec();
     }
 
-    AppImageUpdater mainWidget(parser.isSet(minimized));
-    QObject::connect(&mainWidget, &AppImageUpdater::quit, &app, &QApplication::quit, Qt::QueuedConnection);
+    if(!lockFile.tryLock()) {
+	    if(!lockFile.removeStaleLockFile()) {
+		    return 0;
+	    }
+
+	    if(!lockFile.tryLock()) {
+		    return 0;
+	    }
+    }
+ 
+    app.setQuitOnLastWindowClosed(false);
+
+    qmlRegisterType<BuildConstants>("Core.BuildConstants", 1, 0, "BuildConstants");
+    qmlRegisterType<SettingsManager>("Core.SettingsManager", 1, 0, "SettingsManager");
+    qmlRegisterType<SystemTray>("Core.SystemTray", 1, 0, "SystemTray");
+    qmlRegisterType<DropItemParser>("Core.DropItemParser", 1, 0, "DropItemParser");
+    qmlRegisterType<Updater>("Core.Updater", 1, 0, "Updater");
+    qmlRegisterType<SeedManager>("Core.SeedManager", 1, 0, "SeedManager");
+    qmlRegisterType<Executer>("Core.Executer", 1, 0, "Executer");
+    qmlRegisterType<Helpers>("Core.Helpers", 1, 0, "Helpers");
+
+    app.setWindowIcon(QIcon(QString::fromUtf8(":/logo.png")));
+    QQuickStyle::setStyle("Material"); // Use Google Material Design
+    QQmlApplicationEngine engine;
+    
+    g_AppImageImageProvider = new AppImageImageProvider;
+    engine.addImageProvider("AIImage", g_AppImageImageProvider);
+    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
     return app.exec();
 }

@@ -1,0 +1,11 @@
+<RCC>
+<qresource>
+    <file>main.qml</file>
+    <file>Pages/HomePage.qml</file>
+    <file>Pages/CompletedPage.qml</file>
+    <file>Pages/FailedPage.qml</file>
+    <file>Pages/QueuedPage.qml</file>
+    <file>Pages/SettingsPage.qml</file>
+    <file>Pages/AboutPage.qml</file>
+</qresource>
+</RCC>

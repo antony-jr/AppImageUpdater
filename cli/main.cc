@@ -1,5 +1,5 @@
 #include <QCoreApplication>
-#include <AppImageUpdaterBridge>
+#include <QAppImageUpdate>
 #include <cutelog.h>
 #include <assert.h>
 #include <QJsonObject>
@@ -10,14 +10,26 @@
 #include <cstdio>
 #include <signal.h>
 
+#ifndef APPIMAGE_UPDATER_VERSION
+#define APPIMAGE_UPDATER_VERSION "2"
+#endif
+#ifndef APPIMAGE_UPDATER_COMMIT
+#define APPIMAGE_UPDATER_COMMIT "none"
+#endif
+#ifndef APPIMAGE_UPDATER_BUILD_TIME
+#define APPIMAGE_UPDATER_BUILD_TIME "Unknown"
+#endif
+#ifndef APPIMAGE_UPDATER_BUILD_NO
+#define APPIMAGE_UPDATER_BUILD_NO "1"
+#endif
+
 static void signal_handler(int);
 void init_signals(void);
 
 struct sigaction sigact;
 
 bool updateRunning = false;
-using AppImageUpdaterBridge::AppImageDeltaRevisioner;
-AppImageDeltaRevisioner reviser; // This is made global for make it available for signal handlers
+QAppImageUpdate *updater = nullptr; // This is made global for make it available for signal handlers
 
 static const char *star_emoji = "🌟";
 static const char *heart_emoji = "💖";
@@ -29,10 +41,13 @@ int main(int ac, char **av){
 	int r = 0;	
 	init_signals();
 	QCoreApplication app(ac, av);
+	updater = new QAppImageUpdate(/*singleThreaded=*/false, &app);
 	bool moveOldVersion = false,
 	     deleteOldVersion = false,
 	     debug = false,
-	     avoidRunMsg = false;
+	     avoidRunMsg = false,
+	     checkForUpdateAndExit = false,
+	     useTorrent = false;
 	double megaBytesTotal = 0;
 	QStringList appImagesToUpdate;
 	QString currentOperatingAppImage;
@@ -48,7 +63,13 @@ int main(int ac, char **av){
         std::string progName(*av);
 	++av; // Go past program name.
 	while(*av){
-		if(!qstrcmp(*av, "-m") ||
+		if(!qstrcmp(*av, "-t") ||
+		   !qstrcmp(*av, "--use-torrent")){
+			useTorrent = true;
+		}else if(!qstrcmp(*av, "-j") ||
+		   !qstrcmp(*av, "--check-for-update")){
+			checkForUpdateAndExit = true;
+		}else if(!qstrcmp(*av, "-m") ||
 		   !qstrcmp(*av, "--move-old-version")){
 			moveOldVersion = true;
 		}else if(!qstrcmp(*av, "-D") ||
@@ -77,8 +98,15 @@ int main(int ac, char **av){
 		return r;
 	}
 
-	QObject::connect(&reviser, &AppImageDeltaRevisioner::started, [&](){
+	QObject::connect(updater, &QAppImageUpdate::started, [&](short action){
 		// Put variable initialization here.
+		if(action == QAppImageUpdate::Action::CheckForUpdate) {
+			cutelog_mode(ctx,cutelog_multiline_mode);
+			cutelog_info(ctx,
+		     	"[Running on] %s" ,
+		      	currentOperatingAppImage.toStdString().c_str());
+			return;
+		}
 		megaBytesTotal = 0;
 		updateRunning = true;
 		cutelog_mode(ctx, cutelog_multiline_mode);
@@ -89,16 +117,23 @@ int main(int ac, char **av){
 	
 
 	if(debug){	
-		QObject::connect(&reviser, &AppImageDeltaRevisioner::logger,
+		QObject::connect(updater, &QAppImageUpdate::logger,
 		[&](QString msg, QString path) {
-			Q_UNUSED(path);
+			
 			cutelog_mode(ctx, cutelog_multiline_mode);
 			cutelog_debug(ctx, "%s", msg.toStdString().c_str() + 9);
 		});
 	}
 
-	QObject::connect(&reviser, &AppImageDeltaRevisioner::progress,
-	[&](int percent, qint64 br, qint64 bt, double speed, QString unit) {
+	QObject::connect(updater, &QAppImageUpdate::progress,
+	[&](int percent, qint64 br, qint64 bt, double speed, QString unit, short action) {
+		if(action == QAppImageUpdate::Action::CheckForUpdate) {
+			cutelog_mode(ctx, cutelog_non_multiline_mode);
+        		cutelog_progress(ctx, 
+			"[%i%% Done] Downloading and parsing meta file.",
+			percent);
+			return;
+		}
 	        if(!br && !bt ){
 			return;
 		}
@@ -113,24 +148,10 @@ int main(int ac, char **av){
         	return;
 	});
 
-	QObject::connect(&reviser, &AppImageDeltaRevisioner::operatingAppImagePath,
-	[&](QString path){
-		if(avoidRunMsg){
-			avoidRunMsg = false;
-			return;
-		}
-		currentOperatingAppImage = QFileInfo(path).fileName();	
-		cutelog_mode(ctx,cutelog_multiline_mode);
-		cutelog_info(ctx,
-				"[Running on] %s" ,
-				currentOperatingAppImage.toStdString().c_str());
-	
-	});
-
-	QObject::connect(&reviser, &AppImageDeltaRevisioner::error,
-	[&](short errorCode){
+	QObject::connect(updater, &QAppImageUpdate::error,
+	[&](short errorCode, short action){
 		updateRunning = false;
-	        QString reason = AppImageUpdaterBridge::errorCodeToDescriptionString(errorCode);
+	        QString reason = QAppImageUpdate::errorCodeToDescriptionString(errorCode);
 		cutelog_mode(ctx,cutelog_multiline_mode);
 		cutelog_fatal(
 			ctx, 
@@ -141,35 +162,59 @@ int main(int ac, char **av){
 		if(appImagesToUpdate.isEmpty()){
 			QCoreApplication::quit();
 		}else{
-			reviser.setAppImage(appImagesToUpdate.takeFirst());
-			reviser.checkForUpdate();
+			auto path = appImagesToUpdate.takeFirst();
+			currentOperatingAppImage = QFileInfo(path).fileName();
+
+			updater->setAppImage(path);
+			updater->start(QAppImageUpdate::Action::CheckForUpdate);
 		}
 	});
 
-	QObject::connect(&reviser, &AppImageDeltaRevisioner::updateAvailable,
-	[&](bool isAvailable, QJsonObject info){
-	        Q_UNUSED(info);
-		if(!isAvailable){
-			cutelog_mode(ctx,cutelog_multiline_mode);
-			cutelog_success(ctx, 
-			"[No Update Needed] %s" ,
+	QObject::connect(updater, &QAppImageUpdate::finished, 
+	[&](QJsonObject info, short action) {
+		if(action == QAppImageUpdate::Action::CheckForUpdate) {
+			if(!info["UpdateAvailable"].toBool()){
+				cutelog_mode(ctx,cutelog_multiline_mode);
+				cutelog_success(ctx, 
+				"[No Update Needed] %s" ,
+				currentOperatingAppImage.toStdString().c_str());
+				if(appImagesToUpdate.isEmpty()){
+					QCoreApplication::quit();
+				}else{
+					auto path = appImagesToUpdate.takeFirst();
+					currentOperatingAppImage = QFileInfo(path).fileName();
+
+					updater->setAppImage(path);
+					updater->start(QAppImageUpdate::Action::CheckForUpdate);
+				}
+			 return;
+			}
+			cutelog_mode(ctx,cutelog_multiline_mode);		
+			cutelog_info(ctx, 
+			"[Update Needed] %s" ,
 			currentOperatingAppImage.toStdString().c_str());
-			if(appImagesToUpdate.isEmpty()){
-				QCoreApplication::quit();
+			if(checkForUpdateAndExit) {
+				if(appImagesToUpdate.isEmpty()){
+					QCoreApplication::quit();
+				}else{
+					auto path = appImagesToUpdate.takeFirst();
+					currentOperatingAppImage = QFileInfo(path).fileName();
+
+					updater->setAppImage(path);
+					updater->start(QAppImageUpdate::Action::CheckForUpdate);	
+				}
+				return;
+			}
+			if(useTorrent) {
+				updater->start(QAppImageUpdate::Action::UpdateWithTorrent);
 			}else{
-				reviser.setAppImage(appImagesToUpdate.takeFirst());
-				reviser.checkForUpdate();
+				updater->start(QAppImageUpdate::Action::Update);
 			}
 			return;
 		}
-		avoidRunMsg = true;
-		reviser.start();
-	});
 
-	QObject::connect(&reviser, &AppImageDeltaRevisioner::finished, 
-	[&](QJsonObject newVersion, QString oldAppImagePath) {
-        	updateRunning = false;
-	        QString newVer = newVersion.value("AbsolutePath").toString();
+		updateRunning = false;
+	        QString newVer = info.value("NewVersionPath").toString();
 	        cutelog_mode(ctx, cutelog_multiline_mode);
         	cutelog_success(ctx, "[Updated] %s", currentOperatingAppImage.toStdString().c_str());
         	cutelog_info(ctx, 
@@ -177,13 +222,13 @@ int main(int ac, char **av){
 		newVer.toStdString().c_str());
 
 		if(moveOldVersion){
-			QString movePath = oldAppImagePath;
+			QString movePath = info.value("OldVersionPath").toString();
 			movePath.append(".old-version");
-			QFile::rename(oldAppImagePath, movePath);
+			QFile::rename(info.value("OldVersionPath").toString(), movePath);
 			cutelog_info(ctx, "[Moved] %s", 
 				     movePath.toStdString().c_str());	
 		}else if(deleteOldVersion){
-			QFile::remove(oldAppImagePath);
+			QFile::remove(info.value("OldVersionPath").toString());
 			cutelog_info(ctx, "[Removed] %s", currentOperatingAppImage.toStdString().c_str());
 		}
 
@@ -191,20 +236,28 @@ int main(int ac, char **av){
 		if(appImagesToUpdate.isEmpty()){
 			QCoreApplication::quit();
 		}else{
-			reviser.setAppImage(appImagesToUpdate.takeFirst());
-			reviser.checkForUpdate();
+			auto path = appImagesToUpdate.takeFirst();
+			currentOperatingAppImage = QFileInfo(path).fileName();
+
+			updater->setAppImage(path);
+			updater->start(QAppImageUpdate::Action::CheckForUpdate);
 		}
         	return;
 	});
 
-	QObject::connect(&reviser, &AppImageDeltaRevisioner::canceled,
+	QObject::connect(updater, &QAppImageUpdate::canceled,
 	[&](){
 		QCoreApplication::quit();
 	});
 
-	reviser.setAppImage(appImagesToUpdate.takeFirst());
-	reviser.checkForUpdate();
-	
+	{
+		auto path = appImagesToUpdate.takeFirst();
+		currentOperatingAppImage = QFileInfo(path).fileName();
+
+		updater->setAppImage(path);
+		updater->start(QAppImageUpdate::Action::CheckForUpdate);
+	}
+
 	r = app.exec();
 	cutelog_safe_finish(ctx);
 	cutelog_free(ctx);
@@ -233,7 +286,7 @@ static void signal_handler(int sig){
 	    if(!updateRunning){
 		    QCoreApplication::quit();
 	    }else{
-		    reviser.cancel();
+		    updater->cancel();
 	    }
     }
 }
@@ -254,7 +307,9 @@ static void print_usage(const char *prog) {
     printf(
         "Usage: %s [OPTIONS] [APPIMAGE(S)]\n\n"
         "OPTIONS:\n"
-        "    -m,--move-old-version      Move the old version with suffix .old-version\n"
+	"    -t,--use-torrent		Enable BitTorrent Usage for Decentralized Update.\n"
+        "    -j,--check-for-update	Check for update and exit.\n"
+	"    -m,--move-old-version      Move the old version with suffix .old-version\n"
         "    -D,--delete-old-version    Delete the old version after update.\n"
         "    -d,--debug                 Debug mode.\n"
         "    -v,--version               Show version.\n"

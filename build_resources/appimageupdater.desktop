@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=appimageupdatercli
+Type=Application
+Exec=appimageupdater
+Icon=AppImageUpdater
+Terminal=true
+Categories=System;
+Comment=AppImage Updater for Humans (CLI).
